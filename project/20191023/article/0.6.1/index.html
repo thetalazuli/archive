@@ -1,0 +1,290 @@
+ <style>
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     padding:1em;
+     width:148mm;
+     margin:0 auto;
+   }
+   nav{
+    position: absolute;
+    text-align:right;
+    width:calc(100%);
+    z-index: 999;
+    right: -1em;
+    top: -1em;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.label.image,
+   .ui.segment.editor,
+   .ui.segments{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.segment.editor{
+     padding:0;
+   }
+
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+  margin-right:0;
+ }
+ .ui.multiple.search.dropdown>.text{
+  margin:0;
+ }
+ .ui.label>.close.icon, .ui.label>.delete.icon{
+  vertical-align: top;
+  display:none;
+ }
+ .ui.selection.dropdown{
+   display:block;
+ }
+ .ui.dropdown .dropdown.icon{
+  display:none;
+ }
+ .ui.selection.dropdown{
+  padding:.14285714em 0;
+  border:none;
+  min-height:auto;
+  background:transparent;
+ }
+ .ui.multiple.dropdown>.label{
+  font-size: .85714286rem;
+  padding: .5833em .833em;
+ }
+
+</style>
+   
+  <template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label orange'>
+          <i class='icon tags'>
+         </i>
+       </div>
+      </div>
+
+      <div class="menu">
+        <!-- 後にデータを分ける:refill用 -->
+        <div class="item" data-value="angular">h1</div>
+        <div class="item" data-value="css">syntax-highlight</div>
+        <div class="item" data-value="design">math-jax</div>
+        <div class="item" data-value="ember">vegas</div>
+        <div class="item" data-value="ember">list</div>
+
+        <!-- 後にデータを分ける:file用 -->
+        <div class="item" data-value="angular">/files/mojiji/疲れた.jpg</div>
+        <div class="item" data-value="css">/files/mojiji/楽しい.jpg</div>
+        <div class="item" data-value="design">/files/mojiji/どぅふふ.jpg</div>
+        
+     </div>
+
+   </div>
+ </template>
+
+ <template id='document'>
+   <article>
+
+       <div class='ui segment'>
+         <div class='ui ribbon label grey' style='float:left;'>
+           {{data.title}}
+        </div><div class='ui label grey' style='float:left;'>search text...</div><div class='ui label grey' style='float:left;'>４</div><div class='ui label grey'><i class='icon heart'></i></div>
+      </div>
+
+
+     <template v-for='page in data.pages'>
+       <section class='ui segment'>
+         <nav class='ui labels blue'>
+           <div class='ui label image'>
+             <img src='https://avatars1.githubusercontent.com/u/9919?v=4'>
+             {{page.in_a_word}}
+          </div>
+           <div class='ui label'>
+             {{page.createdAt}}
+          </div>
+           <slot name='commands'>
+          </slot>
+        </nav>
+         <div class='body' v-html='page.content'>
+           
+        </div>
+      </section>
+    </template>
+  </article>
+</template>
+
+ <body>
+   <main>
+     <document
+       class='ui segments'
+       :data='article'>
+       <template v-slot:commands>
+         <div class='ui label' @click='action(mode)'>
+           <i :class="['icon',mode]"></i>
+        </div>
+      </template>
+    </document>
+     
+     <div ref='menu' class='ui menu pointing icon'>
+       <div data-tab='top' class='item active' @click="mode = 'edit'"><i class='icon edit'></i></div>
+       <div class='item' @click="push('file')"><i class='icon plus'></i></div>
+       <div class='item' @click="mode = 'trash'"><i class='icon trash'></i></div>
+
+       <div class='right menu'>
+         <div data-tab='select-files' class='item'>
+           <i class='icon file'></i>
+        </div>
+      </div>
+    </div>
+
+     <div data-tab='top' class='ui tab'>
+
+        <div class='ui segment editor'>
+            <codemirror v-model='edit.content'>
+           </codemirror>
+         </div>
+     
+       <indexes color='orange'>
+      </indexes>  
+
+          <div class='ui fluid button' @click="push('template')">
+            タグ追加直後の処理：リフィルを選択してPAGEに挿入
+         </div>
+     </div>
+
+
+     <div data-tab='select-files' class='ui tab'>
+
+       <indexes color='orange'>
+      </indexes>
+
+       <div class='ui fluid button' @click="push('file')">
+         タグ追加直後の処理：ファイルを選択してPAGEに挿入
+      </div>
+
+   </div> 
+
+
+
+  </main>  
+</body>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script>
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+
+   var Idx = Vue.component('indexes',{
+     template:'#dropdown',
+     props:['color'],
+     computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+     },
+     mounted:function(){
+      var self = this
+       $(this.$refs.labels).dropdown({
+         allowAdditions:true
+       })
+     }
+   })
+
+   var Doc = Vue.component('document',{
+     template:'#document',
+     props:['data'],
+     mounted:function(){
+       console.dir(this.data)
+     }
+   })
+
+   new Vue({
+     el:'main',
+     methods:{
+       push:function(type){
+         if(type =='template'){
+           // dropdown.labels (auto complete h1, slideshow, syntax highlighter...)
+           this.article.pages.push({in_a_word:'pushed template',createdAt:'2019/09/19',content:'<h1>...</h1>'})
+         }
+         if(type =='file'){
+           // dropdown.labels file-path (event:add label->handlebars->push page)
+           this.article.pages.push({in_a_word:'pushed file',createdAt:'2019/09/19',content:"<img class='ui fluid image' src='https://i.pinimg.com/736x/47/d2/72/47d272879a29df6e0844f4d6981ca4e8.jpg'>"})
+         }
+       },
+       action:function(mode){
+        switch(mode){
+          case 'edit':
+            this.edit = this.article.pages[0]
+            break;
+        }
+       }
+     },
+     mounted:function(){
+       $('.item',this.$refs.menu).tab({
+         
+       })
+       $(this.$refs.menu).tab('change tab','top')
+     },
+     data:{
+      mode:'edit',
+      edit:'',
+      article:{
+        title:'仕様',
+        pages:[
+          {in_a_word:'An online code editor, learning environment,',createdAt:'2019/09/19',content:'1'},
+          {in_a_word:'creating a shared vocabulary for UI.',createdAt:'2019/09/19',content:'2'},
+          {in_a_word:'it is algorithm on text aditor',createdAt:'2019/09/19',content:'3'},
+          {in_a_word:'it is me',createdAt:'2019/09/19',content:'4'}
+        ]
+      },
+     }
+   })
+</script>

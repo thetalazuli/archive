@@ -1,0 +1,309 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template id='keys'>
+      <div>
+      <div :class='struct' ref='labels'>
+        <input name='labels' type='hidden'>
+        <div class='default text'>
+          <div class='ui label'>
+            <i class='icon tags'>
+           </i>
+         </div>
+       </div>
+     </div> 
+    </div>
+   </template>
+    <main>
+      <div class='ui grid padded'>
+
+        <div class='one column row'>
+
+
+          <div class='column' name='brain'>
+
+            <div class='ui tab active' data-tab='home'>
+                <div class='ui fluid card'>
+                    <div class='image'>
+                      <img src='data:image/png;base64,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'>
+                        </div>
+                </div>
+            </div>
+
+            <div class='ui tab' data-tab='edit'>
+              <div class='ui grid'>
+                <div class='one column row'>
+                <div class='column' v-for='i in 12'>
+
+                    <labels :color='colors[i-1]'></labels>
+                 </div>  </div></div>
+            </div> 
+
+             <div class='ui tab' data-tab='settings'>
+                <div class='ui form'>
+           
+                    <h4 class='ui horizontal divider'>LOGIN</h4>
+                    <div class='field'>
+                      <div class='ui input left icon'>
+                        <i class='icon user'></i>
+                        <input type='text' placeholder='username'>
+                     </div>
+                   </div>
+                    <div class='field'>
+                      <div class='ui input left icon'>
+                        <i class='icon lock'></i>
+                        <input type='text' placeholder='password'>
+                     </div>
+                   </div>
+                   <h4 class='ui horizontal divider'>GIST</h4>
+                   <div class='field'>
+                      <div class='ui input left icon'>
+                        <i class='icon github'></i>
+                        <input type='text' value='c61c701c1543c6f53db814e77c9b1d56' placeholder='gist sha'>
+                     </div>
+                   </div>
+                   <h4 class='ui horizontal divider'>REPO</h4>
+                   <div class='field'>
+                      <div class='ui input left icon'>
+                        <i class='icon github'></i>
+                        <input type='text' value='files' placeholder='gist sha'>
+                     </div>
+                   </div>
+        
+  
+  
+  
+            </div>
+             </div>
+
+             <div class='ui tab' data-tab='users'>
+                    <div class="ui seven cards"><div class="ui link card"><div class="image"><img src="https://thimbleprojects.org/ghumphreyevans/290024/Ben%20Goodger3.jpg"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/daneden.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/madeas.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/codemirror.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/zloirock.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/dataarts.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/github.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/wycats.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/highlightjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/picturepan2.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jquery.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lodash.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mathjax.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/webkul.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Modernizr.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/moment.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mikemaccana.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Semantic-Org.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/systemjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/CodeSeven.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jaysalvat.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/vuejs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/surmon-china.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lq111lq.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/FranckFreiburger.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/brockpetrie.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/s4l1h.png"></div></div></div>
+             </div>
+
+             <div class='ui tab' data-tab='comment'>
+                <div class="ui comments">
+                    <h3 class="ui dividing header">Comments</h3>
+                    <div class="comment">
+                      <a class="avatar">
+                        <img src="/images/avatar/small/matt.jpg">
+                      </a>
+                      <div class="content">
+                        <a class="author">Matt</a>
+                        <div class="metadata">
+                          <span class="date">Today at 5:42PM</span>
+                        </div>
+                        <div class="text">
+                          How artistic!
+                        </div>
+                        <div class="actions">
+                          <a class="reply">Reply</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="comment">
+                      <a class="avatar">
+                        <img src="/images/avatar/small/elliot.jpg">
+                      </a>
+                      <div class="content">
+                        <a class="author">Elliot Fu</a>
+                        <div class="metadata">
+                          <span class="date">Yesterday at 12:30AM</span>
+                        </div>
+                        <div class="text">
+                          <p>This has been very useful for my research. Thanks as well!</p>
+                        </div>
+                        <div class="actions">
+                          <a class="reply">Reply</a>
+                        </div>
+                      </div>
+                      <div class="comments">
+                        <div class="comment">
+                          <a class="avatar">
+                            <img src="/images/avatar/small/jenny.jpg">
+                          </a>
+                          <div class="content">
+                            <a class="author">Jenny Hess</a>
+                            <div class="metadata">
+                              <span class="date">Just now</span>
+                            </div>
+                            <div class="text">
+                              Elliot you are always so right :)
+                            </div>
+                            <div class="actions">
+                              <a class="reply">Reply</a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="comment">
+                      <a class="avatar">
+                        <img src="/images/avatar/small/joe.jpg">
+                      </a>
+                      <div class="content">
+                        <a class="author">Joe Henderson</a>
+                        <div class="metadata">
+                          <span class="date">5 days ago</span>
+                        </div>
+                        <div class="text">
+                          Dude, this is awesome. Thanks so much
+                        </div>
+                        <div class="actions">
+                          <a class="reply">Reply</a>
+                        </div>
+                      </div>
+                    </div>
+                    <form class="ui reply form">
+                      <div class="field">
+                        <textarea></textarea>
+                      </div>
+                      <div class="ui blue labeled submit icon button">
+                        <i class="icon edit"></i> Add Reply
+                      </div>
+                    </form>
+                  </div>
+
+             </div>
+
+             <div class='ui tab' data-tab='terminal'>
+               truss debug info
+             </div>
+
+              <div class='ui tab' data-tab='list'>
+                revisions of gist (ui table clickすると...そのリビジョンのデータを読み込む)
+              </div>
+
+
+          </div>
+
+      
+
+   
+     
+
+        </div>
+
+         <div class='one column row'>
+
+            <div class='column' name='switch'>
+
+                <div class='ui menu pointing icon' rel='menu'>
+                    <div class='item active' data-tab='home'><i class='icon home'></i></div>
+                    <div class='item' data-tab='list'><i class='icon list'></i></div>
+                    <div class='item' data-tab='users'><i class='icon users'></i></div>
+       
+                   <div class='item' data-tab='edit'><i class='icon edit'></i></div>
+                   <div class='item' data-tab='settings'><i class='icon settings'></i></div>
+                   <div class='item' data-tab='comment'><i class='icon comment'></i><div class='ui floating label'>12</div></div>
+                   <div class='item' data-tab='terminal'><i class='icon terminal'></i></div>
+                   <div class='right menu'>
+                     <div class='item'><i class='icon save'></i></div>
+
+                   </div>
+
+                </div>
+  
+  
+            </div>
+
+         </div>
+
+          <div class='one column row'>
+            <div class='column'>
+
+                <div class='ui card fluid'>
+                    <div class='content'>
+      
+                        <a class="header">Gist Note</a>
+                        <div class="meta">
+                          <span class="date">created at 2019/09/19</span>
+                        </div>
+                        <div class="description">
+
+                        </div>
+      
+                   </div>
+                 </div>
+  
+  
+                 <div class='ui segments'>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                 </div>
+  
+  
+                 <div class='ui segments'>
+                    <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                    <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                    <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                    <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                    <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                   </div>
+  
+  
+
+            </div>
+          </div>
+
+
+
+
+      </div>
+    </div>
+
+
+    
+
+
+
+
+    
+
+
+
+       </div> 
+     </div>
+   </main> 
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+
+  <script src='index.js'></script>
+</html>

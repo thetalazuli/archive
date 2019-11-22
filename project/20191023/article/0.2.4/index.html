@@ -1,0 +1,160 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title>ph note</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('/css/animate/3.7.2.min.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template id='document' type='text/x-template'>
+      <section>
+        <nav class='ui labels'>
+          <slot>
+         </slot>
+        </nav>
+
+        <div :class="['ui','ribbon','label',color]">
+          {{data.title}}
+       </div>
+       <p></p>
+        <div v-html='data.content'></div>
+     </section>
+   </template>
+    <template id='dropdown' type='text/x-template'>
+      <div ref='labels' :class='theme'>
+          <input name='labels' type='hidden'>
+          <div class='default text'>
+            <div class='ui label'>
+              <i class='icon tags'></i>
+           </div>
+         </div>
+       </div>
+   </template>
+    <main>
+
+        <transition
+        name="custom-classes-transition"
+        enter-active-class="animated fadeIn"
+
+      >
+
+      <div class='ui grid padded' v-show='!editing'>
+        <div class='one column row'>
+            <div class='column'>
+
+          <div class='column' v-for='(obj,i) in labels'>
+            <labels  @labelselect='labelselect' :data='obj' :color='colors[i]'></labels>
+         </div>
+
+
+
+
+
+
+       </div>
+     </div>
+    </div>
+  </transition>
+
+    <transition
+    name="custom-classes-transition"
+    enter-active-class="animated tada"
+    leave-active-class="animated bounceOutRight"
+  >
+
+    <div class='ui grid padded' v-if='editing'>
+      <div class='row'>
+        <div class='column'>
+          <div class='ui segments'>
+            <document class='ui segment' :data='editing' color='grey'>
+              <div class='ui label blue' @click='clearEditing()'><i class='icon edit'></i></div>
+           </document>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+</transition>
+
+
+
+    <div class='ui grid padded'>
+
+        <div class='one column row'>
+          <div class='column'>
+
+              <div class='ui menu pointing icon'>
+                  <div class='item active'><i class='icon edit'></i></div>
+               </div>
+
+          </div>      
+          
+          
+
+        </div>
+      </div>
+      <div class='ui grid padded' v-if='editing'>
+
+          <div class='one column row'>
+            <div class='column'>
+
+              <div class='ui segments'>
+      <codemirror v-model='editing.content' >
+        </codemirror>
+
+      </div>
+      </div>      
+          
+          
+
+    </div>
+  </div>
+     <div class='ui grid padded' v-if='!editing'>
+
+        <div class='one column row'　v-for='(data,i) in labels' >
+            <div class='column' >
+                <article :class="['ui','segments']" v-show='Object.keys(data).length'>
+                    <document class='ui segment' :data='data[key]' :color='colors[i]' v-for='(n,key) in data'>
+                   </document>
+               </article>
+    
+             </div>
+            </div>
+     </div>
+   </main>
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='index.js'></script>
+</html>

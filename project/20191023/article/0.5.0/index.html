@@ -1,0 +1,346 @@
+<meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+ <style>
+  @import url('/js/native/highlight/styles/vs.css');
+  @import url('/js/jquery/plugin/pedudo-code/0.9.css');
+  @import url('/js/jquery/plugin/vegas/2.4.4.min.css');
+  @import url('/css/semantic-ui/2.4.2.min.css');
+  @import url('/css/instagram/0.1.4.min.css');
+
+
+
+  main{
+    width:148mm;
+    margin:0 auto;
+  }
+  .pinch-zoom-parent {
+  height: 80vh;
+  width: 90vw;
+}
+
+
+@media screen and (max-width:148mm){
+    main{
+      width:100%;
+    }
+  }
+</style>
+ <body>
+   <main>
+     <div v-append='code'></div>
+     <div class='ui segment page' v-for='content in pages'>
+       <div v-append='content'>
+      </div>
+    </div> 
+  </main>
+</body>
+ <script>
+    window.MathJax = {
+    root:'/js/native/math-jax',
+    skipStartupTypeset:true,
+    config: ["MMLorHTML.js"],
+    jax: ["input/TeX","input/MathML", "input/AsciiMath","output/HTML-CSS","output/NativeMML"],
+    extensions: ["tex2jax.js","mml2jax.js","asciimath2jax.js","MathMenu.js","MathZoom.js"],
+    asciimath2jax: {
+      delimiters: [['`','`'], ['$','$']]
+    },
+    "HTML-CSS": {
+      matchFontHeight: false,
+      preferredFont: null,
+      webFont: "STIX"
+    },
+    TeX: {
+      extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"]
+    },
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    }
+  }
+
+ </script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+
+ <script src='/js/vue/plugin/append/2.0.0.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/native/highlight/9.15.10.min.js'></script>
+ <script src='/js/native/handlebars/4.1.2.min.js'></script>
+ <script src='/js/jquery/plugin/repo/1.0.min.js'></script>
+ <script src='/js/jquery/plugin/pedudo-code/0.9.min.js'></script>
+ <script src='/js/jquery/plugin/vegas/2.4.4.min.js'></script>
+ <script src='/js/native/math-jax/2.7.6.min.js'></script>
+ <script src='/js/native/processing/1.6.6.min.js'></script>
+ <script src='/js/native/p5/0.9.0.min.js'></script>
+
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script src='/js/jquery/plugin/pedudo-code/0.9.min.js'></script>
+ <script src='/js/jquery/plugin/vegas/2.4.4.min.js'></script>
+ <script src='/js/native/math-jax/2.7.6.min.js'></script>
+ <script src='/js/native/processing/1.6.6.min.js'></script>
+ <script src='/js/native/p5/0.9.0.min.js'></script>
+ <script src='/js/native/pinch-zoom/2.3.4.min.js'></script>
+
+ <script>
+
+
+
+
+
+
+   Vue.use(VueAppend)
+   new Vue({
+     el:'main',
+     mounted:function(){
+
+       var self = this
+       this.refills.forEach(function(template,n){
+        var insetter = Handlebars.compile(template.content)
+          self.pages.push(insetter({
+            uuid:self.getRandomString()
+          }))
+       })
+
+     },
+     methods:{
+       getRandomString:function(){
+         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+       }
+     },
+     data:{
+       code:`
+         <script>
+           console.log('hello v-append')
+        <\/script>
+       `,
+       refills:[
+         {
+           content:`
+           <div id='{{uuid}}'>
+<pre><code>function $initHighlight(block, cls) {
+  try {
+    if (cls.search(/\bno\-highlight\b/) != -1)
+      return process(block, true, 0x0F) + 
+        ' class=""';
+  } catch (e) {
+  /* handle exception */
+  }
+  for (var i = 0 / 2; i < classes.length; i++) {
+    if (checkCondition(classes[i]) === undefined)
+      return /\d+[\s/]/g;
+  }
+}</code></pre>
+             <script>
+               hljs.highlightBlock(document.getElementById('{{uuid}}'))
+            <\/script>
+            </div>
+           `
+         },
+         {
+          content:`
+          <div>
+              <script>
+                  $('#{{uuid}}').pseudocode({
+                      tab:2,
+                      keywords: {
+                          'if': '#990000',
+                          'for': '#990000',
+                          'var': '#990000',
+                          'function': '#990000',
+                          'return': '#990000',
+                          'this': '#990000'
+                      }
+                  });
+                  <\/script>
+              <pre id='{{uuid}}'>
+<code>
+var N = 6
+var j = 4
+for i = 1 to N
+    // A simple if statement:
+    if i = j
+        N = N + 1
+</code>
+              </pre>
+            </div>
+
+          `
+         },
+         {
+          content:`
+          <div id='{{uuid}}' style='height:315px;'>
+
+         </div>
+          <script>
+          $('#{{uuid}}').vegas({
+            delay: 7000,
+            timer: false,
+            shuffle: true,
+
+            transitionDuration: 2000,
+            slides: [
+                { src: "images/a.jpg" },
+                { src: "images/b.jpg" }
+            ]
+          });
+          <\/script>       
+          
+          
+          `
+         },
+         {
+           content:`
+           <div
+             id="{{uuid}}"
+             class="ui embed" 
+             data-placeholder='https://semantic-ui.com/images/bear-waving.jpg'
+             data-url="https://www.youtube.com/embed/O6Xo21L0ybE">
+          </div>
+           
+          <script>
+              $('#{{uuid}}').embed();
+          <\/script>       
+          
+             
+           
+           `
+         },
+         {
+           content:`
+              <div id='{{uuid}}'>
+
+
+                  $y'' + x^2 y' + 4y = e^x$
+
+
+
+          </div>
+           <script>
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, document.getElementById('{{uuid}}')]);
+          <\/script>
+
+           `
+         },
+         {
+           content:`
+           
+           <figure class="filter-gingham">
+  <img class='ui image fluid' src="https://www.hamazoo.net/img/animalBaby/tigerBaby/20130127_01.jpg">
+</figure>        
+           
+           
+           `
+         },
+         {
+           content:`
+             <div id='{{uuid}}'>
+
+            </div>
+             <script>
+                $('#{{uuid}}').repo({
+  user:"github-tools",
+  name:"github"
+});
+
+
+           <\/script>
+           `
+         },
+         {
+           content:`
+           
+           <script type="application/processing">
+void setup ( ) {
+  size(300, 300); //キャンバスの大きさ
+  background(255);//キャンバスの背景色を白
+}
+
+
+void draw( ) {
+  if (mousePressed) {
+    fill(200);//マウスボタンを押すと灰色に
+  } else {
+    fill(255);//マウスボタンを押さないと白色に
+  }
+  ellipse(mouseX, mouseY, 50, 50);
+           //カーソルの位置に半径50の円を描く
+}
+
+<\/script>
+<canvas id="canvas"></canvas>
+    
+           
+           
+           `
+         },
+         {
+           content:`
+           <div id='{{uuid}}'></div>
+           
+           <script>
+  let sketch = function(p) {
+    p.setup = function(){
+      p.createCanvas(100, 100);
+      p.background(0);
+    }
+  };
+  new p5(sketch, window.document.getElementById('{{uuid}}'));
+  <\/script>
+           
+           
+           `
+         },
+         {
+           content:`
+
+           <style>
+
+ img {
+  height: 90vh;
+}
+.pinch-zoom-container{
+  height:315px;
+
+}
+div.page {
+  max-width: 100vw;
+  text-align: left;
+}
+
+.pinch-zoom-parent {
+  height: 80vh;
+
+}
+
+img {
+  height: 90vh;
+}
+
+
+</style>
+
+        <div id='{{uuid}}' class="page pinch-zoom-parent">
+        <div class="pinch-zoom">
+
+            <img src="images/a.jpg">
+        </div>
+    </div>
+
+
+
+           <script>
+
+   
+              new PinchZoom.default(document.getElementById('{{uuid}}'));
+       
+           
+           <\/script>
+           `
+         }
+       ],
+       pages:[
+       ]
+     }
+   })
+   
+</script>

@@ -1,0 +1,187 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title>WALK://WRITING</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='WALK://WRITING' name='application-name'>
+   <meta content='歩き続けるためのノートです' name='description'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('index.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @media screen and (max-width:148mm){
+       main{
+         width:100%;
+       }
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row log'>
+         <div class='column'>
+
+
+          <router-view name='pages'></router-view>
+          <router-view name='editpage'></router-view>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <nav class='ui menu pointing icon'>
+             <div class='item active'><i class='icon edit'></i></div>
+             <div class='item input'>
+               <div class='search input'>
+                 <div class='ui calendar' ref='calendar'>
+                   <div class='ui input left icon'>
+                     <i class='icon calendar'></i>
+                     <input type='text' placeholder=''>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+             <div class='right menu'>
+               <div class='item'><i class='icon edit'></i></div>
+               <div class='item'><i class='icon clone'></i></div>
+               <div class='item'><i class='icon trash'></i></div>
+            </div>
+          </nav>
+        </div>
+      </div>
+       <div class='row log'>
+         <div class='column'>
+
+
+               <router-view>
+              </router-view>
+
+
+        </div>
+      </div>
+    </div>
+  </main>
+ </body>
+
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+
+  <script src='/js/native/moment/2.24.0.min.js'></script>
+  <script src='/js/native/moment/plugin/array-dates/2.0.3.min.js'></script>
+
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/x/3.1.1.min.js'></script>
+  <script src='/js/vue/router/3.1.3.min.js'></script>
+
+  <script src='/js/vue/plugin/moment-lib/1.2.2.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+
+  <script id='editor' type='text/x-template'>
+    <article class='ui segments'>
+      <div class='ui segment editor'>
+        <header>
+          <div class='ui labels orange'>
+            <div class='ui label'>HTMLS</div>
+          </div>
+        <header>
+        <codemirror v-model='store.state.data[date].content'>
+       </codemirror>
+     </div> 
+   </article>  
+ </script>
+
+  <script id='main' type='text/x-template'>
+    <article class='ui segments'>
+      <div class='ui segment fitted'>
+        <header>
+          <div class='ui labels orange'>
+            <div class='ui label'>FILES</div>
+            <div class='ui label'>使い方</div>
+            <div class='ui label'>管理者に連絡する</div>
+          </div>
+        </header>
+
+
+        <img class='ui fluid image' src='https://blog-imgs-92.fc2.com/k/i/s/kisaraginotubo/bb5-1.jpg'>
+     </div>
+   </article>
+ </script>
+
+
+ <script id='editpage' type='text/x-template'>
+  <article class='ui segments'>
+
+   
+   <page :aaa='date'>
+     <template v-slot:labels>
+        <div class='ui label orange'><router-link  :to="'/'">{{date | moment('x').format('MM/DD')}}</router-link></div><indexes :aaa='date' class='indexes'></indexes>
+    </template>
+  </page> 
+
+</article>
+</script>
+ 
+  <script id='pages' type='text/x-template'>
+            <article class='ui segments'>
+           <template v-for='date in store.state.indexes'>
+
+             <page :aaa='date'>
+               <template v-slot:labels>
+                 <router-link :to="'/edit/' + date"><div  @click='add(date)' class='ui label orange'>{{date | moment('x').format('MM/DD')}}</div></router-link>
+              </template>
+            </page> 
+          </template>
+        </article>
+ </script>
+
+  <script id='page' type='text/x-template'>
+    <section class='ui segment'>
+        <header>
+            <div class='ui labels'>
+              <slot name='labels'>
+             </slot>
+           </div>
+         </header>
+ 
+          <section  v-if='aaa in store.state.data' v-html='store.state.data[aaa].content'>
+          </section>
+    </section>
+
+ </script>
+
+  <script id='dropdown' type='text/x-template'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label orange'>
+          <i class='icon tags'>
+         </i>
+       </div>
+     </div>
+   </div>
+ </script>
+
+  <script src='index.js'></script>
+</html>

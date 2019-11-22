@@ -1,0 +1,507 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     /*
+      * ゴシック体
+      */
+     @font-face{
+       font-family:'あずき';
+       src:url('asset/azuki.ttf');
+     }
+     @font-face{
+       font-family:'うずら';
+       src:url('asset/uzura.ttf');
+     }
+     @font-face{
+       font-family:'りいてがき';
+       src:url('asset/riitn_r.otf');
+     }
+     /*
+      * 明朝体
+      */
+     @font-face{
+       font-family:'しっぽり';
+       src:url('asset/shippori-mincho-2.ttf');
+     }
+  </style>
+   <style>
+     @import url('css/animate-3.7.2.min.css');
+  </style>
+   <style>
+     html,
+     body{
+       font-size:12px;
+     }
+     /*
+      * 配置
+      */
+     body{
+       display:flex;
+       align-items:center;
+       justify-content:center;
+     }
+     /*
+      * 見栄
+      */
+      *:not(.icon){
+       font-weight:normal !important;
+       font-family:'あずき' !important;
+     }
+     .ui.label,
+     .ui.segments{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     /*
+      * 構造
+      */
+     main{
+       width:652px;                 /* 原稿用紙の画像の幅を基準とする */       
+       margin:0 auto;
+     }
+     .ui.segments{
+       margin-top:0;
+     }
+     /*
+      * 原稿用紙上の入力用エリア（重ね合わせ）
+      */
+      .ui.segments .ui.segment:nth-child(2){
+       background:transparent;
+       position:absolute;
+       height:100%;
+       width:100%;
+       left:0;
+       top:0;
+     }
+     /*
+      * 原稿用紙の中身（位置合わせ）
+      */
+     article>.body{
+       width:100%;
+       height:100%;
+       padding-top:49px;
+       padding-left:43px;
+       padding-right:41px;
+       padding-bottom:42px;
+     }
+     /*
+      * 原稿用紙の中身にあたるコンテンツ
+      */
+     article>.body .content::selection{
+       background:transparent;
+       color:#0cf;
+     }
+     article>.body .content{
+       text-orientation:upright;    /* 英文字を90度回転するための指定 */
+       writing-mode:vertical-rl;    /* 書字方向は右から左に対する縦書 */
+       white-space:pre-wrap;        /* V-TEXT 用として自動で折り返す */
+       word-break:break-all;        /* 強制的に折返（連続した英文字） */
+       letter-spacing:6px;          /* 原稿用紙の縦マス分の位置合わせ */
+       line-height:27px;            /* 原稿用紙の横マス分の位置合わせ */
+       outline:none;                /* フォーカス時の選択境界線を消去 */
+       height:100%;
+       width:100%;
+     }
+     /*
+      * 補足
+      * 単なる位置合わせだよ
+      */
+     aside.ui.dimmer>.content .ui.label.ribbon{
+       left:calc(-1rem - 4.6em);
+     }
+     aside.ui.dimmer>.content p{
+       font-size:13px;
+     }
+     .animating.dimmable:not(body),
+     .dimmed.dimmable:not(body){
+       overflow:visible;
+     }
+     aside.ui.dimmer>.content{
+       padding-right:37px;
+       padding-left:40px;
+       text-align:left;
+       height:100%;
+       width:100%;
+     }
+     aside.ui.dimmer{
+       padding:.5em;
+     }
+     /*
+      * ドロップダウンメニューをラベル化する
+      */
+     .ui.dropdown>.default.text,
+     .ui.label>input::placeholder{
+       color:white !important;
+     }
+     .ui.label>input{
+       background:transparent;
+       line-height:0;
+       color:white;
+       outline:none;
+       border:none;
+       padding:0;
+     }
+     /*
+      * 非表示にする（VUEにマウントまでレイアウトが崩れてるから）
+      */
+     main{
+       display:none;
+     }
+     /*
+      * 位置合わせる（HTML2CANVASは縦書きにすると数PXずれる）
+      */
+     .ui.grab.segments>article>.body{
+       padding-top:43px;
+     }
+     .ui.grab.segments > .ui.label.corner,
+     .ui.grab.segments > .ui.dimmer{
+       display:none;
+     }
+     /*
+      * カラーパレットを収める
+      */
+      .ui.popup .vc-compact{
+       width:245px !important;
+     }
+     /*
+      * ドロップダウンをラベル化する
+      */
+     #btnSelectFont.ui.dropdown .menu .item{
+       color:white;
+     }
+     #btnSelectFont.ui.dropdown .menu{
+       background:#f2711c;
+       margin-top:1em;
+     }
+     #btnSelectFont.ui.dropdown>.dropdown.icon{
+       display:none;
+     }
+     #btnSelectFont.ui.dropdown{
+       z-index:999;
+       width:12em;
+     }
+     /*
+      * ポップアップの背景色を揃える
+      */
+     .ui.popup{
+       padding:0;
+       border:1px solid #f2711c;
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+
+     <div class='ui labels orange' v-show='!isAsiding'>
+       <h3 id='btnTweet'
+            class='ui label animated fadeIn pointing below blue'>
+         <i class='icon twitter'>
+        </i>ツイッターに投稿しちゃう？
+      </h3>
+       <h3 id='btnSaveImage'
+            class='ui label animated fadeInUp delay-3s' @click='save'>
+         <i class='icon save'>
+        </i>画像で保存しとく？
+      </h3>
+       <h3 id='btnSelectColor'
+            class='ui label animated fadeInUp delay-4s' ref='contentColor'>
+         <input type='text' v-model='content.colors.hex' placeholder='好きな色は？'>
+      </h3>
+       <div class='ui popup'>
+         <compact-picker v-model='content.colors'>
+        </compact-picker>
+      </div>
+       <h3 id='btnSelectFont'
+            class='ui dropdown search label orange animated fadeInUp delay-5s' ref='contentFont'>
+         <input type='hidden' name='country'>
+         <i class='dropdown icon'></i>
+         <input class='search'>
+         <div class='default text'>
+           好きなフォントは？
+        </div>
+         <div class='menu'>
+           <div class='item'>あずき</div>
+           <div class='item'>うずら</div>
+           <div class='item'>しっぽり</div>
+           <div class='item'>りいてがき</div>
+        </div>
+      </h3>
+    </div>
+    
+     <div ref='capture'
+       :class="['ui segments stacked',{'grab':isGrabbing},'animated fadeIn']">
+
+       <!-- 原稿用紙 -->
+       <div class='ui segment fitted'>
+         <img src='asset/p0181_m_layer.png'>
+      </div>
+       <!-- 原稿用紙の中身 -->
+       <article class='ui segment fitted area'>
+          
+          <div ref='draft'>
+            <span>&nbsp;読書感想文</span>
+            <span>&nbsp;読書感想文&#13;&#10;　　　　　　　　あなたの名前は？</span>
+        </div>
+         <div class='body'>
+           <div
+             class='content'
+            :style='contentStyle'
+             v-text='content.text'
+             @keyDown='keyDw($event)'
+             @input='keyIn($event)'
+             @keyUp='keyUp($event)'
+             contenteditable='true'
+             spellcheck='false'
+             ref='content'>
+          </div>
+        </div>
+      </article>
+
+       <aside class='ui dimmer inverted' ref='window'>
+         <div class='content'>
+           <h1>読書感想文</h1>
+           <div class='ui label ribbon orange'>
+             このサイトの使い方
+          </div>
+           <p></p>
+           <p>
+             わしは可愛いフォントで作りたかったし余計なものは一切見せたくない。既にあるサービスだがわしが作るともう少し可愛くなるということを見せたかった。みたままに編集できるというのも大事な要素の１つだ。フォントも選択したかったしツイートにそのまま載せてみたかったりしたそれにフォントの色も変えたかった。テキストを選択したときはハイライトした色も変えたくてしたいことをたくさん盛り込んだ。楽しい。                     </p>
+        </div>
+      </aside>
+       <nav class='ui label corner' @click='open'>
+         <i class='icon edit'>
+        </i>
+      </nav>
+
+    </div>
+  </main>
+ </body>
+</html>
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/caret-0.3.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+
+ <!-- native -->
+ <script src='js/native/typed-2.0.11.min.js'></script>
+ <script src='js/native/html2canvas-1.0.0.min.js'></script>
+ <script src='js/native/canvas2image-1.0.0.min.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/color-2.7.0.min.js'></script>
+
+ <script>
+   Vue.use(VueColor)
+   
+   new Vue({
+     el:'main',
+     components:{
+       'compact-picker':VueColor.Compact
+     },
+     data:{
+       isAsiding:false,
+       isGrabbing:false,
+       target:undefined,
+       cache:{
+         isComposed:false,
+         keyCode:0,
+         pos:0
+       },
+       content:{
+         text:'',
+         colors:{
+           hex: '#000000',
+           hsl: {h:0,s:0,l:0,a:1},
+           hsv: {h:150,s:0,v:0,a:1},
+           rgba:{r:0,g:0,b:0,a:1},
+           a:0
+         },
+         font:'あずき',
+         size:13
+       }
+     },
+     computed:{
+       contentStyle:function(){
+         return[
+           {'fontFamily':`${this.content.font} !important`},
+           {'color':`${this.content.colors.hex}`},
+           {'fontSize':`${this.content.size}px`}
+         ]
+       }
+     },
+     methods:{
+       /*
+        * 以下の順序で呼び出される
+        *  1:keyDw
+        *  2:keyIn
+        *  3:keyup
+        */
+       keyDw:function(event){
+         /*
+          * 文字列の確定完了直後はRETURNが押される。
+          * したいことは、「にほんご」って打ってスペース（変換）して
+          * 「日本語」と確定した時のRETURN押下時に改行させたくない為の分岐だ
+          * 確定した時もイベントが飛んでくる。isComposingは入力が未確定か否かを
+          * 知るためにあって、確定した瞬間のRETURNキーは勿論isComposing eq false
+          * だから、前回の確定状態をキャッシュする必要があるんだ。確定した時の改行を防ぐ
+          */
+         this.cache.isComposed = event.isComposing
+       },
+       keyIn:function(event){
+         // 変換中もキャレットはキャッシュしておこう
+         this.cache.pos = $(this.$refs.content).caret('pos')
+
+         // 変換中なら文字列のセットを飛ばそう
+         // でないと変換中なのに確定してしまう
+         // 変換できなくなってしまうって事だよ
+         if(event.isComposing){
+           return false
+         }else{
+           // 変換が終わったか。変換の必要のない文字だからセットする
+           this.content.text = this.$refs.content.innerText
+         }
+
+         var self=this
+         this.$nextTick(function(){
+           /*
+            * this.content.text = this.$refs.content.innerTextした時
+            * このまま進んだらキャレット位置は０に戻る。新規にセットしてるから
+            * だから実際にこのセットする処理がDOMに反映されたタイミング(ここ)
+            * でキッチリ元の位置にキャレットを戻してやる。
+            * 処理速度が糞遅いパソコン（大昔）ならいざ知らず、今のパソコンは
+            * 大抵早いしユーザはキャレットが切り替わったことすら気付かないだ
+            * ろう。
+            * 但し、スマートフォン（特にANDROID）の場合は、確かイベント発火
+            * やらキャンセルやら挙動がパソコン側のウェブブラウザと違うから保
+            * 証はできない。（テストが要る）
+            */
+           $(self.$refs.content).caret('pos',self.cache.pos)
+         })
+       },
+       keyUp:function(event){
+         // 名残り
+         var ENTER  = 10
+         var RETURN = 13
+         /*
+          * 今回リターンキーが押された時、前回入力された文字が日本語（変換の必要な）でなければ
+          * 改行後の位置に移動する。こんなことをする理由はCARET()は改行を含めた位置を取得して
+          * くれないから。つまり、いくらリターンキーが押されてようとkeyIn()の段階ではそれらを
+          * 除く文字数分abcdeReturnReturnだとすると、abcdeの５文字分だけが取得されるって事
+          * これがウェブブラウザの仕様なのか、それともライブラリ側で解決できるのか調べるよりも
+          * こっちで解決したほうが早い。
+          */
+         if(event.keyCode == RETURN && this.cache.isComposed == false){
+           // 確定後に改行したから１つキャレットを前に進めよう
+           $(this.$refs.content).caret('pos',this.cache.pos + 1)
+         }
+       },
+       construct:function(){
+         var self=this
+         // このアプリを説明するためだけにある
+         $(this.$refs.window).dimmer({
+           onShow:function(){
+             self.isAsiding = true
+           },
+           onHide:function(){
+             self.isAsiding = false
+           }
+         })
+         // フォントが選択されたら更新
+         $(this.$refs.contentFont).dropdown({
+           onChange:function(value,text,$choice){
+             self.content.font = value
+           }
+         })
+         // フォントカラーを選択するダイアログを表示
+         $(this.$refs.contentColor).popup({
+           on:'click',
+           closable:false,
+           position:'top right'
+         })
+       },
+       setup:function(){
+         // 最初に選択するフォントを初期化するだけだよ
+         $(this.$refs.contentFont).dropdown(
+           'set selected',this.content.font)
+       },
+       caret:function(){
+         // 原稿用紙の中身を選択して末尾から入力可能にするだけ
+         var range = document.createRange()
+         var sel = window.getSelection()
+         range.selectNodeContents(this.target)
+         range.collapse(false)
+         sel.removeAllRanges()
+         sel.addRange(range)
+         $(this.target).focus()
+       },
+       play:function(options){
+         // スプラッシュスクリーンみたいなもん
+         new Typed(this.target,options)
+       },
+       open:function(){
+         // ポップアップが開いていたら閉じる
+         $(this.$refs.contentColor).popup('hide')
+         $(this.$refs.window).dimmer('toggle')
+       },
+       show:function(){
+         // マウントされるまでみっともないから
+         this.$el.style.display = 'block'
+       },
+       save:function(){
+         var self=this
+         /* キャプチャ開始 */
+         this.isGrabbing = true
+         /* DOM更新後にキャプチャ */
+         this.$nextTick(function(){
+           html2canvas(this.$refs.capture).then(function(canvas) {
+             var name = new Date().toISOString()
+            Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,name)
+             self.isGrabbing = false
+           })
+         })
+       }
+     },
+     mounted:function(){
+       var self=this
+       
+       /*
+        * 原稿用紙の入力エリアの中身
+        */
+       this.target = this.$refs.content
+
+       this.construct() // DOM作って
+       this.setup() // 入れて
+       this.show() // 見せる
+
+       /*
+        * タイプアニメーションの開始
+        */
+       this.play({
+         typeSpeed:128,
+         stringsElement:this.$refs.draft,
+         onComplete:function(){
+           // アニメーション後に末尾から入力可能
+           self.caret()
+         }
+       })
+
+     }
+   })
+</script>

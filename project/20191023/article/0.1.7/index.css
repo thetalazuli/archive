@@ -1,0 +1,43 @@
+html,
+body{
+  font-size:12px;
+}
+
+main{
+  width:148mm;
+  margin:0 auto;
+}
+
+.ui.multiple.search.dropdown>.text .ui.label>.icon{
+  margin-right:0;
+}
+.ui.multiple.search.dropdown>.text{
+  margin:0;
+}
+.ui.label>.close.icon, .ui.label>.delete.icon{
+ vertical-align: top;
+ display:none;
+}
+.ui.dropdown .dropdown.icon{
+  display:none;
+}
+.ui.selection.dropdown{
+  padding:0;
+  border:none;
+  min-height:auto;
+  background:transparent;
+}
+.ui.multiple.dropdown>.label{
+ font-size: .85714286rem;
+ padding: .5833em .833em;
+ margin: 0 .14285714em;
+}
+
+nav{
+  position: absolute;
+  text-align:right;
+  width:calc(100%);
+  z-index: 999;
+  right: -1em;
+  top: -1em;
+}

@@ -1,0 +1,77 @@
+@font-face{
+  src:url('asset/uzura.ttf');
+  font-family:'Uzura';
+}
+@font-face{
+  src:url('asset/gidolinya.otf');
+  font-family:'Gidolinya';
+}
+
+html,
+body,
+main{height:100%;}
+.ui.stackable.cards{margin:0;}
+
+i.icon.hotel:before {content:'\f594';}
+i.icon.回収:before {content:'\f52b';}
+i.icon.寝室:before {content:'\f236';}
+i.icon.浴室:before {content:'\f2cd';}
+i.icon.仕上:before {content:'\f756';}
+i.icon.台車:before {content:'\f472';}
+i.icon.toggle-on:before {content:'\f205';}
+i.icon.toggle-off:before {content:'\f204';}
+
+.回収 {color:#f2711c;}
+.寝室 {color:#b5cc18;}
+.浴室 {color:#2185d0;}
+.仕上 {color:#21ba45;}
+.台車 {color:#6435c9;}
+path.回収,
+rect.回収{
+  fill:#f2711c;
+}
+path.寝室,
+rect.寝室{
+  fill:#b5cc18;
+  stroke-width:0;
+}
+path.浴室,
+rect.浴室{
+  fill:#2185d0;
+  stroke-width:0;
+}
+path.仕上,
+rect.仕上{
+  fill:#21ba45;
+  stroke-width:0;
+}
+path.台車,
+rect.台車{
+  fill:#6435c9;
+  stroke-width:0;
+}
+
+section header .ui.no{
+  color:black;
+  background:#0cf;
+}
+section header .detail{
+  color:#0cf;
+  font-family:'Uzura';
+}
+section article .data-table tbody td,
+section article .numeric-up-down input{
+  font-family:'Gidolinya';
+}
+
+.ui.cards > .card{
+  box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+}
+
+.ui.cards{
+  margin:0;
+}
+
+i.icon.user-one:before   {content:'\f007';}
+i.icon.user-two:before   {content:'\f500';}
+i.icon.user-three:before {content:'\f0c0';}

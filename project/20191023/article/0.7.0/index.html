@@ -1,0 +1,42 @@
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+ </style>
+ <body>
+   <main>
+     <router-link to='/users/profile'><a>profile</a></router-link>
+     <router-link to='/users/articles'><a>articles</a></router-link>
+     <router-view>
+    </router-view>
+  </main>
+</body>
+ <script src='/js/vue/2.6.10.js'></script>
+ <script src='/js/vue/x/3.1.1.js'></script>
+ <script src='/js/vue/router/3.1.3.js'></script>
+ <script>
+   var foo = { template: "<div>Foo</div>" }
+   var bar = { template: "<div>Bar</div>" }
+   new Vue({
+     el:'main',
+     created:function(){
+
+     },
+     router:new VueRouter({
+       routes:[
+         {
+           path:'/users',
+           component:{template:'<router-view></router-view>'},
+           children:[
+             {
+               path:'profile',
+               component:{template:'<div>user-profile</div>'}
+             },
+             {
+               path:'articles',
+               component:{template:'<div>user-articles</div>'}
+             }
+           ]
+         }
+       ]
+     })
+   })
+</script>

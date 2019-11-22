@@ -1,0 +1,89 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet' media='screen'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('index.css');
+  </style>
+   
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+
+       <div class='row'>
+         <div class='column'>
+
+           <div class='ui card fluid'>
+             <div class='image'>
+               <img src='asset/businesshotel-9956-400x400.png'>
+            </div>
+             <div class='content'>
+               <p>清掃の完了を一覧化するアプリです。元からあるデータをスクレイピングして分かりやすく配慮しました。清掃済の部屋数が判りその部屋の状態によって色分けしています。</p>
+            </div>
+          </div>
+
+           <!-- settings -->
+           <div class='ui label fluid blue' v-if='false'>
+             <i class='icon sync'></i>
+             <input type='text' v-model='uri' placeholder='１分毎に更新中'>
+          </div>
+
+           <div class='ui label pointing below green'>完了</div>
+           <div class='ui label pointing below pink'>在室</div>
+           <table class='ui table unstackable celled fixed center aligned'>
+             <thead>
+               <tr>
+                 <th colspan='2'>清掃済</th>
+                 <th v-for='(n,floor) in floors.length'>
+                   {{cleanup[floor]}}
+                </th>
+              </tr>
+               <tr>
+                 <th>番</th>
+                 <th>種</th>
+                 <th v-for='(n,floor) in floors.length'>
+                   {{floor+1 | suffix}}
+                </th>
+              </tr>
+            </thead>
+             <tbody>
+               <tr v-for='no in 112'>
+                 <td>{{no}}</td>
+                 <td>{{type[no]}}</td>
+                 <td v-for='floor in floors.length' :class='status(floor,no)'>
+                   {{no}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+      </div>
+      
+    </div>
+  </main>
+ </body>
+</html>
+
+ <script src='js/native/html5-parser-1.0.0.min.js'></script>
+ <script src='js/native/html2json-1.0.2.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/fetch-3.0.0.min.js'></script>
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='index.js'></script>

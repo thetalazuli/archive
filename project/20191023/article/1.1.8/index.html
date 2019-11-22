@@ -1,0 +1,17 @@
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script>
+   var url = 'https://qiita.com/baby-degu/items/a2bba910b3807c4036c1'
+   fetch(url)
+   .then(function(response) {
+     return response.text();
+   })
+   .then(function(text) {
+     var el = $.parseHTML(text)
+     var container = $('.p-items_main',el)
+     var x = $('img',el).each(function(num,item){
+       $(item).addClass('ui fluid image')
+     })
+     $(document.body).append(x)
+     
+   });
+</script>

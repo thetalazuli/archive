@@ -1,0 +1,260 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet' media='screen'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style name='font'>
+     @font-face{
+       font-family:'M+2VM+IAPG circle';
+       src:url('asset/m+2vm+ipag-circle.ttf');
+     }
+     @font-face{
+       font-family:'gidole';
+       src:url('asset/gidole.ttf');
+     }
+  </style>
+
+   <style>
+     /*
+      * 視認
+      */
+     html,
+     body{
+       font-size:14px;
+     }
+     .ui.table td,
+     .ui.table input{
+       font-family:'gidole';
+     }
+     .ui.table>thead>tr>th,
+     .ui.table>tbody>tr>td{
+       padding:0;
+     }
+     /*
+      * 入力
+      */
+     .ui.table input[type='number']{
+       -moz-appearance:textfield;
+     }
+     .ui.table input::-webkit-outer-spin-button,
+     .ui.table input::-webkit-inner-spin-button{
+       -webkit-appearance: none;
+     }
+     .ui.table input{
+       background:transparent;
+       text-align:center;
+       appearance:none;
+       outline:none;
+       border:none;
+       width:100%;
+     }
+     /*
+      * 見栄
+      */
+     .ui.table thead tr:first-child>th:first-child{
+       width:3em;
+     }
+     .ui.card,
+     .ui.label,
+     .ui.table,
+     .ui.buttons{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     .ui.card .description p{
+       font:12px 'M+2VM+IPAG circle';
+       line-height:1.2;
+       color:black;
+     }
+     /*
+      * アイコン
+      */
+     i.icon.thumbs-up:before {
+       content: '\f164';
+     }
+  </style>
+   
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui card fluid'>
+             <div class='image'>
+               <img src='asset/businesshotel-9956-400x400.png'>
+            </div>
+             <div class='content'>
+               <div class='description'>
+                 <p>ホテル清掃の進捗を管理するアプリです。予定通り進んでいるか緑と赤のバランスでわかります。上のテーブルを入力して作業を開始しましょう。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+
+           <table class='ui table unstackable celled fixed center aligned blue'>
+             <thead>
+               <tr>
+                 <th>数</th>
+                 <th>開始時刻</th>
+                 <th>作業時間</th>
+              </tr>
+            </thead>
+             <tbody>
+               <tr>
+                 <td><input type='number' v-model.number='rooms'></td>
+                 <td><input type='tel' v-model='time.base' ref='v1'></td>
+                 <td><input type='tel' v-model='time.task' ref='v2'></td>
+              </tr>
+            </tbody>
+          </table>
+
+           <table class='ui table unstackable celled fixed center aligned blue'>
+             <thead>
+               <th>No.</th>
+               <th>予定時刻</th>
+               <th>完了時刻</th>
+            </thead>
+             <tbody>
+               <tr v-for='(no,i) in rooms' :class="[lt(i)]">
+                 <td>{{no}}</td>
+                 <td>{{estimate[i] | HHmmss }}</td>
+                 <td>{{complete[i] | HHmmss }}</td>
+              </tr>
+            </tbody> 
+          </table>
+
+           <div class='ui buttons two blue'>
+             <button class='ui button icon' @click='reset'>
+               <i class='icon file'></i>
+            </button>
+             <button class='ui button icon' @click='stamp'>
+               <i class='icon thumbs-up'></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+ </body>
+
+  <!-- native -->
+  <script src='js/native/moment-2.24.0.min.js'></script>
+  <script src='js/native/moment-duration-format-2.3.2.min.js'></script>
+  <script src='js/native/predicate-1.2.0.min.js'></script>
+  <script src='js/native/cleave-1.5.3.min.js'></script>
+
+  <!-- vue -->
+  <script src='js/vue/2.6.10.js'></script>
+  <script>
+    new Vue({
+      el:'main',
+      data:{
+        /*
+         * 入力用のデータ
+         */
+        time:{
+          base:null,    /* 作業開始時刻        */
+          task:null,    /* 作業平均時間（作業者）*/
+        },
+        rooms:10,       /* 作業予定個数（部屋数）*/
+
+        /*
+         * 進捗用のデータ
+         */
+        estimate:[      /* 作業完了予定時刻     */
+        ],
+        complete:[      /* 作業完了実際時刻     */
+        ],
+
+        /*
+         * 入力用のバリデーション（時刻と時間）
+         */
+        validation:{
+          time:true,
+          timePattern:['h','m','s']
+        }
+      },
+      filters: {
+        HHmmss:function(ts) {
+          if(ts !== undefined){
+            /* 何時:何分:何秒 */
+            return moment(ts).format('HH:mm:ss')
+          }
+        }
+      },
+      computed:{
+        timeChanged:function(){
+          /* 部屋数と時刻が修正されたことを監視 */
+          return this.rooms && this.time
+        },
+      },
+      watch:{
+        timeChanged:{
+          deep:true,
+          handler:function(){
+            /* 再計算 */
+            this.calc()
+          }
+        }
+      },
+      methods:{
+        lt:function(i){
+          /* 予定より遅い or 早い */
+          return (i < this.complete.length) ? 
+            (predicate.lt(this.estimate[i],this.complete[i]) ? 'negative' : 'positive') : null
+        },
+        stamp:function(){
+          /* 作業完了 */
+          if(this.complete.length < this.rooms) {
+            this.complete.push(moment().valueOf())
+          }
+        },
+        reset:function(){
+          /* 初期化 */
+          this.complete.splice(0,this.complete.length)
+        },
+        calc:function(){
+          /* 計算 */
+          var base = moment(this.time.base,'HH:mm:ss')
+          var task = moment.duration(this.time.task)
+          
+          for(var i=0;i<this.rooms;i++){
+            var val = base.add(task).valueOf()
+            if(val){
+              this.estimate[i] = val
+            }
+          }
+        },
+        init:function(){
+          /* HH:MM:SSによる入力検証 */
+          new Cleave(this.$refs.v1,this.validation)
+          new Cleave(this.$refs.v2,this.validation)
+        }
+      },
+      mounted:function(){
+        this.time.base = '11:30:00' /* 作業開始 */
+        this.time.task = '00:09:00' /* 作業時間 */
+        this.init()       /* NN:NN:NNの入力検証 */
+        this.calc()       /* 計算（作業完了時刻） */
+      }
+    }) 
+ </script>
+</html>

@@ -1,0 +1,97 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template id='page' type='text/x-template'>
+      <article>
+        <div :class="['ui','segment','attached','top',colors[data.depth]]">
+          <nav>
+            <div class='ui label' @click='expand = !expand'><i class='icon edit'></i></div>
+         </nav>
+          <div :class="['ui','ribbon','label',colors[data.depth]]">{{data.text}}</div>
+          <div class='ui dropdown selection multiple search' ref='tags'>
+            <input name='tags' type='hidden'>
+            <div class='default text'>
+              <div class='ui label'>
+                <i class='icon tags'></i>
+            </div>
+          </div>    
+        </div>
+      </div>
+       <page :data='i' :colors='colors' v-for='i in data.children' v-if='expand'>
+
+       </page>
+     </article>
+   </template>
+    <main>
+      <div class='ui grid padded'>
+        <div class='row'>
+          <div class='column'>
+
+              <v-jstree :data="pages" show-checkbox multiple allow-batch whole-row @item-click="itemClick"></v-jstree>
+
+            <div class='ui menu pointing icon'>
+              <div class='item' @click='push()'>
+                <i class='icon file'></i>
+             </div>
+           </div>
+
+
+           <div class='ui dropdown selection multiple search' ref='tags'>
+              <input name='tags' type='hidden'>
+              <div class='default text'>
+                <div class='ui label'>
+                  <i class='icon tags'></i>
+              </div>
+            </div>    
+            <div class="menu" v-if='currentnode != null'>
+                <div class="item"
+                  :data-value="label.text" 
+                  v-for='label in currentnode.data.children'>{{label.text}}</div>
+            </div>
+          </div>
+
+
+            <template v-for='i in pages'>
+              <page :data='i' class='attached top' :colors='colors'>
+             </page>
+           </template>
+
+         </div>
+       </div>
+     </div>
+   </main>
+ </body>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/jstree/2.1.6.min.js'></script>
+  <script src='index.js'></script>
+</html>

@@ -1,0 +1,74 @@
+ <body>
+  <main>
+   <div class='ui menu pointing icon'>
+     <div class='item active'><i class='icon github'></i></div>
+  </div>
+   <div class='ui tab' data-tab='select'>
+     <div id="mocha"></div>
+  </div>
+   <div class='ui tab' data-tab='list'>
+     <div id='git_repository'></div>
+  </div>
+ </main>
+</body>
+ 
+ <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet'>
+ <link href='/js/test/mocha/6.2.0.min.css' rel='stylesheet'>
+
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/repo/1.0.min.js'></script>
+ <script src='/js/test/assert/1.0.0.min.js'></script>
+ <script src='/js/node/urlite/2.0.2.min.js'></script>
+ <script src='/js/node/parse-github-url/1.0.2.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <style>
+  html,
+  body{
+    font:12px 'M+2VM+IPAG circle';
+  }
+
+  main{
+    width:148mm;
+    margin:0 auto;
+  }
+  .ui.tab{
+    display:block;
+  }
+ </style>
+
+ <script src="/js/test/mocha/6.2.0.min.js"></script>
+ <script>
+   mocha.setup('bdd');
+</script>
+
+
+ <script src='TestParseGithubUrl.js'></script>
+ <script>
+   var gh = parseGithubUrl
+   
+   new Vue({
+     el:'main',
+     data:{
+       repo:'git@github.com:assemble/verb.git'
+     },
+     methods:{
+       construct:function(){
+         parseGithubUrl(this.repo)
+       },
+       mount:function(){
+         $('#git_repository').repo({ user: 'github-tools', name: 'github' })
+       },
+       init:function(){
+         mocha.run()
+       }
+     },
+     created:function(){
+       this.construct()
+     },
+     mounted:function(){
+       this.mount()
+       this.init()
+     }
+   })
+</script>
+ 

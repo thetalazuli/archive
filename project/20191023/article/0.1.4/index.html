@@ -1,0 +1,84 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <main>
+      <div class='ui grid padded'>
+        <div class='row'>
+          <div class='column'>
+            <div class='ui dropdown selection multiple search fluid' ref='tags'>
+              <input name='tags' type='hidden'>
+              <div class='default text'>
+                <div class='ui label'>
+                  <i class='icon tags'></i>
+               </div>
+             </div>
+           </div>
+
+            <div class='ui menu compact pointing icon clearfix'>
+                <div class='item'><i class='icon clone'></i></div>
+                <div class='item'><i class='icon trash'></i></div>
+                <div class='item'><i class='icon star'></i></div>
+                <div class='item'><i class='icon edit'></i></div>
+           </div>
+            <div class='ui segments'>
+                <div class='ui segment' v-for='doc in Object.values(post)'>
+                    <nav class='ui labels black'>
+       
+                      <div class='ui label'>
+                        2019-09-19
+                      </div>
+                      <div class='ui label'>
+                          <i class='icon edit'></i>
+                       </div>
+                   </nav>
+                    <div class='ui ribbon label'></div>
+                 </div>
+           </div>
+
+            <div class='ui menu compact pointing icon clearfix'>
+              <div class='item'><i class='icon calendar'></i></div>
+              <div class='item'><i class='icon clone'></i></div>
+              <div class='item'><i class='icon tags'></i></div>
+           </div>
+         </div>   
+       </div>
+     </div>
+   </main>
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='index.js'></script>
+</html>

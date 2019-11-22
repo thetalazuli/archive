@@ -1,0 +1,170 @@
+ <style>
+  @import url('css/fomantic-ui/2.7.8.min.css');
+  @font-face{
+    font-family:'azuki';
+    src:url('asset/azuki.ttf');
+  }
+  @font-face{
+    font-family:'M+2VM+IPAG circle';
+    src:url('asset/M+2VM+IPAG-circle.ttf');
+  }
+  [contenteditable]{
+    outline:none;
+  }
+  html,
+  body{
+    font:12px 'azuki';
+  }
+  main{
+    width:500px;        /* calcはhtml2canvas非対応 */
+    margin:0 auto;
+  }
+  main .text{
+    width:80%;
+    height:80%;
+    left:10%;top:10%;   /* transformはhtml2canvas非対応 */
+    position:absolute;
+  }
+  main .text pre.tweet{
+    font-size:14px;
+    line-height:1.2;
+    stroke-width:.2px;
+    font-family:inherit;
+  }
+
+  .ui.menu,
+  .ui.card,
+  .ui.label,
+  .ui.segments{
+    border-bottom: 2px solid rgba(34,36,38,.15) !important;
+    box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+  }
+  .ui.menu .ui.input > input{
+    padding:0;
+  }
+
+</style>
+ <body>
+  <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div class='column'>
+          <div class='ui card fluid'>
+            <div class='image'>
+              <img class='ui image mini centerd' src='asset/logo.png'>
+           </div>
+            <div class='content'>
+              <div class='header'>
+                (´θωθ`):Tweet Frame Generator
+             </div>
+              <div class='description'>
+                <p>ツイッターの炎上とか、すぐブロックしちゃうとか。ミュートしちゃうとか。そういった人間関係の問題をすこしだけ良くしようと思って。簡単です。タイムライン上に表示されている各ツイートの背景をすこしやんわりした…フォントや美しくて楽しいフレームに変更するだけ。これでみんな背景に見合った発言ができるようになるといいな。</p>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div class='ui menu pointing icon'>
+            <div class='item active'>
+              <i class='icon edit'></i>
+           </div>
+            <div class='menu right'>
+              <div class='item'>
+                <i @click='elementShot' class='icon camera'></i>
+             </div>
+              <div class='item'>
+                <div class='ui input transparent'>
+                  <input placeholder='フレーム名をいれます' v-model='frameName' type='text'>
+               </div>
+             </div>
+              <div class='item'>
+                <div class='ui input transparent'>
+                  <input placeholder='フォント名をいれます' v-model='fontName' type='text'>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <article class='ui segments'>
+            <div class='ui label corner blue'>
+              <i class='icon twitter'></i>
+           </div>
+            <section ref='container' class='ui segment fitted' :style='tweetStyle'>
+              <img class='ui fluid image' :src='baseDir + frameName + baseExt'>
+              <div class='text'>
+                <pre v-if='tweet != null' class='tweet' ref='tweet' v-html='tweet' @input='tweet = $refs.tweet.innerHTML' contenteditable='true' v-once>ツイート</pre>
+             </div>
+           </section>            
+         </article>
+       </div>
+     </div>
+   </div>
+ </main>
+</body>
+ <script src='js/vue/2.6.10.min.js'></script>
+ <script src='js/native/html2canvas-1.0.0.min.js'></script>
+ <script src='js/native/canvas2image-1.0.0.min.js'></script>
+ <script src='js/native/local-forage-1.7.3.min.js'></script>
+ <script>
+
+   new Vue({
+     el:'main',
+     data:{
+       key:'twApp',
+       tweet:null,
+       baseExt:'.png',
+       baseDir:'asset/',
+       fontName:'azuki',
+       frameName:'子供の日'
+     },
+     watch:{
+       '$data':{
+         deep:true,
+         handler:function(obj){
+           localforage.setItem(this.key,obj)
+         }
+       }
+     },
+     methods:{
+       init:function(){
+         var self = this
+         localforage.getItem(this.key,function(err,obj){
+           if(obj){
+             self.frameName = obj.frameName
+             self.fontName = obj.fontName
+             self.tweet = obj.tweet
+             self.key = obj.key
+           }
+         })
+       },
+       elementShot:function(){
+         var self = this
+         var summary = this.tweet.substr(0,21)
+         html2canvas(this.$refs.container).then(function(canvas) {
+           Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,summary)
+         })
+       }
+     },
+     computed:{
+       tweet:function(){
+          return this.$refs.tweet
+       },
+       tweetStyle:function(){
+         return [{
+           'font-family':`'${this.fontName}'`
+         }]
+       }
+     },
+     created:function(){
+       this.init()
+     },
+     mounted:function(){
+
+     }
+   })
+</script>

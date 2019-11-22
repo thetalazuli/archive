@@ -1,0 +1,129 @@
+ <body>
+  <main>
+    <div class='ui menu pointing icon'>
+      <div class='item active'>
+        <i class='icon edit'></i>
+     </div>
+   </div>
+    <select class='ui fluid search dropdown' multiple='' ref='dropdown'>
+      <option :value='file.path' v-for='file in files'>
+        {{file.path}}
+     </option>
+   </select>
+    <div class='ui segment' v-for='(doc,i) in selection' v-html='doc.view'>
+   </div>
+ </main>
+</body>
+ <style>
+   @import url('/css/semantic-ui/2.4.2.min.css');
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.table thead th,
+   .ui.table tbody td{
+     padding:0;
+   }
+</style>
+ <script src='/js/node/mime/2.4.4.min.js'></script>
+ <script src='/js/native/base64/2.5.1.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script>
+
+  function test()
+  {
+    console.dir(Mime.getType('txt'))
+  }
+
+  new Vue({
+    el:'main',
+    data:{
+      tree:[],
+      settings:{
+        user:'github-tools',
+        name:'github',
+        branch:'master'
+      },
+      selection:{
+      }
+    },
+    computed:{
+      files:function(){
+        return this.tree.filter(function(value,index){
+          return value.mode == 100644
+        })
+      },
+      request:function(){
+        return 'https://api.github.com/repos/' + this.settings.user + '/' + this.settings.name + '/git/trees/' + this.settings.branch + '?recursive=1'
+      }
+    },
+    methods:{
+      getView:function(path,mime,content){
+        console.dir(mime)
+        switch(mime){
+          case 'image/jpeg':
+          case 'image/png':
+            return `<img src='${path}'>`
+            break;
+          case 'application/json':
+              return `<pre>${content}</pre>`
+            break;
+        }
+      }
+    },
+    created:function(){
+      console.dir(Mime.getType('txt'))
+    },
+    mounted:function(){
+      var self = this
+      fetch(this.request)
+        .then(response => response.json())
+        .then(data => {
+
+          self.tree = data.tree
+          
+          $(self.$refs.dropdown).dropdown({
+            fullTextSearch:true,
+            onRemove:function(value){
+              self.$delete(self.selection,value)
+            },
+            onAdd:function(value){
+              if (Mime.getType(value) == 'application/json'){
+                var url = `https://api.github.com/repos/github-tools/github/contents/${value}?ref=master`
+                fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                  console.dir(data)
+                  self.$set(self.selection,value,{
+                    path:'https://raw.githubusercontent.com/github-tools/github/master/' + value,
+                    extension:value.split('.').pop().toLowerCase(),
+                    view:self.getView('https://raw.githubusercontent.com/github-tools/github/master/' + value,Mime.getType(value.split('.').pop().toLowerCase()),Base64.decode(data.content))
+                  })
+                })
+              }
+
+              self.$set(self.selection,value,{
+                path:'https://raw.githubusercontent.com/github-tools/github/master/' + value,
+                extension:value.split('.').pop().toLowerCase(),
+                view:self.getView('https://raw.githubusercontent.com/github-tools/github/master/' + value,Mime.getType(value.split('.').pop().toLowerCase()))
+              })
+            }
+          })
+        })
+    }
+  })
+
+
+
+
+
+
+
+</script>

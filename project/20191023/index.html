@@ -1,0 +1,221 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title>TimeRipes</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='TimeRipes' name='application-name'>
+   <meta content='' name='description'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('js/native/code-mirror/theme/5.49.1.min.css');
+     @import url('js/native/code-mirror/addon/5.49.1.min.css');
+     @import url('js/native/code-mirror/mode/5.49.1.min.css');
+     @import url('js/native/code-mirror/5.49.1.min.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+   <main>
+
+      <div class='ui grid main internally celled'>
+        <div class='row'>
+            <div class='column'>
+            </div>
+          <div class='column'>
+            <div class='ui card fluid'>
+              <div class='ui label corner'>
+                <i class='icon edit'>
+                </i>
+              </div>
+              <div class='image'>
+                <img src='https://5.imimg.com/data5/FX/OT/MY-33936013/manpower-supply-500x500.jpg'>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     <div class='user' v-if='inited'>
+      
+       <div class='ui grid main internally celled'>
+         <div class='row top' v-if='show'>
+           <div class='column'>
+          </div>
+           <div class='column'>
+
+             <div class='ui tab' data-tab='user'>
+               <E-自己紹介を表示 class='pages'>
+              </E-自己紹介を表示>
+            </div>
+
+             <div class='ui tab' data-tab='calendar'>
+               <E-記事一覧を日付毎に表示 class='pages' v-model='drafts' :range='days' :highlight='drafts'>
+              </E-記事一覧を日付毎に表示>
+            </div>
+           
+             <div class='ui tab' data-tab='tags'>
+               <E-記事一覧をタグ毎に表示 v-model='drafts' ref='labels'>
+              </E-記事一覧をタグ毎に表示>
+            </div>
+
+             <div class='ui tab' data-tab='folder'>
+              <E-記事一覧をファイル毎に表示 class='pages' v-model='files'>
+       　    </E-記事一覧をファイル毎に表示>
+            </div>
+
+         </div>
+       </div>
+        <div class='row'>
+          <div class='column'>
+            <div class='ui menu icon vertical'>
+              <div class='item' @dblclick='toggle' @click='navigate' style='padding:0;overflow:hidden;'>
+                <img src='https://avatars1.githubusercontent.com/u/9919?v=4'>
+             </div>
+           </div>
+         </div>
+          <div class='column'>
+            <div class='controller' v-if='show'>
+                <div class='ui shape' ref='navigation'>
+                    <div class='sides'>
+                      <div class='side active'>
+                        <div class='ui menu pointing icon' ref='xxx'>
+                          <div class='item' data-tab='user'>
+                            <i class='icon user'>
+                           </i>  
+                         </div>
+                          <div class='item' data-tab='tags'>
+                            <i class='icon tags'>
+                           </i>  
+                         </div>
+                          <div class='item' data-tab='calendar'>
+                            <i class='icon calendar'>
+                           </i>  
+                         </div>
+                          <div class='item' data-tab='folder'>
+                            <i class='icon folder'>
+                           </i>  
+                         </div>
+                          <div class='menu right'>
+                            <div class='item' ref='btnEdit'>
+                              <i class='icon settings'> 
+                             </i>
+                           </div>
+                           <div class='ui popup'>
+                              <dat-gui>
+                                <dat-folder name="最近の記事">
+                                  <dat-value label="表示件数" v-model='recently' :min="0" :max="10" :step='1'></dat-value>
+      
+                               </dat-folder>
+                             </dat-gui>
+                          </div>
+                         </div>
+                       </div>
+                     </div>
+                      <div class='side'>
+                        <div class='ui menu icon'>
+                          <div class='item input'>
+                            <E-記事の作成 v-model='drafts' :skelton='draft'>
+                           </E-記事の作成>
+                         </div>
+                       </div>
+                     </div>
+                      <div class='side'>
+                        <div class='ui menu icon'>
+                          <div class='item input'>
+                            <E-カレンダの日付の指定 v-model='drafts' :range='days'>
+                           </E-カレンダの日付の指定>
+                         </div>
+                          <div class='item' @click='next'>
+                            <i class='icon arrow-up'>
+                           </i>
+                         </div>
+                          <div class='item' @click='prev'>
+                            <i class='icon arrow-down'>
+                           </i>
+                         </div>
+                       </div>
+                     </div>
+                      <div class='side'>
+                        <div class='ui menu icon'>
+                          <div class='item'>
+                            <E-ファイルの登録 v-model='files'>
+                           </E-ファイルの登録>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+           </div>
+            <div class='pickup' v-else>
+              
+                <template v-for='timestamp in _.keys(store.pages).slice(-1)'>
+          <div class='ui segments'>
+            <E-記事の表示と編集 :canedit='false' class='ui segment noborder' color='blue' v-model='store.pages[timestamp]'>
+
+            </E-記事の表示と編集>
+            </div>
+            </template>
+
+           </div>
+         </div>
+       </div>
+        <div class='row bottom' v-if='show'>
+          <div class='column'>
+         </div>
+          <div class='column'>
+ 
+            <E-記事一覧の最近の10件を表示 class='pages'>
+       　  </E-記事一覧の最近の10件を表示>
+
+         </div>
+       </div>
+     </div>
+    </div>
+    
+
+     <div class='boot' >
+       <div class='ui grid internally celled'>
+         <div class='row'>
+           <div class='column'>
+          </div>
+           <div class='column'>
+             <E-初期化 path='boot-system.json' @loaded='init'>  
+            </E-初期化>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+ </body>
+</html>
+
+ <script src='js/native/core/2.6.9.min.js'></script>
+ <script src='js/native/fetch/3.0.0.min.js'></script>
+ <script src='js/native/system/0.21.6.min.js'></script>
+ <script src='js/native/lodash/4.17.15.min.js'></script>
+
+ <script src='js/native/modernizr/3.7.1.min.js'></script>
+ <script src='js/native/outdated-browser/2.8.0.min.js'></script>
+
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui/2.7.8.min.js'></script>
+
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/loader/1.4.1.min.js'></script>
+
+ <script src='index.js'></script>
+
+ <style>
+   @import url('css/dat-gui/0.0.1.min.css');
+</style>

@@ -1,0 +1,492 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='application-name'>
+   <meta content='' name='description'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+   
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     @font-face{
+       font-family:'M+2MV+IPAG circle';
+       src:url('asset/m+2vm+ipag-circle.ttf');
+     }
+     html,
+     body{
+       font:12px 'M+2VM+IPAG circle';
+     }
+     main{
+       width:148mm;
+       margin:0 auto;
+     }
+     input{
+       width:100%;
+       border:none;
+       outline:none;
+       text-align:center;
+     }
+     .ui.table>thead>tr>th,
+     .ui.table>tbody>tr>td{
+       text-align:center;
+       padding:0;
+     }
+     .ui.table>thead>tr>th.no{
+       width:4em;
+     }
+     .ui.form input{
+       border:none !important;
+     }
+     .ui.card p{
+       color:black;
+       line-height:1.2;
+       font-family:'M+2VM+IPAG circle';
+     }
+     .ui.card,
+     .ui.segment{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     @media screen and (max-width:148mm){
+       main{
+        width:100%;
+       }
+     }
+ </style>
+
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+
+       <div class='row'>
+         <div class='column'>
+           <div class='ui card fluid'>
+             <div class='image'>
+               <img src='asset/008-warehouse-images.jpg'>
+            </div>
+             <div class='content'>
+               <div class='description'>
+                 <p>１パレット毎の作業時間を記録するアプリとして開発しました。各作業が全体の作業時間の平均に対して遅かったか早かったを一覧化します。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <div class='row'>
+         <div class='column'>
+
+           <div class='ui segment fitted'>
+             <div class='ui buttons two'>
+               <button @click='reset' class='ui button fluid yellow'>
+                リセット
+              </button>
+               <button v-if='status.isWorking' @click='stop' class='ui button fluid yellow'>
+                 作業を停止する
+              </button>
+               <button v-else @click='start' class='ui button fluid blue'>
+                 作業を開始する
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+       <div class='row'>
+         <div class='column'>
+
+           <div class='ui segment fitted blue'>
+             <list :work='working' :stat='$refs.stat'>
+            </list>
+          </div>
+           <div class='ui segment fitted blue'>
+             <info :work='working' :stat='$refs.stat' v-if='$refs.stat'>
+            </info>
+          </div>
+           <div class='ui segment fitted blue'>
+             <stat ref='stat' :times='elapsedTimes'>
+            </stat>
+          </div>
+          
+        </div>
+      </div>
+
+       <div class='row' v-if='status.isWorking'>
+         <div class='column'>
+
+           <div class='ui segment fitted'>
+             <div class='ui form'>
+               <div class='field'>
+                 <input type='tel' v-model='no' placeholder='ダンボール箱に記載されたパレット番号を入力して下さい'>
+              </div>  
+            </div>
+          </div>
+           <div class='ui segment fitted'>
+             <div class='ui buttons two'>
+               <button @click='pop' class='ui button yellow'>
+                 {{working.complete.length}}個目を削除
+              </button>
+               <button @click='push' class='ui button blue'>
+                 {{working.complete.length+1}}個目を追加
+              </button>
+            </div>   
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+ </body>
+</html>
+
+ <template id='info' type='text/x-template'>
+   <table class='ui table unstackable celled fixed very basic'>
+     <thead>
+       <tr>
+         <th class='no'>No</th>
+         <th>現在時刻</th>
+         <th>作業時間</th>
+         <th>作業順位</th>
+         <th>開始時刻</th>
+      </tr>
+    </thead>
+     <tbody>
+       <tr>
+         <td>{{work.complete.length+1}}</td>
+         <td>{{work.time.end | moment('x').format('HH:mm:ss')}}</td>
+         <td>{{work.time.end - work.time.begin | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td v-show='isSlow.result' class='negative'>
+           +{{isSlow.time | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td v-show='isFast.result' class='positive'>
+           -{{isFast.time | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td v-show='isEq.result'>
+           {{isEq.time | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td>{{work.time.begin | moment('x').format('HH:mm:ss')}}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+ <template id='list' type='text/x-template'>
+   <table class='ui table unstackable celled fixed very basic'>
+     <thead>
+       <tr>
+         <th class='no'>No</th>
+         <th>完了時刻</th>
+         <th>作業時間</th>
+         <th>作業速度</th>
+         <th>パレット</th>
+      </tr>
+    </thead>
+     <tbody>
+       <tr v-for='(item,i) in work.complete'>
+         <td>{{i+1}}</td>
+         <td>{{item.time.end | moment('x').format('HH:mm:ss')}}</td>
+         <td>{{item.time.end - item.time.begin | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td v-if='stat.times[i] < stat.mean' class='positive'>
+           -{{stat.mean - stat.times[i] | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td v-else class='negative'>
+           +{{stat.times[i] - stat.mean | moment('x').utc().format('HH:mm:ss')}}</td>
+         <td><input v-model='item.pallet' type='tel'></td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+ <template id='stat' type='text/x-template'>
+   <table class='ui table unstackable celled very basic'>
+     <thead>
+       <tr>
+         <th colspan='1' class='no'>作業</th>
+         <th colspan='2'>平均</th>
+         <th colspan='4'>時間</th>
+      </tr> 
+       <tr>
+         <th>回数</th>
+         <th>早い</th>
+         <th>遅い</th>
+         <th>中央</th>
+         <th>平均</th>
+         <th>最小</th>
+         <th>最大</th>       
+      </tr>  
+    </thead>
+     <tbody>
+       <tr>
+         <td>{{times.length}}</td>
+         <td>{{speed.true}}</td>
+         <td>{{speed.false}}</td>
+         <td>{{mid  | moment('x').format('mm:ss')}}</td>
+         <td>{{mean | moment('x').format('mm:ss')}}</td>
+         <td>{{min  | moment('x').format('mm:ss')}}</td>
+         <td>{{max  | moment('x').format('mm:ss')}}</td>
+      </tr>
+    </tbody>
+  </table>
+</template>
+
+ <!-- native -->
+ <script src='js/native/jstat-1.9.1.min.js'></script>
+ <script src='js/native/moment-2.24.0.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/local-forage-1.7.3.min.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/moment-lib-1.2.2.min.js'></script>
+
+ <script>
+
+   var controller = {
+     info:{
+     },
+     list:{
+     　clone:function(){
+         /* 今後オブジェクトも含まれると考えディープコピー */
+         return _.clone(this.working.time,true)
+       },
+       next:function(){
+         /* 一緒に初期化しておかないと自動計算（computed）される時値がマイナスになり23:59:59等になる */
+         this.working.time.end = this.working.time.begin = this.getCurrentTime()
+         this.working.no = null
+       },
+       push:function(){
+         var self=this
+         /* 次入力のために空ける */
+         this.$nextTick(function(){
+           self.no = null
+         })
+         /* 作業開始ボタンが押されており、作業ログの末尾（現在の作業したパレットのログ）に追加するなら */
+         return (this.status.isWorking && this.no != null) ?
+           this.working.complete.push({
+             time:this.clone(),
+             pallet:this.no
+           }) && this.next() :
+           false
+       },
+       pop:function(){
+         /* 作業開始ボタンが押されており、作業ログの末尾（最後に作業したパレットのログ）を削除するなら */
+         return (this.status.isWorking && window.confirm('本当に削除しますか？')) ? 
+           this.working.complete.pop() : false
+       }
+     },
+     stat:{
+
+     }
+   }
+
+   Vue.mixin({
+     methods:{
+       getCurrentTime:function(){
+         /*
+          * 数値：経過ミリ秒数
+          * 場合：経過ミリ秒数が0の時（出力）
+          * 基準：UTC+0:1970年1月1日午前0時0分0秒
+          * 注意：ＯＳのタイムゾーンによりUTC+Nとして出力される
+          * 具体：日本ではUTC+9なので経過ミリ秒数が0の時、1970年1月1日午前9時0分0秒
+          * 回避：moment(timestamp,'x').utc().format('YYYY/MM/DD HH:mm/ss')としてutc()を介す
+          */
+         return moment().valueOf()
+       }
+     }
+   })
+
+   new Vue({
+     el:'main',
+     computed:{
+       elapsedTimes:function(){
+         var self = this
+         /*
+          * 生成処理：作業ログの各経過時間
+          * 注意事項：日本標準時から世界協定時に変更：UTC()を介す */
+         return this.working.complete.map(function(v,i,arr){
+           return arr[i].time.end - arr[i].time.begin
+         })
+       }
+     },
+     components:{
+       /* 作業現狀（今作業中のパレットに関する情報）*/
+       info:{template:'#info',props:['work','stat'],computed:{
+         span:function(){
+           return this.work.time.end - this.work.time.begin
+         },
+         isEq:function(){
+           return{
+             result:this.stat.mean == this.span,
+             time:0
+           }
+         },
+         isSlow:function(){
+           return{
+             result:this.stat.mean < this.span,
+             time:this.time.negative
+           }
+         },
+         isFast:function(){
+           return{
+             result:this.stat.mean > this.span,
+             time:this.time.positive
+           }
+         },
+         time:function(){
+           return {
+             negative:this.span - this.stat.mean,
+             positive:this.stat.mean - this.span
+           }
+         }
+       }},
+       /* 作業ログ（既作業済のパレットに関する情報）*/
+       list:{template:'#list',props:['work','stat']},
+       /* 統計情報（作業ログから統計的な情報を得る）*/
+       stat:{template:'#stat',props:['times'],computed:{
+         /* 作業速度の分類別 */
+         speed:function(){
+           var self = this
+           /* 早い：遅いの振分「基準は平均作業時間」 */
+           return _.countBy(this.times,function(time){
+             return time < self.mean
+           })
+         },
+         /* 平均値（作業時間）*/
+         mean:function(){
+           return jStat(this.times).mean()   || 0
+         },
+         /* 中央値（作業時間）*/
+         mid:function(){
+           return jStat(this.times).median() || 0
+         },
+         /* 最大値（作業時間）*/
+         max:function(){
+           return jStat(this.times).max()    || 0
+         },
+         /* 最小値（作業時間）*/
+         min:function(){
+           return jStat(this.times).min()    || 0
+         }
+       }}
+     },
+     beforeCreate:function(){
+       Object.assign(this.$options.
+         methods,
+           window.controller.info,
+           window.controller.list,
+           window.controller.stat
+         )
+     },
+     methods:{
+       scrollTo:function(pos){
+         var el = document.scrollingElement || document.documentElement
+
+         switch(pos){
+           case 'bottom':
+             el.scrollTop = el.scrollHeight
+             break;
+         }
+       },
+       /*
+        * 削除：初期「全体の情報」
+        */
+       reset:function(){
+         if(window.confirm('本当に削除しますか？')){
+           this.stop()
+           this.no = null
+           this.clock = null
+           this.working.time.end = 0
+           this.working.time.begin = 0
+           this.working.complete = []
+           this.status.isWorking = false
+         }
+       },
+       /*
+        * 取得：設定「打刻前処理」
+        */
+       ready:function(){
+         this.working.time.end = this.working.time.begin = this.getCurrentTime()
+       },
+       /*
+        * 開始：停止「記録の処理」
+        */
+       start:function(){
+         var self = this
+         this.ready()
+         this.startTimer()
+         this.status.isWorking = true
+       },
+       stop:function(){
+         this.stopTimer()
+         this.status.isWorking = false
+       },
+       /*
+        * 開始：停止「打刻タイマ」
+        */
+       startTimer:function(){
+         var self = this
+         this.clock = setInterval(function(){
+           self.working.time.end = self.getCurrentTime()
+         },1000)
+       },
+       stopTimer:function(){
+         clearInterval(this.clock)
+       },
+       /*
+        * 保存；復帰「作業のログ」
+        */
+       load:function(){
+         var self = this
+         localforage.getItem(
+           this.option.key,function(err,arr){if(arr){
+             self.working.complete = arr
+           }
+         })
+       },
+       save:function(arr){
+         var self = this
+         localforage.setItem(
+           this.option.key,arr,function(err){
+         })
+       }
+     },
+     created:function(){
+           this.load()    /* 読込作業ログ */
+     },
+     watch:{
+       'working.complete':{
+         handler:function(arr){
+           var self=this
+           this.save(arr) /* 保存作業ログ */
+           this.$nextTick(function(){
+             self.scrollTo('bottom')
+           })
+         }
+       }
+     },
+     data:{
+       no:null,           /* 作業パレット */
+       clock:null,        /* 打刻用タイマ */
+       status:{
+         isWorking:false, /* 識別作業状態 */
+       },
+       option:{
+         key:'c7ddd6cf'   /* 保存ログキー */
+       },
+       working:{
+         time:{           /* 現在作業状態 */
+           end:0,         /* 時刻作業終了 */
+           begin:0,       /* 時刻作業開始 */
+         },
+         complete:[       /* 過去作業ログ */
+         ]
+       }
+     }
+   })
+</script>

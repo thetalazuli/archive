@@ -1,0 +1,134 @@
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   body{
+     padding:1em;
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.segments{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+</style>
+ <body>
+   <main>
+     <div class='ui segments'>
+        <router-view name='main'>
+       </router-view>
+    </div>
+     <div class='ui menu pointing icon'>
+       <router-link to='/home'><div class='item'><i class='icon home'></i></div></router-link>
+       <router-link to='/edit'><div class='item'><i class='icon edit'></i></div></router-link>
+    </div>
+     <router-view name='bottom' class='ui segments'>
+    </router-view>
+     <router-view>
+    </router-view>
+  </main>   
+</body>
+
+ <template id='home'>
+   <div class='ui segment'>
+     <div @click='next' class='ui label corner'>
+       <i class='icon user'></i>
+    </div>
+     <router-view>
+    </router-view>
+  </div>
+</template>
+ <template id='edit'>
+   <div class='ui segment'>
+     <div class='ui label corner'>
+       <i class='icon hdd'></i>
+    </div>
+     <router-view>
+    </router-view>
+  </div>
+</template>
+ <script src='/js/vue/2.6.10.js'></script>
+ <script src='/js/vue/x/3.1.1.js'></script>
+ <script src='/js/vue/router/3.1.3.js'></script>
+ <script>
+   new Vue({
+     el:'main',
+     store:new Vuex.Store({
+       mutations:{
+
+       },
+       getters:{
+
+       },
+       state:{
+         article:{
+
+         },
+         colors:{
+
+         },
+         pages:{
+
+         }
+       }
+     }),
+     router:new VueRouter({
+       routes:[
+         {
+           path:'/home',
+           components:{
+             main:{template:'<div>main</div>'},
+             bottom:
+             Vue.extend({
+             template:'#home',
+             data:function(){
+               return{
+                 idx:0,
+                 path:'',
+                 routes:[
+                   '/home/contributors',
+                   '/home/help'
+                 ]
+               }
+             },
+             methods:{
+               next:function(){
+                 var i = this.idx++ % this.routes.length
+                 this.$router.push(this.routes[i])
+               }
+             }
+           })
+          },
+           children:[
+             {
+               path:'contributors',
+               component:{template:'<div>contributors</div>'}
+             },
+             {
+               path:'help',
+               component:{template:'<div>help</div>'}
+             }
+           ]
+         },
+         {
+           path:'/edit',
+           component:Vue.extend({
+             template:'#edit'
+           }),
+           children:[
+
+           ]
+         },
+
+
+
+       ]
+     })
+   })
+</script>

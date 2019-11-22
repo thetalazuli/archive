@@ -1,0 +1,135 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template id='keys'>
+      <div>
+      <div :class='struct' ref='labels'>
+        <input name='labels' type='hidden'>
+        <div class='default text'>
+          <div class='ui label'>
+            <i class='icon tags'>
+           </i>
+         </div>
+       </div>
+     </div> 
+    </div>
+   </template>
+    <main>
+      <div class='ui grid padded'>
+
+
+          <div class='one column row'>
+              <div class='column' v-for='i in 12'>
+     
+                 <labels :color='colors[i-1]'></labels>
+              </div>   </div>
+
+
+
+
+         <div class='row'>
+         <div class='column'>
+   
+              <div class='ui menu pointing icon'>
+                 <div class='item active'><i class='icon home'></i></div>
+                 <div class='item'><i class='icon comment'></i><div class='ui floating label'>12</div></div>
+              </div>
+
+          </div></div>
+
+
+
+
+          <div class='row'>
+
+
+
+
+          
+              <div class='column'>
+                <div class='ui card fluid'>
+                  <div class='content'>
+    
+                      <a class="header">Gist Note</a>
+                      <div class="meta">
+                        <span class="date">created at 2019/09/19</span>
+                      </div>
+                      <div class="description">
+                          俺はリフィルを世界中の学生に作ってもらいたい。雑誌のDTPとか。かわいいスタンプとか。そういったものだ。技術者にも良い意味でデザインが必要だ。俺はデザイナとデベロパの手を結ばせるのだ。ひいてはデザイナとデベロパに使ってもらいたいツールだ。このアプリを開きGISTHUBにログインしGISTを作れば即座にウェブ上に情報を公開できる。勿論シークレットも可能だ。SEMANTIC-UIの強力なタグ機能はアメリカ人が新しいものを次々作り出すのと同じ勢いでアジア人もポイントを夜空の星星のように紡ぐことが出来る。そして作り出した記事は強力なリフィル機能によって纏められ、GITHUB上の世界中のプラグインによってスライドショーや画像のビュアーなどを組み込める。数式やシンタックスハイライタもだ。リフィルとして登録する時に記事中本文にuuidとかあると、プラグイン（スクリプト）が処理するのに必要な個別のUUIDがテンプレートエンジンによって割り当てられて登録される。 俺は世界を変えられる。なぜなら世界中で利用されている最高のサービスの上にアプリを作るからだ。強力な地盤。インフラの整った街に高層ビルを建設する。もはやGISTはそれ単体で使われなくなる。誰もが俺のURLを介して利用されるだろう。そのとき、俺は本当の意味で広大なネットワークを手にする。                           だが、仕掛けが必要だ。世界中の開発者や表現者、この世界に新しい息吹をもたらし技術によって物事の味方を買える者たちが好きな時に、好きな用に世界中の開発者のライブラリを自由に使って自己を表現しようとする時、このGIST NOTEは役立つ。強力なリフィル機能は表現を豊かにする。 welcome to gist note, gist.jsとrepo.jsをメインとして世界中の開発者に好まれるエディタを作る。ガラケー時代のfreespaceみたいに誰でも簡単にリフィルで書ける gist.js -> login -> create gist する。http://ohtruss.github.io/note/gist-hash俺のURLを解すので全く心配ない。人は自由になりたがる。敢えて選択肢の狭める（タグの数）ことで考える力の大きい企業ほど金を払うようになる ファイルホスティングの時代は終わった。これからはバックエンド側おユーザ数とか登録とかタグ数に制限をかける 市場を操作して付加価値をあげなければ。金をかける基準は量から室に変わり次に種類の数が来る
+                      </div>
+    
+                 </div>
+               </div>
+
+
+               <div class='ui segments'>
+                <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+               </div>
+
+
+               <div class='ui segments'>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                  <div class='ui segment'><div class='ui ribbon label'>TITLE</div></div>
+                 </div>
+
+
+             </div> 
+            </div> 
+
+
+
+
+    
+
+
+
+       </div> 
+     </div>
+   </main> 
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+
+  <script src='index.js'></script>
+</html>

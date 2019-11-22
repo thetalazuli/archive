@@ -1,0 +1,208 @@
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   body{
+     padding:1em;
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.menu{
+     margin-bottom:2em;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.segments{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.segment.editor{
+     padding:0;
+   }
+   header:after{
+     display:block;
+     clear:both;
+     content:'';
+     height:0;
+   }
+   header .ui.label.ribbon{
+     float:left;
+   }
+   .ui.label>.icon{
+      margin-right:0;
+    }
+    nav{
+     position: absolute;
+     text-align:right;
+     width:calc(100%);
+     z-index: 999;
+     right: -1em;
+     top: -1em;
+    }
+    [contenteditable]{
+      outline:none;
+    }
+</style>
+ <body>
+   <main>
+
+     <div class='ui menu pointing icon'>
+        <div @click='slide' class='ui label corner'>
+            <i :class="['icon',views[idx].icon]"></i>
+         </div>
+       <div class='item active'><i class='icon edit'></i></div>
+       <div class='item'><i class='icon trash'></i></div>
+       <div class='item'><i class='icon star'></i></div>
+     </div>
+     <div class='ui segments'>
+       <div class='ui segment' v-for='i in 1'>
+
+          <nav class='ui labels orange'>
+              <div class='ui label image' style='float:left;'>
+                <img src="https://avatars1.githubusercontent.com/u/9919?v=4">Things you might want to do right now:
+             </div><div class ='ui label'>2019/09/19</div>
+              <div class='ui label'>
+                <i class='icon edit'></i>
+              </div>
+            </nav>
+            <p>...</p>
+     </nav>
+      
+
+      </div>
+
+    </div>
+     <div class='ui segments'>
+       <div class='ui segment'>
+         <header>
+         <div class='ui ribbon label orange'>
+           EDITOR
+        </div><div class='ui labels orange'>
+          <div class='ui left pointing label image'><img src='/asset/favicon.ico'><span contenteditable='true'>comment</span></div>
+        </div>
+      </header>
+
+         <div @click='slide' class='ui label corner'>
+           <i :class="['icon',views[idx].icon]"></i>
+        </div>
+      </div>
+          </div>
+      <div class='ui segments'>
+        <div class='ui segment editor'>
+            <router-view>
+              </router-view>
+        </div>
+      </div>
+
+
+  </main>
+</body>
+
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/x/3.1.1.min.js'></script>
+ <script src='/js/vue/router/3.1.3.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+
+ <script id='edit' type='text/x-template'>
+   <div>
+     <codemirror v-model='content'>
+    </codemirror>
+  </div>
+</script>
+
+ 
+ <script>
+
+
+
+
+    Vue.use(VueCodeMirror,{
+      options:{
+        scrollbarStyle  : 'simple',
+        theme           : 'default',
+        mode            : 'htmlmixed',
+        firstLineNumber : 1,
+        tabSize         : 2,
+        indentUnit      : 2,
+        matchTags       : {bothTags: true},
+        htmlMode        : true,
+        autoCloseTags   : true,
+        foldGutter      : true,
+        lineNumbers     : true,
+        lineWrapping    : true,
+        extraKeys: {
+          'Ctrl-A': 'autocomplete',
+          'Ctrl-Q': function(cm){
+            cm.foldCode(cm.getCursor())
+          },
+          'F11': function(cm){
+            cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+          }
+        },
+        gutters: [
+          'CodeMirror-linenumbers',
+          'CodeMirror-foldgutter'
+        ]
+      }
+    })
+    
+    var editComponent = Vue.component('editor',{
+      template:'#edit',
+      data:function(){
+        return{
+          content:''
+        }
+      }
+    })
+
+   new Vue({
+     el:'main',
+     methods:{
+       slide:function(){
+         this.idx = (this.idx + 1) % this.views.length
+         this.$router.push(this.views[this.idx])
+       }
+     },
+     data:{
+       idx:0,
+       views:[
+         {path:'/edit',icon:'edit'},
+         {path:'/files',icon:'hdd'},
+         {path:'/refills',icon:'clone'}
+       ]
+     },
+     router:new VueRouter({
+       routes:[
+          {
+            path:'/edit',
+            component:editComponent
+          },
+          {
+            path:'/files',
+            component:{template:'<div>files template</div>'}
+          },
+          {
+            path:'/refills',
+            component:{template:'<div>refills template</div>'}
+          }
+       ]
+     })
+   })
+
+</script>

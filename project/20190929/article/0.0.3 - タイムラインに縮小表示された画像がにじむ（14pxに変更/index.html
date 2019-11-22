@@ -1,0 +1,44 @@
+ <style>
+  @import url('css/fomantic-ui/2.7.8.min.css');
+  @font-face{
+    font-family:'azuki';
+    src:url('asset/azuki.ttf');
+  }
+  @font-face{
+    font-family:'M+2VM+IPAG circle';
+    src:url('asset/M+2VM+IPAG-circle.ttf');
+  }
+  [contenteditable]{
+    outline:none;
+  }
+  html,
+  body{
+    font:12px 'azuki';
+  }
+  main{
+    width:148mm;
+    margin:0 auto;
+  }
+  main p.tweet{
+    font-size:14px;
+    line-height:1.2;
+    stroke-width:.2px;
+  }
+
+</style>
+ <body>
+  <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div class='column'>
+          <article class='ui segments'>
+            <section class='ui segment blue' contenteditable='true'>
+              <p class='tweet'>...</p>
+           </section>
+         </article>
+       </div>
+     </div>
+   </div>
+ </main>
+</body>
+ 

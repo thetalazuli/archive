@@ -1,0 +1,325 @@
+ <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui segments'>
+              <template v-for='(data,filename) in github.gistfile.files'>
+                  <div class='ui segment'>
+                    <header class='ui labels'>
+                      <div class='ui label blue' @click='edit(data)'>
+                        <i class='icon edit'></i>編集する
+                     </div>
+                      <div class='ui label blue' @click='remove(data)'>
+                        <i class='icon remove'></i>削除する
+                     </div>
+                   </header>
+                    <div class='ui ribbon label blue'>
+                      <input v-model='data.filename' type='text'>
+                   </div>
+                    <p></p>
+                    <section v-html='data.content'>
+                   </section>
+                 </div>
+               </template>
+          </div>
+        </div>  
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui menu pointing icon' ref='menu'>
+             <div class='item active' data-tab='auth'><i class='icon github'></i></div>
+             <div class='item' data-tab='edit'><i class='icon edit'></i></div>
+             <div class='item' data-tab='comment'><i class='icon comment'></i></div>
+             <div class='right menu'>
+               <div class='item' @click='add'><i class='icon plus'></i></div>
+               <div class='item' @click='save'><i class='icon save'></i></div>
+            </div>
+          </div>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui tab' data-tab='comment'>
+             <div class='ui segment' v-for='comment in github.comments'>
+               <header>
+                 <div class='ui labels'>
+
+                    <div :class="['ui','label','image',{'teal':comment.author_association == 'OWNER'}]">
+                      <img :src='comment.user.avatar_url'>
+                      <a :href='comment.user.html_url'>
+                        {{comment.user.login}}
+                      </a>
+                    </div>
+                    <div class='ui label'>
+                      {{comment.created_at}}
+                    </div>
+      
+                </div>
+              </header>
+               <section v-html='comment.body'>
+
+              </section>
+            </div>
+          </div>
+           <div class='ui tab active' data-tab='auth'>
+             <div class='ui form' ref='login'>
+               <div class='field'>
+                 <div class='ui input left icon'>
+                   <i class='user icon'></i>
+                   <input v-model='github.username' type='text' name='username' placeholder='user'>
+                </div>
+              </div>
+               <div class='field'>
+                 <div class='ui input left icon'>
+                   <i class='user icon'></i>
+                   <input v-model='github.password' type='password' name='password' placeholder='lock'>
+                </div>
+              </div>
+               <div class='field'>
+                 <div class='ui input left icon'>
+                   <i class='edit icon'></i>
+                   <input v-model='github.gisthash' type='text' name='gisthash' placeholder='lock'>
+                </div>
+              </div>
+               <div class='ui submit button'>Login</div>
+               <div class='ui message error'></div>
+            </div>
+          </div>
+           <div class='ui tab' data-tab='edit'>
+             <div class='ui segment' id='editor'>
+               <template>
+                  <codemirror ref='editor' v-model='current.content'>
+                 </codemirror>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+ <style>
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   @import url('/css/semantic-ui/2.4.2.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   #editor{
+     padding:0;
+   }
+   #editor .CodeMirror-linenumbers{
+    background:#f7f7f7;
+    width:32px !important;
+   }
+   .ui.segments,
+   .ui.segment,
+   .ui.label,
+   .ui.label.image,
+   .ui.form .ui.input>input,
+   .ui.menu{
+    box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+   }
+   .ui.menu{
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.segment header{
+     position: absolute;
+     text-align:right;
+     width:calc(100%);
+     z-index: 999;
+     right: -1em;
+     top: -1em;
+  }
+</style>
+ <script src='/js/native/github/3.3.0.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script>
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+  
+  new Vue({
+    el:'main',
+    data:{
+      github:{
+        username:'ohtruss',
+        password:'',
+        gisthash:'c1452d0f4ac5c409c697f542acf36bda',
+        profile:{
+
+        },
+        comments:[
+
+        ],
+        gistfile:{
+          files:{
+
+          }
+        }
+      },
+      current:{
+        content:''
+      },
+      controller:null,
+      content:'<p>...</p>'
+    },
+    computed:{
+      files:function(){
+        return this.github.gistfile.files
+      }
+    },
+    methods:{
+      add:function(){
+        var name = new Date().getTime()
+        this.$set(this.files,'test.js',{
+
+          filename:name,
+          content:'',
+
+        })
+      },
+      save:function(){
+
+        this.controller.getGist(this.github.gisthash).createComment("fdsfdsfsdfsd").then(function(){
+
+        })
+
+
+        this.controller.getGist(this.github.gisthash).create({
+          description:'flksjfds',
+          files:this.github.gistfile.files
+        }).then(function(){
+
+        })
+ 
+      },
+      remove:function(data){
+
+      },
+      edit:function(data){
+        this.current = data
+        $('.item',this.$refs.menu).tab('change tab','edit')
+      }
+    },
+    created:function(){
+
+      console.dir(window.location.hash)
+      var self = this;
+      self.controller = new GitHub()
+
+      if (!window.location.hash){
+        return
+      }
+
+      self.controller.getGist(
+        window.location.hash.slice(1)
+      ).read().then(function(obj){
+        self.github.gistfile = obj.data
+      })
+ 
+    },
+    mounted:function(){
+      var self = this
+      $('.item',this.$refs.menu).tab({
+
+      })
+
+      this.$refs.editor.refresh()
+
+      $(this.$refs.login).form({
+        onSuccess:function(){
+          self.controller = new GitHub({
+            username:self.github.username,
+            password:self.github.password
+          })
+          self.controller.getUser().getProfile().then(function(obj){
+            self.github.profile = obj.data
+          })
+          self.controller.getGist(self.github.gisthash).read().then(function(obj){
+            self.github.gistfile = obj.data
+            console.dir(obj.data)
+          })
+          self.controller.getGist(self.github.gisthash).listComments().then(function(obj){
+            self.github.comments = obj.data
+            console.dir(obj.data)
+          })
+        },
+        fields:{
+          username:{
+            identifier:'username',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your username'
+              }
+            ]
+          },
+          gisthash:{
+            identifier:'gisthash',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your gisthash'
+              }
+            ]
+          },
+          password:{
+            identifier:'password',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your password'
+              }
+            ]
+          }
+        }
+      })
+    }
+  })
+
+</script>

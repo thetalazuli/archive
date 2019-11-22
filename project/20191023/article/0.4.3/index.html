@@ -1,0 +1,88 @@
+ <style>
+   @import url('/css/semantic-ui/2.4.2.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+</style>
+ <body>
+   <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div ref='menu' class='column'>
+          <div data-tab='user' class='ui divider horizontal'>
+            USER
+         </div>
+          <div data-tab='refill' class='ui divider horizontal'>
+            REFILL
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div class='ui menu pointing icon'>
+            <div class='item active'>
+              <i class='icon edit'>
+             </i>
+           </div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div data-tab='user' class='ui tab active'>
+            クリックされたユーザ毎の記事
+         </div>
+          <div data-tab='refill' class='ui tab'>
+            リフィル
+         </div>
+       </div>
+     </div>
+   </div>
+  </main>
+</body>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script>
+   new Vue({
+     el:'main',
+     data:{
+       articles:[
+         {
+           仕様:1,
+           設計:2
+         },
+         {}
+       ],
+       refills:[
+         {
+           'コードのハイライト':3,
+         }
+       ],
+       pages:{
+         '1':{
+           title:'',
+           content:''
+         },
+         '2':{
+           title:'',
+           content:''
+         },
+         '3':{
+           title:'',
+           content:''
+         }
+       }
+     },
+     mounted:function(){
+       $('.divider',this.$refs.menu).tab({
+
+       })
+     }
+   })
+</script>

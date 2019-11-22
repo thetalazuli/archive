@@ -1,0 +1,461 @@
+
+<style>
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   @import url('/css/semantic-ui/2.4.2.min.css');
+   @import url('/css/semantic-ui/2.4.2.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+    margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+    vertical-align: top;
+    display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+    display:none;
+   }
+   .ui.selection.dropdown{
+    padding:.14285714em 0;
+    border:none;
+    min-height:auto;
+    background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+    font-size: .85714286rem;
+    padding: .5833em .833em;
+   }
+   .ui.divider{
+     color:gray;
+   }
+   .ui.divider.selected{
+     /* 選択されると、記事一覧がそのGISTに切り替わる */
+     color:blue;
+   }
+</style>
+ <body>
+  <template id='segment'>
+    <div class='ui segment'>
+      <div :class='title'>
+        {{src.title}}
+     </div>
+      <p></p>
+      <div class='content' v-html='src.content'>   
+     </div>
+   </div>
+ </template>
+  <template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label'>
+          <i class='icon tags'>
+         </i>
+       </div>
+     </div>
+   </div>
+ </template>
+  <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div class='column'>
+          <div class='ui card fluid'>
+            <div class='image'>
+              <img src='https://s3-ap-northeast-1.amazonaws.com/lifull-homes-press/uploads/press/2016/06/pixta_17380192_S.jpg'>
+            </div>
+          </div>
+          GISTによって人の脳は抽象化され、タグによってその人が持ってる箱（水戸が最初の授業で話したアンテナの話）を一覧化する。そして、アコーディオンによって相手を切り替えながらコメントによって大多数のプロジェクトに一人でも関われるようにする。１対多のコミュニケーションの粒度で標準化ツールとなりえる素晴らしいツールとなる
+                              <div class="ui ten cards"><div class="ui link card"><div class="image"><img src="https://thimbleprojects.org/ghumphreyevans/290024/Ben%20Goodger3.jpg"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/daneden.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/madeas.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/codemirror.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/zloirock.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/dataarts.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/github.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/wycats.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/highlightjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/picturepan2.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jquery.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lodash.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mathjax.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/webkul.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Modernizr.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/moment.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mikemaccana.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Semantic-Org.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/systemjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/CodeSeven.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jaysalvat.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/vuejs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/surmon-china.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lq111lq.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/FranckFreiburger.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/brockpetrie.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/s4l1h.png"></div></div></div>
+
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <!-- accordion semantic ui vue を利用する -->
+          <div class='ui divider horizontal'>FFFF7f3716c33d257676b5de00a0afaF:USER111</div>
+          <div class='ui divider horizontal selected'>23b807f3716c33d257676b5de00a0afa:OHTRUSS</div>
+          <indexes @select='selectPage' :color='colors[i]' :list='dst' :src='pages' v-for='(dst,i) in articles'>
+         </indexes>
+          <div class='ui divider horizontal'>DRAFT (LOCALSTORAGE)</div>
+          <indexes @select='selectDraft' color='black' :list='dst' :src='datas' v-for='(dst,i) in drafts'>
+         </indexes>
+          <div class='ui divider horizontal'>REFILLS (LOCALSTORAGE OR GIST)</div>
+          <div class='ui labels black'>
+            <div class='ui label'>h3</div>
+            <div class='ui label'>slideshow</div>
+            <div class='ui label'>syntax-highlighter</div>
+            <div class='ui label'>mathjax</div>
+            <div class='ui label'>クリックするとcode-mirrorに記事がコピペ</div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div ref='menu' class='ui menu pointing icon'>
+            <div data-tab='signin' class='item'><i class='icon github'></i></div>
+            <div data-tab='pages' class='item'><i class='icon list'></i></div>
+            <div data-tab='comments' class='item'><i class='icon comment'></i></div>
+            <div class='right menu'>
+              <div class='item'><i class='icon save'></i></div>
+           </div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div data-tab='signin' class='ui tab'>
+            <div ref='signin' class='ui form'>
+              <div class='field'>
+                <div class='ui input left icon'>
+                  <i class='icon github'>
+                 </i>
+                  <textarea v-model='gist.id' name='gistid' placeholder='gist-id list'>
+                 </textarea>
+               </div>
+             </div>
+              <div class='field'>
+                <div class='ui input left icon'>
+                  <i class='icon user'>
+                 </i>
+                  <input v-model='auth.username' name='username' placeholder='username' type='text'>
+               </div>
+             </div>
+              <div class='field'>
+                <div class='ui input left icon'>
+                  <i class='icon lock'>
+                 </i>
+                  <!-- <auth.input とうつと、名前空間（データ変数:auth{parameter}）にのみアクセスできる-->
+                  <input v-model='auth.password' name='password' placeholder='password' type='text'>
+               </div>
+             </div>
+              <div class='ui submit button'>
+                読込
+             </div>
+              <div class='ui message error'>
+             </div>
+           </div>
+         </div>
+          <div data-tab='pages' class='ui tab'>
+            <template v-for='(names,i) in articles'>
+              <div class='ui segments' v-show='Object.keys(names).length'>
+                <template v-for='(key,n) in names'>
+                  <page :color='colors[i]' :src='pages[key]'>
+                 </page>
+               </template>
+             </div>
+
+           </template>
+         </div>
+          <div data-tab='comments' class='ui tab'>
+            <page color='black' :src='comment'>
+           </page>
+            <div class='ui segment comment-1'>
+              <p>
+
+                  タグをクリックすると記事をコピーして編集可能になり投稿出来る（まるでリポジトリをCLONEして投稿できるかの如く）それからGISTは幾つも増やせるつまり、一人が万人に対して自由にコメントでき、影響を与える。管理者はそのコメントを記事としてGISTにマージ出来る。マージボタンを押すと自動でマージされ、マージされましたよコメントが出力される
+
+                  世界中の情報を抽象化しリフィルという形で誰でも表現豊かにする
+                  俺はインターネットを表現豊かにする
+                  リフィルは作成した記事から追加可能だ。コピーすることも出来る
+                  {uid}とか割り振れば投稿前の前処理によってtemplate engineが自動でIDを割り振る
+                  だから、記事の中にstyleとかscriptとか入れると自動で専用のコンポーネントが出来る
+                  つまり、記事としてスライドショー（jquery）とか挿入可能
+                  
+                  例えば、タグにYOUTUBEのURLをそのまま入力するとAJAX通信によってIFRAMEが自動で作成されタグ名はpage:title名に早変わり
+                  
+                  URLにGISTのハッシュを入れるとそれが表示される。つまり、誰でもインターネット上に自由にマージ可能な領域を作ることができて、全員リフィルという形で記事に飛び込める場所ができる。
+              </p>
+           </div>
+            <div class='ui segment' style='padding:0;'>
+              <codemirror v-model='comment.content'>
+             </codemirror>
+           </div>
+
+            <div class='ui button'>
+             　commentに投稿
+           </div>
+            <div class='ui button'>
+             　gistにマージ
+           </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </main>  
+</body>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script>
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+
+   Vue.component('page',{
+     props:{
+       color:{
+         default:'',
+         type:Object
+       },
+       src:{
+         default:{},
+         type:Object
+       }
+     },
+     computed:{
+       title:function(){
+         return ['ui ribbon label',this.color].join(' ')
+       }
+     },
+     template:'#segment',
+     mounted:function(){
+
+     }
+   })
+   Vue.component('indexes',{
+     props:{
+       color:{
+         default:'',
+         type:String
+       },
+       list:{
+         default:{},
+         type:Object,
+       },
+       src:{
+         default:{},
+         type:Object
+       }
+     },
+     computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+     },
+     methods:{
+       getTime:function(){
+         return new Date().getTime()
+       },
+       select:function(name){
+         var key = this.list[name]
+         this.$emit('select',key)
+       },
+       remove:function(name){
+         var key = this.list[name]
+
+         this.$delete(this.list,
+           name
+         )
+       },
+       add:function(name){
+         var key = this.getTime()
+         
+         this.$set(this.src,key,{
+           title:name,
+           content:''
+         })
+
+         this.$set(this.list,
+           name,key
+         )
+       }
+     },
+     template:'#dropdown',
+     mounted:function(){
+       var self = this
+       $(this.$refs.labels).dropdown({
+         allowAdditions:true,
+         onLabelSelect:function(dom){
+           $(self.$refs.labels).dropdown('remove activeLabel')
+           self.select(dom.dataset.value)
+         },
+         onRemove:self.remove,
+         onAdd:self.add
+       })
+     }
+   })
+
+   new Vue({
+     el:'main',
+     data:{
+       mode:'signin',
+       comment:{
+         // copy page
+       },
+       comments:[
+
+       ],
+       files:{
+
+       },
+       gist:{
+         id:''
+       },
+       auth:{
+         username:'',
+         password:''
+       },
+       drafts:[
+         {}
+       ],
+       datas:{
+
+       },
+       articles:[
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},
+         {},        
+       ],
+       colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ],
+       pages:{
+         
+       }
+     },
+     watch:{
+       pages:{
+         handler:function(){
+           console.dir(this.pages)
+         }
+       }
+     },
+     methods:{
+      init:function(){
+        this.gist.id = `FFFF7f3716c33d257676b5de00a0afaF
+23b807f3716c33d257676b5de00a0afa
+`
+      },
+      selectDraft:function(key){
+        console.dir(key)
+      },
+      selectPage:function(key){
+
+        switch(mode){
+          case 'comments':
+            this.comment = Object.assign({},this.pages[key])
+            break;
+        }
+      }
+     },
+     created:function(){
+       this.init()
+     },
+     mounted:function(){
+       $(this.$refs.signin).form({
+         onSuccess:function(){
+
+         },
+         fields:{
+          username:{
+            identifier:'username',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your username'
+              }
+            ]
+          },
+          password:{
+            identifier:'password',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your password'
+              }
+            ]
+          },
+          gistid:{
+            identifier:'gistid',
+            rules:[
+              {
+                type:'empty',
+                prompt:'Please enter your gistid'
+              }
+            ]
+          }
+        }
+       })
+       $('.item',this.$refs.menu).tab({
+         onLoad:function(name){
+           self.mode = name
+         }
+       })
+       $('.item',this.$refs.menu).tab(
+         'change tab','signin'
+       )
+
+     }
+   })
+
+</script>
+</html>

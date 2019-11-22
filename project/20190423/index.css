@@ -1,0 +1,156 @@
+/*
+ * 数値は見やすく
+ */
+@font-face {
+  src:url('asset/gidolinya.otf');
+  font-family:'Gidolinya';
+}
+/*
+ * 文字は読みやすく
+ */
+@font-face {
+  src:url('asset/azuki.ttf');
+  font-family:'Azuki';
+}
+
+/*
+ * 構造を決めて
+ */
+html,
+body,
+main{
+  height:100%;
+}
+.ui.grid,
+.ui.grid .row,
+.ui.grid .row .column{
+  height:100%;
+}
+.ui.grid .row .column{
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:-moz-box;
+  display:-ms-flexbox;
+  display:flex;
+  -webkit-box-orient:vertical;
+  -webkit-box-direction:normal;
+  -webkit-flex-direction:column;
+     -moz-box-orient:vertical;
+     -moz-box-direction:normal;
+      -ms-flex-direction:column;
+          flex-direction:column;
+}
+/*
+ * ２行にして
+ */
+.ui.grid .row .column .view{
+  height:100%;
+  padding:2px 1em;
+  overflow-y:scroll;
+}
+.ui.grid .row .column .controller{
+  margin-top:1rem;
+}
+/*
+ * １行目を設定して
+ */
+.view > #share{
+  min-height:30%;
+  height:30%;
+}
+.view > #share textarea{
+  font-family:'Azuki';
+  font-weight:bold;
+  display:block;
+  outline:none;
+  border:none;
+  resize:none;
+  height:100%;
+  width:100%;
+}
+.view > #total{
+  height:min-content;
+  height:-webkit-min-content;
+}
+/*
+ * １行目以下のDIVは全て連結して
+ */
+.view-component{
+  position:relative;
+  overflow-y:auto;
+}
+/*
+ * ２行目を設定して
+ */
+.controller > #counter{
+
+}
+/*
+ * アイコンを新しくして
+ */
+i.icon.name:before  {content:'\f007';}
+i.icon.floor:before  {content:'\f03a';}
+/*
+ * 配色を考えて
+ */
+.name    {color:#00b5ad;}
+.floor   {color:#000000;}
+.bed     {color:#fbbd08;}
+.bath    {color:#2185d0;}
+.check   {color:#21ba45;}
+.item .numeric-up-down input.label.bed   {background:#fbbd08;}
+.item .numeric-up-down input.label.bath  {background:#2185d0;}
+.item .numeric-up-down input.label.check {background:#21ba45;}
+/*
+ * 見栄を良くして
+ */
+#counter,
+.view-component{
+  border-bottom:2px solid rgba(34,36,38,.15) !important;
+  box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+}
+/*
+ * １列目（作業者の名前）は文字だからフォントを変更
+ * １列目以外（作業の数）は数値だから幅固定及びフォントを変更
+ */
+ #users .ui.table tbody td:first-child{
+  font-family:'Azuki';
+  font-weight:bold;
+}
+#users .ui.table>thead>tr>th:not(:first-child){
+  width:3em;
+}
+#users .ui.table>tbody>tr>td:not(:first-child){
+  font-family:'Gidolinya';
+  font-weight:bold;
+}
+/*
+ * 作業者が自分自身なら行色を変更
+ * 作業の数が０になったら完了として非表示
+ */
+#users tr.me{
+  background-color:rgba(0,0,0,.05);
+}
+#users td.zero{
+  color:transparent;
+}
+/*
+ * DAT.GUI
+ */
+ .dg.main,
+ .dg.main .close-button{
+   width:100% !important;
+ }
+ .dg.main .close-button{
+   display:none;
+ }
+ .dg li.title{
+   text-align:left;
+ }
+ /*
+  * UI.POPUP
+  */
+  .ui.popup{
+   border:none;
+   padding:0;
+ }

@@ -1,0 +1,27 @@
+html,
+body{
+  font-size:12px;
+}
+html,
+body,
+main{
+  height:100%;
+}
+.ui.grid,
+.ui.grid .row,
+.ui.grid .row .column{
+  height:100%;
+}
+
+.ui.grid .row{
+  flex-wrap:nowrap;
+}
+.ui.grid>.column:not(.row), .ui.grid>.row>.column{
+  width:148mm;
+  height:100%;
+}
+.ui.grid>.column:not(.row), .ui.grid>.row>.column iframe{
+  height:100%;
+  border:none;
+  width:100%;
+}

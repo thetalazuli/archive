@@ -1,0 +1,89 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('index.css');
+  </style>
+
+ </head>
+  <body>
+   <template id='keys'>
+     <div ref='labels' :class='struct'>
+       <input name='labels' type='hidden'>
+       <div class='default text'>
+         <div class='ui label'>
+           <i class='icon tags'>
+          </i>
+        </div>
+      </div>
+    </div>
+  </template>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui tab' data-tab='home'>
+             <labels v-for='i in 12' @add='addPage' @remove='removePage' :color='colors[i]' >
+            </labels>
+          </div>
+           <div class='ui tab' data-tab=''>
+
+          </div>
+           <div class='ui tab' data-tab=''>
+
+          </div>
+           <div class='ui tab' data-tab=''>
+
+          </div>
+           <div class='ui tab' data-tab=''>
+
+          </div>
+           <div class='ui tab' data-tab=''>
+
+          </div>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <div ref='menu' class='ui menu pointing icon'>
+             <div class='item' data-tab='home'><i class='icon home'></i></div>
+             <div class='item'><i class='icon home'></i></div>
+             <div class='item'><i class='icon home'></i></div>
+             <div class='item'><i class='icon home'></i></div>
+             <div class='item'><i class='icon home'></i></div>
+             <div class='item'><i class='icon home'></i></div>
+          </div>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui segment' v-for='(page,key) in pages'>
+             <div class='ui ribbon label'>
+               {{page.title}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>   
+  </main>
+ </body>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='index.js'></script>
+</html>

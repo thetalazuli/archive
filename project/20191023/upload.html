@@ -1,0 +1,40 @@
+ <body>
+   <main>
+      <label>
+          <input type='file' @change='uploadFile' multiple>
+       </label> 
+  </main>
+ 
+</body>
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/native/lodash/4.17.15.min.js'></script>
+ <script>
+   new Vue({
+     el:'main',
+     data:{
+       files:[
+
+       ]
+     },
+     methods:{
+       uploadFile:function(e){
+         console.dir(e)
+         console.dir(e.target.files[0])
+
+         var files = _.map(e.target.files,function(val){
+           return{
+             file:val,
+             show:false
+           }
+         })
+
+         this.files = this.files.concat(files)
+         console.dir(this.files)
+
+       }
+     },
+     mounted:function(){
+
+     }
+   })
+</script>

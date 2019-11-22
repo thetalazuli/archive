@@ -1,0 +1,69 @@
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+
+   main{
+     padding:1em;
+     width:148mm;
+     margin:0 auto;
+   }
+
+   nav{
+    position: absolute;
+    text-align:right;
+    width:calc(100%);
+    z-index: 999;
+    right: -1em;
+    top: -1em;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.segments{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+
+   .ui.label>.icon{
+    margin-right:0;
+   }
+</style>
+ <body>
+   <main>
+     <div class='ui segments'>
+       <div class='ui segment'>
+         <nav class='ui labels blue'>
+           <div class='ui label'><i class='icon edit'></i></div>
+        </nav>
+         <div class='ui ribbon label orange'>
+           POST:TITLE
+        </div>
+      </div>
+       <div class='ui segment'>
+         <nav class='ui labels blue'>
+           <div class='ui label'><i class='icon edit'></i></div>
+        </nav>
+         <p>...</p>
+      </div>
+       <div class='ui segment'>
+         <nav class='ui labels blue'>
+           <div class='ui label'><i class='icon edit'></i></div>
+        </nav>
+         <p>...</p>
+      </div>
+    </div>
+
+     <div class='ui menu pointing icon'>
+       <div class='item active'><i class='icon edit'></i></div>
+    </div>
+
+     <div class='ui segments'>
+       <div class='ui segment editor'>
+
+      </div>
+    </div>
+  </main>
+</body>

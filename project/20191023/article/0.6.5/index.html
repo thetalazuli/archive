@@ -1,0 +1,475 @@
+ <link href='/asset/me.png' rel='icon'>
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.dropdown .label.active{
+     background-color: white!important;
+     border-color: white!important;
+     color: black!important;
+   }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+     margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+     margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+     vertical-align: top;
+     display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+     display:none;
+   }
+   .ui.selection.dropdown{
+     padding:.14285714em 0;
+     border:none;
+     min-height:auto;
+     background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+     font-size: .85714286rem;
+     padding: .5833em .833em;
+   }
+   .page header,
+   .document header{
+     position: absolute;
+     text-align:right;
+     width:calc(100%);
+     z-index: 999;
+     right: -1em;
+     top: -1em;
+   }
+   .ui.label>.icon{
+     margin-right:0;
+   }
+   .ui.menu,
+   .ui.card,
+   .ui.label,
+   .ui.buttons:not(.basic):not(.inverted),
+   .ui.segments,
+   .ui.image.label,
+   .ui.segment.editor,
+   .ui.multiple.dropdown>.label{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.segment.editor{
+     padding:0;
+   }
+   .CodeMirror{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   .ui.segment.nopadding{
+     padding:0;
+   }
+</style>
+
+ <template id='section'>
+   <section class='page'>
+     <header :class='ui'>
+       <!-- subject -->
+       <div class='ui label'>{{data.comment}}</div>
+       <slot name='labels'>
+      </slot>
+       <!-- verb -->
+       <div class='ui label'>{{data.createdAt}}</div>
+    </header>
+    <!-- when -->
+     <section class='body' v-html='data.content'>
+    </section>
+  </section>
+</template>
+
+ <template id='dropdown'>
+   <div ref='labels' :class='ui'>
+     <input name='labels' type='hidden'>
+     <div class='default text'>
+       <div class='ui label'>
+         <i class='icon tags'>
+        </i>
+      </div>
+    </div>
+  </div>
+</template>
+
+ <body>
+  <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div class='column'>
+
+            <div class='ui divider horizontal'>一日分の全ての記事（あみだくじ）</div>
+            <div class='ui segments'>
+                <page class='ui segment' :data='pages[day]' v-for='day in days'>
+               </page> 
+             </div>
+    
+
+
+          <div class='ui segment'>
+            <indexes @select='open' @delete='remove' :document='doc' :struct='struct.article' :color='i' v-for='(doc,i) in documents'>
+           </indexes>
+         </div>
+
+
+
+         <!--
+          考え方１
+          考え方２
+          考え方３
+          ・トピック
+          ・一日分の記事（あみだくじ）
+          例
+          　正しいタグ
+          　間違いタグ
+          ・トピック「問題」
+          ・一日分の思想
+          間違いが１００あっても正しいを１００導き出し、１００：１００＋１で正しいような形にする
+          例
+          　合理性（正しさ or 間違い
+          　論理性（正しさ or 間違い
+          　主観性（正しさ or 間違い）
+          ・トピック
+          ・一日分の思想
+          　自分の書いていることが１００％正しい訳ではない
+          　ので、せめて、あみだくじのようにあらゆる角度から物事を見つめてみる
+          このインターフェイスが例えば、設計したらどうするか？とかそういったとこを考える
+          人は、誰しもが飽きるのだ。同じ色に飽きる。だから増やす
+          設計したら実装がいるよね。とか。より連想的にすることを
+          目的としたインターフェイス
+          -->
+
+          <div class='ui pointing icon menu'>
+            <div class='item active'><i class='icon edit'></i></div>
+            <div class='item'><i class='icon calendar'></i></div>
+            <!-- カレンダーが押されると表示する（一日分の記事一覧（タグに関係なく）） -->
+            <div class='item'><i class='icon star'></i></div>
+            <div class='menu'>
+              <div class='item'><i class='icon trash'></i></div>
+           </div>
+
+        </div>
+
+          <div class='ui divider horizontal'>選択されたタグの記事（縦のライン）</div>
+        
+          <div class='ui segments document' v-if='current.article'>
+            <div class='ui segment'>
+              <div :class="['ui','ribbon','label',current.color]">
+                {{current.name}}
+             </div>
+
+           </div>
+           <template v-if='!editing.key'>
+            <page :color='current.color' :data='pages[created_at]' v-for='(section,created_at) in current.article.sections' :class="['ui','segment',{'nopadding':!pages[created_at].padding}]">
+              <template v-slot:labels>
+                <div class='ui label' @click='edit(created_at)'><i class='icon edit'></i></div>
+             </template>
+        　 </page>
+          </template>
+           <template v-else>
+              <page :data='pages[editing.key]' :class="['ui','segment',{'nopadding':!pages[editing.key].padding}]">
+                  <template v-slot:labels>
+                    <div class='ui label' @click="editing.key = null"><i class='icon remove'></i></div>
+                 </template>
+            　 </page>
+          </template>
+
+         </div>
+
+          <div class='ui segment editor'>
+
+              <codemirror v-if='editing.key' v-model='pages[editing.key].content'>
+             </codemirror>
+      
+         </div>
+
+
+          <div class="ui icon buttons">
+            <button class="ui button" @click="editing.key ? insert(refills.p) : push(true,refills.p)"><i class="align plus icon"></i></button>
+            <button class="ui button" @click="editing.key ? insert(refills.table) : push(false,refills.table)"><i class="align table icon"></i></button>
+            <button class="ui button" @click="editing.key ? insert(refills.code) : push(false,refills.code)"><i class="align code icon"></i></button>
+         </div>
+
+       </div>
+     </div>
+   </div>
+ </main>
+</body>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script>
+
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+
+   Vue.mixin({
+     methods:{
+       created_at:function(){
+         return new Date().getTime()
+       },
+       clone:function(src){
+         return JSON.parse(JSON.stringify(src));
+       }
+     }
+   })
+
+   Vue.component('page',{
+     template:'#section',
+     props:['data','color'],
+     computed:{
+       ui:function(){
+         return ['ui labels',this.color || this.data.color].join(' ')
+       }
+     }
+   })
+   
+
+   
+
+
+
+   Vue.component('indexes',{
+     methods:{
+       select:function($dom){
+         $(this.$refs.labels).dropdown('remove activeLabel',$dom.dataset.value)
+         this.$emit('select',this.document[$dom.dataset.value],$dom.dataset.value,this.color)
+       },
+       create:function(date){
+         var master = this.clone(this.struct)
+         return Object.assign(master,{title:name,createdAt:date})
+       },
+       insert:function(name){
+         this.$set(this.document,name,this.create(this.created_at()))
+       },
+       remove:function(name){
+         this.$emit('delete',this.document[name])
+         this.$delete(this.document,name)
+       }
+     },
+     mounted:function(){
+       var self = this
+       $(this.$refs.labels).dropdown({
+         allowAdditions:true,
+         onAdd         :self.insert,
+         onRemove      :self.remove,
+         onLabelSelect :self.select
+       })
+     },
+     template:'#dropdown',
+     props:['color','struct','document'],
+     computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+     },
+   })
+
+   new Vue({
+     el:'main',
+     watch:{
+       documents:{
+         deep:true,
+         handler:function(obj){
+           console.dir(obj)
+         }
+       }
+     },
+     computed:{
+       last:function(){
+         return this.pages[Object.keys(this.pages).pop()]
+       },
+       days:function(){
+         var end = Object.keys(this.pages).pop()
+         var beg = end - 86400000
+
+         return Object.keys(this.pages).filter(function(timestamp){
+           return timestamp > beg
+         })
+       }
+     },
+     methods:{
+       edit:function(created_at){
+         this.editing.key = created_at
+       },
+       close:function(){
+         this.current.article = null
+         this.current.color = null
+         this.current.name = null
+         this.$forceUpdate()
+       },
+       remove:function(document){
+         var self = this
+         
+         this.close()
+         Object.keys(document.sections).forEach(function(timestamp){
+           self.$delete(self.pages,timestamp)
+         })
+
+       },
+       create:function(date){
+         var master = this.clone(this.struct.section)
+         return Object.assign(master,{createdAt:date,color:this.current.color})
+       },
+       insert:function(val){
+         this.pages[this.editing.key].content += val
+       },
+       push:function(padding,content){
+         if(!this.current.article)
+           return
+
+         var at = this.created_at()
+         this.$set(this.current.article.sections,at,{})
+         this.$set(this.pages,at,this.create(at))
+         this.pages[at].content = content
+         this.pages[at].padding = padding
+       },
+       open:function(document,name,color){
+         this.current.article = document
+         this.current.color = color
+         this.current.name = name
+         this.$forceUpdate()
+       },
+       init:function(){
+         var self = this
+         this.colors.forEach(function(color,index){
+           self.$set(self.documents,color,{})
+         })
+       }
+     },
+     created:function(){
+       this.init()
+     },
+     data:{
+      refills:{
+        p:`
+          <p>...</p>
+        `,
+        code:`
+          <pre>
+            <code>
+           </code>
+         </pre>
+        
+        `,
+        table:`
+          <table class='ui table'>
+            {{uuid to handlebars}}
+            <thead>
+              <th>No</th>
+              <th>Value</th>
+           </thead>
+            <tbody>
+              <tr>
+                <td>no</td><td>no.</td>
+             </tr>
+           </tbody>
+        </table>
+        `
+      },
+      editing:{
+         key:null,
+         user:null
+       },
+       current:{
+         article:'',
+         color:'',
+         name:'',
+       },
+       /*
+        * html
+        * html.article = document
+        * html.section = document.section
+        */
+       struct:{
+         article:{
+           title:'',
+           createdAt:0,
+           sections:{
+             
+           }
+         },
+         section:{
+           padding:true,
+           createdAt:0,
+           comment:'',
+           content:'',
+           color:''
+         }
+       },
+       /*
+        * abstract
+        */
+       documents:{
+         
+       },
+       colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ],
+       pages:{
+         
+       }
+     }
+   })
+
+</script>

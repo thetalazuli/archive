@@ -1,0 +1,12 @@
+@font-face{
+  font-family:'M+2VM+IPAG circle';
+  src:url('/asset/font/ipa/M+2VM+IPAG-circle.ttf');
+}
+html,
+body{
+  font:12px 'M+2VM+IPAG circle';
+}
+main{
+  width:148mm;
+  margin:0 auto;
+}

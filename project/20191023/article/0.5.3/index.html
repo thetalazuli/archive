@@ -1,0 +1,162 @@
+<!doctype html>
+ <html>
+   
+  <head>
+
+   <title>Me</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/fomantic-ui/2.7.8.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/css/animate/3.7.2.min.css');
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+
+ </head>
+
+  <template id='page'>
+    <section class='ui segment'>
+      <nav class='ui labels'>
+        <slot name='nav'></slot>
+     </nav>
+      <div :class="['ui','label','ribbon',color]">
+        {{data.title}}
+     </div>
+      <p></p>
+      <div v-html='data.content'>
+     </div>
+   </section>
+ </template>
+
+  <template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label'>
+          <i class='icon tags'>
+         </i>
+       </div>
+     </div>
+   </div>
+ </template>
+
+  <body>
+    <main>
+      <div class='ui grid padded'>
+
+        <div class='row animated tada' v-if='isEditing'>
+          <div class='column'>
+            <page color='black' :data='user.pages[edit.idx]'>
+                <template v-slot:nav>
+                  <div @click='exitPage'
+                       class='ui label blue'>
+                    <i class='icon remove'></i>
+                    閉じる
+                 </div>
+               </template>
+          </page>
+         </div>
+       </div>
+
+        <div class='row' v-show='!isEditing'>
+          <div class='column'>
+            
+            <div class='ui segments'>
+
+              <a class='ui label corner right'>
+                <i class='icon list'></i>
+             </a>
+
+              <div class='ui segment'>
+                
+                <div class='ui label ribbon orange' style='float:left;'>
+                 NOTE
+               </div><div class='ui labels orange'>
+                  <div class='ui label'>３人が編集中</div>
+                  
+               </div>
+
+                 <p></p>
+
+                <template
+                  v-for='(document,color) in user.articles' v-if='stat.loadedStorage'>
+                  <indexes
+                    @select='editPage'
+                    :articles='document'
+                    :template='master.page'
+                    :source='user.pages'
+                    :color='color'>
+                </indexes>
+               </template>
+             </div>
+           </div>
+
+         </div>
+       </div>
+
+        <div class='row'>
+          <div class='column'>
+            <div class='ui menu pointing icon'>
+              <div class='item active'><i class='icon edit'></i></div>
+           </div>
+         </div>
+       </div>
+
+        <div class='row' v-if='isEditing'>
+          <div class='column'>
+            <div class='ui segment editor'>
+              <codemirror v-model='user.pages[edit.idx].content'>
+             </codemirror>
+           </div>
+         </div>
+       </div>
+
+        <div class='row' v-show='!isEditing'>
+          <div class='column'>
+            <template v-for='(document,color) in user.articles'>
+              <article class='ui segments' v-show='_.keys(document).length'>
+                <template v-for='info in document'>
+                  <page
+                    :color='color'
+                    :data='user.pages[info.idx]'>
+                  </page>
+               </template>
+             </article> 
+           </template>
+         </div>
+       </div>
+       
+     </div>
+   </main>
+ </body>
+ 
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/local-forage/1.7.3.min.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+  <script src='/js/vue/2.6.10.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='index.js'></script>
+
+</html>

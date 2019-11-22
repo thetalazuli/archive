@@ -1,0 +1,856 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title>BLOG</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='application-name'>
+   <meta content='' name='description'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <script type='application/ld+json'>
+    {
+      '@context':'http://schema.org/'
+    }
+  </script>
+
+   <style>
+     @import url('js/native/code-mirror/5.49.1.min.css');
+     @import url('js/native/code-mirror/addon-5.49.1.min.css');
+     @import url('js/native/code-mirror/mode-5.49.1.min.css');
+     @import url('js/native/code-mirror/5.49.1.min.css');
+     @import url('js/native/highlight/default.css');
+     @import url('js/native/highlight/vs.css');
+     /*
+      * 見栄
+      */
+     @font-face{
+       font-family:'M+2VM+IPAG circle';
+       src:url('asset/m+2vm+ipag-circle.ttf');
+     }
+     /*
+      * 調整
+      */
+     :root{
+       --bg-color:white;
+       --editor-height:315px;
+     }
+     /*
+      * 構造
+      */
+     html,
+     body{
+       font:12px 'M+2VM+IPAG circle';
+       background:var(--bg-color);
+     }
+     main{
+       padding:1em;
+       width:120mm;
+       margin:0 auto;
+     }
+     /*
+      * 記事
+      */
+     .ui.segment>.ui.labels{
+       position:absolute;
+       text-align:right;
+       z-index:999;
+       width:100%;
+       top:-1em;
+       left:0;
+     }
+     .ui.segment>.ui.labels>.ui.label>.icon{
+       margin-right:0;
+     }
+     /*
+      * 見栄
+      */
+     .ui.menu,
+     .ui.card,
+     .ui.label,
+     .ui.input,
+     .ui.button,
+     .ui.segments{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     /*
+      * 設定
+      */
+     .ui.popup{
+       padding:0;
+     }
+     .ui.popup .dg.main .close-button{
+       display:none;
+     }
+     /*
+      * 編集
+      */
+     .CodeMirror{
+       font: 12px 'M+2VM+IPAG circle';
+       height:var(--editor-height);
+       background:transparent;
+     }
+     .CodeMirror pre.CodeMirror-line,
+     .CodeMirror pre.CodeMirror-line-like{
+       padding:0;
+     }
+     /*
+      * 操作
+      */
+     .ui.segment .ui.label:not(:last-child){
+       display:none;
+     }
+     .ui.segment:hover .ui.label:not(:last-child){
+       display:inline-block;
+     }
+     /*
+      * 紹介
+      */
+     .ui.card .description{
+       line-height:1.2;
+       word-break:break-all;
+     }
+     /*
+      * 記事
+      */
+     .page .view{
+       word-break:break-all;
+     }
+     .page .view pre{
+       margin:0;
+     }
+     .page .view p{
+       line-height:1.2;
+     }
+     .page .view .ui.table>thead>tr>th,
+     .page .view .ui.table>tbody>tr>td{
+       padding:0;
+     }
+     /*
+      * 降順
+      */
+     article.ui.segments{
+       display:flex;
+       flex-direction:column-reverse;
+     }
+     article.ui.segments:not(.horizontal)>.segment:first-child{
+       border-top:1px solid rgba(34,36,38,.15);
+     }
+     /*
+      * Responsive
+      */
+     @media screen and (max-width:148mm){
+       main{
+         width:100%;
+       }
+     }
+  </style>
+
+ </head>
+  <body>
+   <main :style="{'width':width}">
+
+     <self class='ui card fluid'>
+    </self>
+     
+     <nav class='ui menu pointing icon'>
+       <div class='item active'>
+         <i class='icon list'>
+        </i>
+      </div>
+       <template v-if='isAuthorized'>
+         <div class='item' @click="insertPage('normal')">
+           <i class='icon plus'>
+          </i>
+        </div>
+         <div class='item' @click="insertPage('image')">
+           <i class='icon image'>
+          </i>
+        </div>
+         <div class='item' @click="insertPage('youtube')">
+           <i class='icon youtube'>
+          </i>
+        </div>
+         <div class='item' @click="insertPage('code')">
+           <i class='icon code'>
+          </i>
+        </div>
+         <div class='item' @click="insertPage('math')">
+           <i class='icon calculator'>
+          </i>
+        </div>
+         <div class='item' @click="insertPage('calendar')">
+           <i class='icon calendar'>
+          </i>
+        </div>
+      </template>
+       <div class='menu right'>
+         <div class='item settings' ref='settings'>
+           <i class='icon settings'>
+          </i>
+        </div>
+         <div class='ui popup very basic'>
+           <dat-gui>
+             <dat-folder name='settings'>
+               <dat-value label='width' v-model='width' :accepted-values="['150mm','140mm','130mm','120mm','110mm']">
+              </dat-value>
+            </dat-folder>
+          </dat-gui>
+        </div>
+      </div>
+    </nav>
+
+     <div class='ui divider horizontal'>
+       articles
+    </div>
+     <template v-if='isAuthorized'>
+       <article class='ui segments'>
+         <template v-for='(page,timestamp,no) in articles'>
+           <template v-if='hasPage(timestamp)'>
+             <page class='ui segment' v-model='articles[timestamp]'>
+               <template v-slot:labels>
+                 <div class='ui label' @click='removePage(timestamp)'>
+                   <i class='icon remove'>
+                  </i> 
+                </div><div class='ui label' @click='fitPage(timestamp)'>
+                   <i class='icon expand'>
+                  </i>   
+                </div><div class='ui label' @click='editPage(timestamp)'>
+                  <i class='icon edit'>
+                 </i>
+                </div><div class='ui label orange'>
+                  {{ timestamp | MMDD }}
+                </div>
+              </template>
+               <template v-slot:viewer>
+                 <div v-html='page.html' v-append='page.html'>
+                </div>
+              </template>
+               <template v-slot:editor>
+                 <codemirror v-model='page.html' @input='updatePage(timestamp)'>
+                </codemirror>
+              </template>
+            </page>
+            
+          </template>
+        </template>
+      </article>
+    </template>
+     <template v-else>
+       <article class='ui segments'>
+         <template v-for='(page,timestamp,no) in logs'>
+           <page class='ui segment' v-model='logs[timestamp]'>
+             <template v-slot:viewer>
+               <div v-html='page.html' v-append='page.html'>
+              </div>
+            </template>
+          </page>
+        </template>
+      </article>
+    </template>
+ 
+     <template v-if='isAuthorized == false'>
+       <div class='ui divider horizontal'>
+         login
+      </div>
+       <sign class='ui form'>
+      </sign>
+    </template>
+
+
+  </main>
+ </body>
+</html>
+
+ <template type='text/x-template' id='about'>
+   <div v-ui>
+     <div class='ui label corner' @click='toggle'>
+       <i class='icon edit'>
+      </i>
+    </div>
+     <div class='image'>
+       <img class='ui fluid image' :src='avater'>
+    </div>
+     <template v-if='isShow'>
+       <div class='content'>
+         <div class='header'>
+           {{ title }}
+        </div>
+         <div class='meta'>
+           <span class='license'>
+             {{ license }}
+          </span>
+           <span class='detail'>
+             {{ detail }}
+          </span>
+        </div>
+         <div class='description'>
+           {{ description }}
+        </div>
+      </div>
+       <div class='extra content'>
+         <template v-for='obj in nav'>
+           <a :href='obj.url' target='_blank'>
+             <i :class="['icon',obj.icon]">
+            </i>
+          </a>
+        </template>
+      </div>
+    </template>
+  </div>
+</template>
+ <template type='text/x-template' id='sign'>
+   <div v-ui>
+     <div class='field'>
+       <div class='ui input icon'>
+         <i class='icon user'>
+        </i>
+         <input type='text' name='username' placeholder='username'>
+      </div>
+    </div>
+     <div class='field'>
+       <div class='ui input icon'>
+         <i class='icon lock'>
+        </i>
+         <input type='password' name='password' placeholder='password'>
+      </div>
+    </div>
+     <div class='ui buttons'>
+       <div class='ui button submit green' @click="sign='up'">
+         UP
+      </div>
+       <div class='or'>
+      </div>
+       <div class='ui button submit blue' @click="sign='in'">
+         IN
+      </div>
+    </div>
+     <div class='ui message error'>
+    </div>
+  </div>
+</template>
+ <template type='text/x-template' id='page'>
+   <div :class="[{'fitted':data.fit}]" v-ui>
+     <div class='ui labels blue'>
+       <slot name='labels'>
+      </slot>
+    </div>
+     <div class='view'  ref='content'>
+       <slot name='viewer'>
+      </slot>
+    </div>
+     <div class='edit' v-if='data.editing'>
+       <slot name='editor'>
+      </slot>
+    </div>
+  </div>
+</template>
+ 
+ <script>
+   window.MathJax={
+     skipStartupTypeset:true,
+     root:'js/native/math-jax',
+     config:[
+       'MMLorHTML.js'
+     ],
+     jax:[
+       'input/TeX',
+       'input/MathML',
+       'input/AsciiMath',
+       'output/HTML-CSS',
+       'output/NativeMML'
+     ],
+     extensions:[
+       'tex2jax.js',
+       'mml2jax.js',
+       'asciimath2jax.js',
+       'MathMenu.js',
+       'MathZoom.js'
+     ],
+     asciimath2jax:{
+       delimiters:[
+         ['`','`'],
+         ['$','$']
+       ]
+     },
+     'HTML-CSS':{
+       matchFontHeight:false,
+       preferredFont:null,
+       webFont:'STIX'
+     },
+     TeX:{
+       extensions:[
+         'AMSmath.js',
+         'noErrors.js',
+         'AMSsymbols.js',
+         'noUndefined.js'
+       ]
+     },
+     tex2jax:{
+       inlineMath:[
+         ['$','$'],
+         ['\\(','\\)']
+       ],
+       processEscapes:true
+     }
+   }
+</script>
+
+<!-- native -->
+ <script src='js/native/dat-gui-0.7.6.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/highlight/9.16.0.min.js'></script>
+ <script src='js/native/math-jax/2.7.6.min.js'></script>
+ <script src='js/native/handlebars-5.0.0.min.js'></script>
+
+ <!-- native.gun-db -->
+ <script src='js/native/gun/0.2019.930.min.js'></script>
+ <script src='js/native/gun/lib/open.js'></script>
+ <script src='js/native/gun/sea.js'></script>
+
+ <!-- native.moment -->
+ <script src='js/native/moment/2.24.0.min.js'></script>
+ <script src='js/native/moment/array-dates-2.0.3.min.js'></script>
+
+ <!-- native.codemirror -->
+ <script src='js/native/code-mirror/5.49.1.min.js'></script>
+ <script src='js/native/code-mirror/addon-5.49.1.min.js'></script>
+ <script src='js/native/code-mirror/mode-5.49.1.min.js'></script>
+
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.min.js'></script>
+ <script src='js/vue/gun-0.0.1.min.js'></script>
+ <script src='js/vue/append-2.0.0.min.js'></script>
+ <script src='js/vue/dat-gui-0.0.1.min.js'></script>
+ <script src='js/vue/code-mirror-4.0.6.min.js'></script>
+
+ <script>
+   /*
+    * 利用
+    */
+   Vue.use(VueGun)
+   Vue.use(VueDatGui)
+   Vue.use(VueAppend)
+   Vue.use(VueCodeMirror,{
+     options:{
+       scrollbarStyle  : 'simple',
+       theme           : 'default',
+       mode            : 'htmlmixed',
+       firstLineNumber : 1,
+       tabSize         : 2,
+       indentUnit      : 2,
+       matchTags       : {bothTags: true},
+       htmlMode        : true,
+       autoCloseTags   : true,
+       foldGutter      : false,
+       lineNumbers     : false,
+       lineWrapping    : true,
+       extraKeys: {
+         'Ctrl-A': 'autocomplete',
+         'Ctrl-Q': function(cm){
+           cm.foldCode(cm.getCursor())
+         },
+         'F11': function(cm){
+           cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+         }
+       }
+     }
+   })
+   /*
+    * insertedとupdateの両方をつけているのは
+    * component.$el自体のclassなどがリアクティブに変化した時の為
+    * ui:function(el...)にしないのは、こっちのほうが明瞭だからだよ
+    */
+   Vue.mixin({
+     directives:{
+       ui:{
+         inserted:function(el,binding,vnode){
+           el.classList.add(vnode.context.$options.name)
+         },
+         update:function(el,binding,vnode){
+           el.classList.add(vnode.context.$options.name)
+         }
+       }
+     },
+     data:function(){
+       return{
+         user:null
+       }
+     },
+     methods:{
+       init:function(){
+         this.user = this.$gun.user()
+       }
+     },
+     created:function(){
+       this.init()
+     }
+   })
+   /*
+    * 導入
+    */
+   Vue.component('self',{
+     template:'#about',
+     data:function(){
+       return{
+         isShow:false,
+         license:'MIT',
+         title:'What is GUN-DB?',
+         detail:'Created by thetalazuli',
+         avater:'asset/icon/xxxhdpi.png',
+         description:'First & foremost, GUN is a community of the nicest and most helpful people out there.GUN was created by Mark Nadal in 2014 after he had spent 4 years trying to get his collaborative web app to scale up with traditional databases.',
+         nav:[
+           {
+             icon:'twitter',
+             url:'https://twitter.com/marknadal'
+           },
+           {
+             icon:'github',
+             url:'https://github.com/amark'
+           }
+         ]
+       }
+     },
+     methods:{
+       toggle:function(){
+         return this.isShow = !this.isShow
+       } 
+     }
+   })
+   /*
+    * 認証
+    */
+   Vue.component('sign',{
+     template:'#sign',
+     data:function(){
+       return{
+         sign:''
+       }
+     },
+     computed:{
+       errors:function(){
+         return{
+           'User already created!'   :'作成に失敗：User already created!',
+           'Wrong user or password.' :'認証に失敗：Wrong user or password.'
+         }
+       }
+     },
+     methods:{
+       hide:function(){
+         this.$el.hidden = true
+       },
+       error:function(obj){
+         alert(this.errors[obj.err])
+       },
+       action:function(username,password){
+         var self=this
+         switch(this.sign){
+           case 'up':
+             this.user.create(username,password,function(obj){
+               if('err' in obj)
+                 self.error(obj)
+               else{
+                 alert('thank you. created a user!!!')
+                 self.$emit('signedup',obj)
+               }
+             })
+             break;
+           case 'in':
+             this.user.auth(username,password,function(obj){
+               console.dir(obj)
+               if('err' in obj)
+                 self.error(obj)
+               else{
+                 self.$emit('signedin',obj)
+                 self.hide()
+               }
+             })
+             break;
+         }
+       },
+       construct:function(){
+         var self=this
+         $(this.$el).form({
+           on:'submit',
+           fields:{
+             username:{
+               rules:[
+                 {
+                   type:'empty',
+                   prompt:'ユーザ名を入れて下さい'
+                 }
+               ]
+             },
+             password:{
+               rules:[
+                 {
+                   type:'empty',
+                   prompt:'秘密の鍵を入れて下さい'
+                 }
+               ]
+             }
+           },
+           onSuccess:function(event,fields){
+             self.action(fields.username,fields.password)
+             event.preventDefault()
+           }
+         })
+       }
+     },
+     mounted:function(){
+       this.construct()
+     }
+   })
+   /*
+    * 記事
+    */
+   Vue.component('page',{
+     model:{
+       prop:'data',
+       event:'input'
+     },
+     props:{
+       data:{
+         type:Object,
+         default:null,
+         required:true
+       }
+     },
+     template:'#page'
+   })
+
+   new Vue({
+     el:'main',
+     data:{
+       /*
+        * 設定項目の１つ
+        * 増えてきたらsettings:{}の中に入れる
+        */
+       width:'110mm',
+       /*
+        * 認証済か？
+        */
+       isAuthorized:false,
+       /*
+        * 下書き
+        * これに対応するそれぞれのボタンを押すとテンプレートエンジンを介して
+        * 処理されたHTMLが挿入される
+        */
+       drafts:{
+         normal:{
+           html:'hello world',
+           editing:false,
+           fit:false
+         },
+         image:{
+           html:`<img class='ui fluid image' src='https://www.sciencenews.org/wp-content/uploads/2019/03/033019_SZ_reviews_feat.jpg'>`,
+           editing:false,
+           fit:true
+         },
+         youtube:{
+           html:`<iframe width='100%' height='315' src='https://www.youtube.com/embed/tfATwXBnRXw' frameborder='0' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>`,
+           editing:false,
+           fit:true
+         },
+         code:{
+           html:` <pre id='{{id}}'><code class="javascript">$(document).ready(function() {
+  $('pre code').each(function(i, block) {
+       hljs.highlightBlock(block);
+  });
+});</code></pre>
+ <script>
+   hljs.highlightBlock(document.getElementById('{{id}}'));
+<\/script>`,
+           editing:false,
+           fit:false
+         },
+         math:{
+           html:` <div id='{{id}}'>
+\\[
+  \\frac{\\pi}{2} =
+  \\left( \\int_{0}^{\\infty} \\frac{\\sin x}{\\sqrt{x}} dx \\right)^2 =
+  \\sum_{k=0}^{\\infty} \\frac{(2k)!}{2^{2k}(k!)^2} \\frac{1}{2k+1} =
+  \\prod_{k=1}^{\\infty} \\frac{4k^2}{4k^2 - 1}
+\\]
+</div>
+ <script>
+ MathJax.Hub.Typeset(document.getElementById('{{id}}'))
+<\/script>`,
+           editing:false,
+           fit:false
+         },
+         calendar:{
+           html:` <table class='ui table single line unstackable celled fixed very basic'>
+   <thead>
+     <tr>
+       <th class='center aligned' style='width:3em;'>日付</th>
+       <th>内容</th>
+    </tr>
+  </thead>
+   <tbody>
+     {{#each days}}
+       <tr>
+         <td class='center aligned'>{{@this}}</td>
+         <td>内容</td>
+      </tr>
+     {{/each}}
+  </tbody>
+</table>`,
+           editing:false,
+           fit:true
+         }
+       },
+       /*
+        * 記事一覧（me）
+        */
+       articles:{
+       },
+       /*
+        * 記事一覧（other）
+        */
+       logs:{
+       },
+     },
+     filters:{
+       MMDD:function(timestamp){
+         /*
+          * わざわざVUE版のMOMENT()を使うこともない
+          */
+         return moment(timestamp,'x').format('MM/DD')
+       }
+     },
+     methods:{
+       insertPage:function(type){
+         /*
+          * 記事を挿入
+          * cat:created at time
+          */
+         var cat = moment().valueOf()
+         var draft = _.clone(this.drafts[type],true)
+         var template = Handlebars.compile(draft.html)
+         /*
+          * テンプレート記法に対応
+          * Handlerbars（ループ文とか使えるぞ）
+          */
+         draft.html = template({
+           id:`x${Math.round((Math.random() * 36 ** 12)).toString(36)}`,
+           date:moment().format('YYYY-MM-DD'),
+           days:moment().nextNDays(14,'MM/DD')
+         })
+
+         /*
+          * UPDATE:LOCAL-VARIABLES
+          */
+         this.$set(this.articles,cat,draft)
+
+         /*
+          * UPDATE:GUN-DB
+          */
+         this.$gun.update(cat)
+       },
+       updatePage:_.throttle(function(cat){
+         /*
+          * 記事を更新するだけだよ
+          * 通信量を抑えて処理を軽量化（2000ms(2s)）
+          */
+         this.$gun.update(cat)
+       },2000),
+       removePage:function(cat){
+         /*
+          * 記事を削除するだけ
+          * NULLを入れるだけだよ
+          */
+         this.articles[cat] = null
+         this.user.get('articles').get(cat).put(null)
+       },
+       editPage:function(cat){
+         /*
+          * 記事を編集可能にするだけ
+          * エディットフラグをトグルする
+          */
+         this.articles[cat].editing = !this.articles[cat].editing
+         this.$gun.update(cat)
+       },
+       hasPage:function(cat){
+         /*
+          * 記事が削除済か確認
+          * キーに対してNULLがあれば済
+          */
+         return this.articles[cat] != null
+       },
+       fitPage:function(cat){
+         /*
+          * 記事内のパディングを削除
+          * .ui.segmentを.ui.segment.fittedにするだけ
+          */
+         this.articles[cat].fit = !this.articles[cat].fit
+         this.$gun.update(cat)
+       },
+       construct:function(){
+         var self=this
+         /*
+          * 設定画面（DAT.GUIを使って工数を減らそう）
+          * 機能優先
+          */
+         $(this.$refs.settings).popup({
+           position:'top right',
+           closable:true,
+           on:'click'
+         })
+       }
+     },
+     created:function(){
+       this.init()
+       var self=this
+       this.$gun.update = function(timestamp){
+         /*
+          * ローカルのりアクティブな変数を操作したら
+          * GUN-DB側に反映する（とても大事なことだ）
+          */
+         self.user.get('articles').get(timestamp).put(self.articles[timestamp])
+       }
+     },
+     mounted:function(){
+       var self=this
+       this.construct()
+       /*
+        * 認証後
+        * 削除されている記事はキーに対してNULLが埋め込んである。
+        * NULLでない、即ち記事がある場合のみ$SETしていこう（$SETはREACTIVEの為）
+        */
+       this.$gun.on('auth',function(obj){
+         self.isAuthorized=true
+         self.user.get('articles').once().map(function(page,timestamp){
+           if(page != null){
+             // null is deleted
+             self.$set(self.articles,timestamp,page)
+           }
+         })
+       })
+
+       /*
+        * 認証前（もしURLにユーザIDが含まれていればそのIDのユーザの記事を一覧表示する）
+        */
+       var id=new URLSearchParams(window.location.search).get('id')
+       this.$gun.get(`~@${id}`).once().map().get('articles').map(function(page,timestamp){
+         if(page != null){
+           self.$set(self.logs,timestamp,page)
+         }
+       })
+
+     }
+   })
+</script>

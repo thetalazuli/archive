@@ -1,0 +1,385 @@
+ <style>
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+
+   html,
+   body{
+     font-size:12px;
+     font-family:'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+    margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+    vertical-align: top;
+    display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+    display:none;
+   }
+   .ui.selection.dropdown{
+    padding:.14285714em 0;
+    border:none;
+    min-height:auto;
+    background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+    font-size: .85714286rem;
+    padding: .5833em .833em;
+   }
+   nav{
+    position: absolute;
+    text-align:right;
+    width:calc(100%);
+    z-index: 999;
+    right: -1em;
+    top: -1em;
+   }
+
+   .ui.label>.icon{
+    margin-right:0;
+   }
+</style>
+
+ <template id='dropdown'>
+  <div ref='labels' :class='ui'>
+    <input name='labels' type='hidden'>
+    <div class='default text'>
+      <div class='ui label'>
+        <i class='icon tags'>
+        </i>
+      </div>
+    </div>
+  </div>
+</template>
+
+  <template id='header'>
+    <section>
+      <div class='ui ribbon label orange'>
+        {{article.title}}
+      </div>
+  </section>
+
+</template>
+
+  <template id='section'>
+    <section>
+      <nav class='ui labels blue'>
+        <div class='ui label'>{{data.comment}}</div>
+        <div class='ui label'>{{data.createdAt}}</div>
+        <slot name='cmd'>
+      </slot>
+      </nav>
+       <div class='body' v-html='data.content'>
+      </div>
+   </section>
+ </template>
+
+ <body>
+   <main>
+     <div class='ui grid padded'>
+ 
+       <div class='row'>
+         <div class='column'>
+
+           <div class='ui segments' v-if='edit.article'>
+             
+             <attribute class='ui segment' :article='edit.article'>
+
+            </attribute>
+
+            
+
+
+            <template v-if='!edit.section'>
+             <page class='ui segment' :data='dat' v-for='dat in edit.article.sections'>
+               <template v-slot:cmd>
+                  <div class='ui label' @click='editSection(dat)'><i class='icon edit'></i></div>
+               </template>
+            </page>
+          </template>
+           <template v-else>
+              <page class='ui segment' :data='edit.section'>
+                <template v-slot:cmd>
+              　</template>
+
+              </page>
+           </template>
+
+
+
+           </div>
+
+
+           <div class='ui segments'  v-if='!edit.article'>
+             <div class='ui segment'>
+
+               
+
+
+
+               <!-- 目次 -->
+               <indexes
+                 @select='openArticle'
+                 v-for='(article,key) in articles'
+                 :color='key'
+                 :article='article'
+                 :template='master.article'>
+               </indexes>
+
+
+
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+       <div class='row'>
+         <div class='column'>
+           
+           <div class='ui pointing menu icon'>
+             <div class='item active'><i class='icon edit'></i></div>
+             <div class='item'><i class='icon clone'></i></div>
+             <div class='item' @click='closeArticle'><i class='icon remove'></i></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class='row'>
+          <div class='column'>
+
+            <div class='ui labels teal' v-if='edit.article && !edit.section'>
+                <div class='ui label' @click='pushSection'><i class='icon plus'></i></div>
+              <div class='ui label'>issue</div>
+              <div class='ui label'>math-jax</div>
+              <div class='ui label'>highlight-code</div>
+            </div>
+
+
+            <codemirror v-if='edit.section' v-model='edit.section.content'></codemirror>
+
+    </div>
+  </div>
+    </div>
+  </main>
+</body>
+
+ <script src='/js/native/lodash/4.17.15.min.js'></script>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script>
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+  Vue.component('attribute',{
+     template:'#header',
+     props:['article']
+   })
+   Vue.component('page',{
+     template:'#section',
+     props:['data']
+   })
+
+   Vue.component('indexes',{
+     template:'#dropdown',
+     props:['article','color','template'],
+     computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+     },
+      methods:{
+        loadLabels:function(){
+          for(k in this.article){
+          $(this.$refs.labels).dropdown('add label',k,k)
+          }
+        },
+        getTime:function(){
+          return new Date().getTime()
+        },
+        select:function(name){
+          var info = this.article[name]
+          this.$emit('select',info)
+        },
+        remove:function(name){
+          this.$delete(this.article,name)
+        },
+        add:function(name){
+          var key = this.getTime()
+          this.$set(this.article,
+            name,
+            _.assign({},this.template,{
+              title:name,
+              createdAt:key
+            })
+          )
+        }
+      },
+      mounted:function(){
+        var self = this
+        $(this.$refs.labels).dropdown({
+          allowAdditions:true,
+          onLabelSelect:function(dom){
+            $(self.$refs.labels).dropdown('remove activeLabel')
+            self.select(dom.dataset.value)
+          },
+          onRemove:self.remove,
+          onAdd:self.add
+        })
+
+
+      }
+   })
+
+   new Vue({
+     el:'main',
+     data:{
+       edit:{
+         article:null,
+         section:null
+       },
+       master:{
+        section:{
+          comment:'hello world',
+          createdAt:'1991/09/91',
+          content:''
+        },
+        article:{
+          title:'',
+          sections:{
+
+          }
+        }
+       },
+       articles:{
+       },
+       colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ],
+       pages:{
+
+       }
+     },
+     watch:{
+       articles:{
+         deep:true,
+         handler:function(obj){
+           console.dir(obj)
+         }
+       }
+     },
+     methods:{
+       getTime:function(){
+          return new Date().getTime()
+       },
+       editSection:function(data){
+          this.edit.section = data
+       },
+       closeSection:function(data){
+         this.edit.section = null
+       },
+       closeArticle:function(){
+        if(this.edit.section){
+        this.edit.section = null
+        return
+       }
+       if(this.edit.article){
+        this.edit.article = null
+       }
+
+       },
+       pushSection:function(){
+         var key = this.getTime()
+         this.$set(
+           this.edit.article.sections,
+           this.getTime(),
+           _.assign({},this.master.section,{
+              createdAt:key
+           })
+         )
+
+       },
+       openArticle:function(article){
+         this.edit.article = article
+       },
+       init:function(){
+         var self = this
+         this.colors.forEach(function(v,i){
+           self.$set(self.articles,v,{})
+         })
+       }
+     },
+     created:function(){
+       this.init()
+     },
+     mounted:function(){
+       
+     }
+   })
+
+
+
+</script>

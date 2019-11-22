@@ -1,0 +1,108 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template type='x-text/template' id='document'>
+        <article :class="['ui','segment',doc.color]" id='view'>
+            <header>
+              <div :class="['ui','ribbon','label',doc.color]">
+                {{doc.title}}
+             </div>
+              <div :class="['ui','label',doc.color]">
+                {{doc.description}}
+             </div>
+           </header>
+            <section v-html='doc.content' contenteditable='true' ref='editable'>
+           </section>
+         </article>
+   </template>
+    <main>
+      <div class='ui grid padded'>
+        <div class='row'>
+          <div class='column'>
+            <div class='ui form'>
+              <div class='field'>
+                <div class='fields'>
+                  <div class="five wide field">
+                    <input class='ui input' type='text' v-model='edit.title' placeholder='title'>
+                 </div>
+                  <div class='eight wide field' placeholder='edit.description'>
+                    <input class='ui input' type='text' v-model='edit.description' placeholder='description'>
+                 </div>
+                  <div class='four wide field' placeholder='description'>
+                     <select class='ui dropdown fluid'>
+                       <option value='grey'>grey</option>
+                       <option value='brown'>brown</option>
+                       <option value='pink'>pink</option>
+                       <option value='purple'>purple</option>
+                       <option value='violet'>violet</option>
+                       <option value='blue'>blue</option>
+                       <option value='teal'>teal</option>
+                       <option value='green'>green</option>
+                       <option value='olive'>olive</option>
+                       <option value='yellow'>yellow</option>
+                       <option value='orange'>orange</option>
+                       <option value='red'>red</option>
+                    </select>
+                 </div> 
+               </div>
+             </div>
+           </div>
+            <document v-model='edit'>
+           </document>
+            <div class='ui menu pointing icon'>
+              <div class='item active'><i class='icon edit'></i></div>
+              <div class='item' @click='push'><i class='icon file'></i></div>
+              <div class='item' @click='save'><i class='icon save'></i></div>
+              <div class='item' @click='binding'><i class='icon sync-alt'></i></div>
+           </div>
+            <div class='ui segment' id='editor'>
+              <codemirror v-model='edit.content' ref='editor'>
+             </codemirror>
+           </div>
+            <div class='ui labels'>
+              <span :class="['ui','label',doc.color]" v-for='(doc,i) in pages' @click='open(i,doc)'>
+                {{doc.title}}
+             </span>
+           </div>
+         </div>
+       </div>
+     </div>
+   </main>
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='index.js'></script>
+</html>

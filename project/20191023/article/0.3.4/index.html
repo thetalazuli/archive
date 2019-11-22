@@ -1,0 +1,16 @@
+ <script src='/js/native/github/3.3.0.min.js'></script>
+ <script>
+
+  var github = new GitHub({
+   username: 'ohtruss',
+   password: '',
+   auth:'basic'
+  });
+
+  user = github.getUser();
+
+  github.getGist('8f1a134a419eeaf8eeeee687a97bacbf').read().then(function(list){
+    console.dir(list)
+  })
+
+</script>

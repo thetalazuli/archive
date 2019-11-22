@@ -1,0 +1,37 @@
+{
+  "settings":{
+    "*":{
+      "format":"global",
+      "authorization":"true"
+    },
+    "code-mirror/addon/*":{
+      "deps":["code-mirror"]
+    },
+    "code-mirror/keymap/*":{
+      "deps":["code-mirror"]
+    },
+    "code-mirror/mode/*":{
+      "deps":["code-mirror","code-mirror/addon"]
+    }
+  },
+  "list":{
+    "native":{
+      "code-mirror"          :{"main":"5.48.4","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/keymap"   :{"main":"5.48.4","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/addon"    :{"main":"5.48.4","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/mode"     :{"main":"5.48.4","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "moment"               :{"main":"2.24.0","license":"mit","link":"https://github.com/moment/moment","author":"moment"},
+      "handlebars"           :{"main":"4.1.2","license":"mit","link":"https://github.com/wycats/handlebars.js","author":"wycats"},
+      "highlight"            :{"main":"9.15.10","license":"bsd","link":"https://github.com/highlightjs/highlight.js/","author":"highlight.js"},
+      "math-jax"             :{"main":"2.7.6","license":"apache","link":"https://github.com/mathjax/MathJax","author":"mathjax"}  
+    },
+    "jquery":{
+      "fomantic-ui"          :{"main":"2.7.8","license":"mit","link":"https://github.com/fomantic/Fomantic-UI","author":" Community fork of Semantic-UI"},
+      "vegas"                :{"main":"2.4.4","license":"mit","link":"https://github.com/jaysalvat/vegas","author":"Jay Salvat"}
+    },
+    "vue":{
+      "moment"               :{"main":"4.0.0","license":"mit","link":"https://github.com/brockpetrie/vue-moment","author":"brockpetrie"},
+      "code-mirror"          :{"main":"4.0.6","license":"mit","link":"https://github.com/surmon-china/vue-codemirror","author":"surmon-china"}
+    }
+  }
+}

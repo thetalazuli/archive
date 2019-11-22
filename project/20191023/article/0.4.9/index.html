@@ -1,0 +1,24 @@
+ <script id='example' type='text/x-handlebars-template'>
+  <div id='{{uuid}}'></div>
+  <script>
+ </script>
+</script>
+ <body>
+
+</body>
+ <script src='/js/native/handlebars/4.1.2.min.js'></script>
+ <script>
+  var d = {
+    uuid:'x00'
+  }
+  var el = document.getElementById('example')
+
+  function getTemplate(html){
+    return Handlebars.compile(html)
+  }
+
+  var tmpl = getTemplate(el.innerHTML)
+
+  console.dir(tmpl(d))
+
+</script>

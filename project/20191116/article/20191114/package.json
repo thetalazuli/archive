@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@hapi/bell": "^11.1.0",
+    "@hapi/cookie": "^10.1.2",
+    "@hapi/hapi": "^18.4.0",
+    "gun": "^0.2019.930",
+    "inert": "^5.1.3"
+  }
+}

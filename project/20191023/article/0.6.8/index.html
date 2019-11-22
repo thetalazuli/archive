@@ -1,0 +1,95 @@
+
+ <template id='brain'>
+   <div>
+     <slot name='head'>
+    </slot>
+     <slot name='body'>
+    </slot>  
+  </div>
+</template>
+
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+</style>
+ <body>
+   <main>
+     <div class='ui menu pointing icon'>
+       <router-link to='home'><div class='item active'><i class='icon home'></i></div></router-link>
+       <router-link to='edit'><div class='item'><i class='icon edit'></i></div></router-link>
+    </div>
+     <div class='ui segment'>
+       <router-view name='home'>
+         <template v-slot:body>
+           Hello home
+           <router-view>
+              <template v-slot:body>
+                  Hello split
+                  </template>
+          </router-view>
+        </template>
+      </router-view>
+       <router-view name='edit'>
+         <template v-slot:body>
+           Hello Edit
+        </template>
+      </router-view>
+
+      
+    </div>
+  </main>
+</body>
+
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/router/3.1.3.min.js'></script>
+ <script>
+   var view = Vue.component('brain',{
+     template:'#brain'
+   })
+
+   var routes;
+       routes = new VueRouter({
+         routes:[
+           {
+             path:'/home',
+             components:{
+               default:view,
+               home:view
+             },
+             children:[
+               {
+                 path:'/users',
+                 component:view
+               }
+             ]
+           },
+           {
+             path:'/edit',
+             components:{
+               default:view,
+               edit:view
+             }
+           }
+         ]
+       })
+
+
+
+   new Vue({
+     el:'main',
+     router:routes,
+     mounted:function(){
+
+     }
+   })
+
+
+
+</script>

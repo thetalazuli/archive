@@ -1,0 +1,222 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template type='text/x-template' id='doc'>
+  
+      <article :class="['ui',{'segments':hasedit},{'expand':v.expand}]" v-show='hasedit'>
+
+
+          <div :class="['ui','segment',{'ssr':!hasedit},classObject]">
+            <div style='display:flex;'>
+              <div class='ui ribbon label black'>
+                  <input
+                  type="text"
+                  v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 0}"
+                  v-model="v.title"
+                  placeholder="下書"
+                /></div><div class='ui dropdown selection multiple search' ref='tags'>
+                  <input name='tags' type='hidden'>
+                  <div class='default text'>
+                    <div class='ui label blue'>
+                      <i class='icon tags'></i>
+                    </div>
+                  </div>
+
+                  <div class="menu">
+                      <div class="item" :data-value="label" v-for='label in _.keys(v.section)'>{{label}}</div>
+                  </div>
+
+
+                </div>
+            </div>
+             <nav class='ui labels black'>
+               <div class='ui label'>slsls</div>
+               <div class='ui label' @click='piled = !piled'>piled</div><div class='ui label' @click='loading = !loading'>loading</div><div class='ui label' @click='stacked = !stacked'>stacked</div><div class='ui label' @click='v.expand = !v.expand'>expand</div>
+               <div class='ui label'><i :class="['icon',mode]"></i></div>
+              </nav>
+
+
+          </div>
+
+          <template v-for='key in Object.keys(v.section)'>
+              <div :class="['ui','segment',{'ssr':!hasedit}]" v-show='v.expand'>
+  
+                  <div class='ui ribbon label black'>{{key}}</div>
+                  <nav class='ui labels black'>
+                      <div class='ui label'>1919-09-19</div>
+                      <div class='ui label'  @click='add(v.section[key])'><i :class="['icon','arrow-down']"></i></div>
+                    </nav>       <p></p>
+                    <div v-html='v.section[key].content'></div>
+              </div>
+              
+               <div :class="['ui','menu','icon',{'ssr':!hasedit}]" v-if='v.section[key].edit'>
+                <div class='item active'><i class='icon edit'></i></div>
+              </div>
+              <div :class="['ui','segment',{'ssr':!hasedit}]" v-show='v.expand' v-if='v.section[key].edit' style='padding:0;box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0;border-bottom: 2px solid rgba(34,36,38,.15);'>
+                  <codemirror v-model='v.section[key].content'>
+                 </codemirror>
+              </div>
+
+          </template>
+
+
+
+        </article>
+   </template>
+    <main>
+      <input type='text' v-model='cnt' v-test>
+      <div class='ui grid padded'>
+        <div class='row'>
+          <div class='column'>
+
+          
+
+           <div class='ui articles'>
+              <div :class="['ui','segment']" v-if='current'>
+  
+                  <div class='ui ribbon label black'></div>
+                  <nav class='ui labels black'>
+                      <div class='ui label'>1919-09-19</div>
+                      <div class='ui label' @click='current = undefined'>閉じる</div>
+       
+                    </nav>       <p></p>
+                    <div v-html='current.content'></div>
+              </div>
+            <doc :v='doc' :mode='mode' v-for='(doc,i) in articles' @addfav='add' v-if='!current'>
+
+           </doc>  
+          </div>   
+          
+          
+
+          <div class='ui menu pointing icon mode' ref='tab'>
+              <div class='item' data-tab='home'><i class='icon home'></i></div>
+              <div class='item' data-tab='users' @click="mode = 'users'"><i class='icon users'></i></div>
+              <div class='item' data-tab='edit' @click="mode = 'edit'"><i class='icon edit'></i></div>
+              <div class='item' data-tab='star' @click="mode = 'star'"><i class='icon star'></i></div>
+              <div class='item' data-tab='clone' @click="mode = 'clone'"><i class='icon clone'></i></div>
+              <div class='item' data-tab='drive' @click="mode = 'drive'"><i class='icon hdd'></i></div>
+              <div class='item' data-tab='trash' @click="mode = 'trash'"><i class='icon trash'></i></div>
+
+         
+              <div class='right menu'>
+                  <div class='item' @click='push()'><i class='icon file'></i></div>
+              </div>
+           </div>
+
+           <div class='ui tab' data-tab='edit'>
+
+  
+           <div :class="['ui','segment']" style='padding:0;box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0;border-bottom: 2px solid rgba(34,36,38,.15);'>
+              <codemirror v-model='current.content' v-if='current'>
+             </codemirror>
+  
+  
+          </div>
+
+          <div class='ui labels'>
+              <div class='ui label'>h3</div>
+              <div class='ui label'>h3</div>
+            </div>
+
+        </div>
+
+        <div class='ui tab' data-tab='drive'>
+            ここはドライブ（repo.js）
+          </div>
+
+        <div class='ui tab' data-tab='users'>
+            ここはユーザ一覧（gisthub.jsのgistを利用）
+          </div>
+        <div class='ui tab' data-tab='star'>
+          ここはお気に入り
+        </div>
+        <div class='ui tab' data-tab='clone'>
+          ここはリフィル
+          </div>
+
+
+          <div class='ui tab' data-tab='trash'>
+            ここはゴミ箱
+            </div>
+
+           <div class='ui card fluid ui tab' data-tab='home'>
+            ここはヘッダ
+
+
+             <!-- users -->
+   
+             <div class='ui image'>
+               <!-- 人のつながりを強化する広告 (記事分析）-->
+               <img src='https://nekogazou.com/wp-content/uploads/2013/03/20375ced40379f1e8ea26f8e6c287f043.jpg'>
+             </div>
+    
+            </div>
+            <div class='ui tab' data-tab='file'>
+              <!--
+              <div class='ui labels'>
+                <div class='ui label' @click='push()'><i class='icon file'></i></div>
+                <div class='ui label' data-tab='edit' @click="mode = 'edit'"><i class='icon edit'></i></div>
+                <div class='ui label' @click="mode = 'star'"><i class='icon star'></i></div>
+                <div class='ui label' @click="mode = 'clone'"><i class='icon clone'></i></div>
+                <div class='ui label' @click="mode = 'trash'"><i class='icon trash'></i></div>
+            </div>
+-->
+           </div>
+
+
+
+
+
+
+           <div class='ui segment' v-for='i in favorite'>
+              {{i.content}}
+            </div>
+
+
+
+         </div>
+       </div>
+     </div>
+   </main>
+ </body>
+
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='/js/vue/plugin/input-auto-width/1.0.9.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='index.js'></script>
+</html>

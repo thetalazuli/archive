@@ -1,0 +1,76 @@
+html,
+body{
+  font-size:12px;
+}
+main{
+  width:100%;
+}
+.ui.table>thead>tr>th,
+.ui.table>tbody>tr>td{
+  padding:0;
+}
+/*
+ * 入力
+ */
+input{
+  background:transparent;
+  text-align:left;
+  appearance:none;
+  outline:none;
+  border:none;
+  padding:0;
+}
+input::placeholder{
+  color:white;
+}
+/*
+ * 状態
+ *   c_s    客滞在中 AND 清掃済
+ *   empty  客室無
+ *   blank  未清掃
+ *   clean  客室清掃完
+ *   seisou 客室清掃済
+ *   stay   客滞在中
+ */
+td.c_s,
+td.empty,
+td.blank{
+  color:transparent;
+}
+td.stay,
+td.clean,
+td.seisou{
+  color:black;
+}
+td.clean,
+td.seisou{
+  background-color:palegreen;
+}
+td.stay  {
+  background-color:pink;
+}
+/*
+ * 見栄
+ */
+.ui.card,
+.ui.label,
+.ui.table{
+  border-bottom:2px solid rgba(34,36,38,.15) !important;
+  box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+}
+/*
+ * 色分（サイド）
+ */
+.ui.table tbody tr:nth-child(-n+56) td:first-child{
+  background-color:rgba(33, 133, 208,0.1);
+}
+.ui.table tbody tr:nth-last-child(-n+56) td:first-child{
+  background-color:rgba(219, 40, 40, 0.1)
+}
+/*
+ * 文字色
+ */
+.ui.card p{
+  color:black;
+  line-height:1.2;
+}

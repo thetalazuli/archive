@@ -1,0 +1,844 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     /*
+      * ゴシック体
+      */
+     @font-face{
+       font-family:'あずき';
+       src:url('asset/azuki.ttf');
+     }
+     @font-face{
+       font-family:'うずら';
+       src:url('asset/uzura.ttf');
+     }
+     @font-face{
+       font-family:'りいてがき';
+       src:url('asset/riitn_r.otf');
+     }
+     /*
+      * 明朝体
+      */
+     @font-face{
+       font-family:'しっぽり';
+       src:url('asset/shippori-mincho-2.ttf');
+     }
+  </style>
+   <style>
+     @import url('css/animate-3.7.2.min.css');
+  </style>
+   <style>
+     html,
+     body{
+       font-size:12px;
+     }
+     /*
+      * 配置
+      */
+     body{
+       display:flex;
+       align-items:center;
+       justify-content:center;
+     }
+     /*
+      * 見栄
+      */
+      *:not(.icon){
+       font-weight:normal !important;
+       font-family:'あずき' !important;
+     }
+     .ui.menu,
+     .ui.label,
+     .ui.segments{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     /*
+      * 構造
+      */
+     main{
+       width:902px;                 /* 原稿用紙の画像の幅を基準とする */
+       min-width:902px;
+       margin:0 auto;
+     }
+     /*
+      * 原稿用紙上の入力用エリア（重ね合わせ）
+      */
+      .ui.segments .ui.segment:nth-child(2){
+       background:transparent;
+       position:absolute;
+       height:100%;
+       width:100%;
+       left:0;
+       top:0;
+     }
+     /*
+      * 原稿用紙の中身（位置合わせ）
+      */
+     article>.body{
+       width:100%;
+       height:100%;
+       padding-top:49px;
+       padding-left:43px;
+       padding-right:41px;
+       padding-bottom:42px;
+     }
+     /*
+      * 原稿用紙の中身にあたるコンテンツ
+      */
+     article>.body .content::selection{
+       background:transparent;
+       color:#0cf;
+     }
+     article>.body .content{
+       text-orientation:upright;    /* 英文字を90度回転するための指定 */
+       writing-mode:vertical-rl;    /* 書字方向は右から左に対する縦書 */
+       white-space:pre-wrap;        /* V-TEXT 用として自動で折り返す */
+       word-break:break-all;        /* 強制的に折返（連続した英文字） */
+       letter-spacing:6px;          /* 原稿用紙の縦マス分の位置合わせ */
+       line-height:27px;            /* 原稿用紙の横マス分の位置合わせ */
+       font-size:13px;              /* フォントサイズ 13PX固定とする*/
+       outline:none;                /* フォーカス時の選択境界線を消去 */
+       height:100%;
+       width:100%;
+     }
+     /*
+      * 補足
+      * 単なる位置合わせだよ
+      */
+     aside.ui.dimmer>.content .ui.label.ribbon{
+       left:calc(-1rem - 4.6em);
+     }
+     aside.ui.dimmer>.content p{
+       font-size:13px;
+     }
+     .animating.dimmable:not(body),
+     .dimmed.dimmable:not(body){
+       overflow:visible;
+     }
+     aside.ui.dimmer>.content{
+       padding-right:37px;
+       padding-left:40px;
+       text-align:left;
+       height:100%;
+       width:100%;
+     }
+     aside.ui.dimmer{
+       padding:.5em;
+     }
+     /*
+      * ドロップダウンメニューをラベル化する
+      */
+     .ui.dropdown>.default.text,
+     .ui.label>input::placeholder{
+       color:white !important;
+     }
+     .ui.label>input{
+       background:transparent;
+       line-height:0;
+       color:white;
+       outline:none;
+       border:none;
+       padding:0;
+     }
+     /*
+      * 非表示にする（VUEにマウントまでレイアウトが崩れてるから）
+      */
+     main{
+       display:none;
+     }
+     /*
+      * 位置合わせる（HTML2CANVASは縦書きにすると数PXずれる）
+      */
+     .ui.grab.segments>article>.body{
+       padding-top:43px;
+     }
+     .ui.grab.segments > .ui.label.corner,
+     .ui.grab.segments > .ui.dimmer{
+       display:none;
+     }
+     /*
+      * カラーパレットを収める
+      */
+      .ui.popup .vc-compact{
+       width:245px !important;
+     }
+     /*
+      * ドロップダウンをラベル化する
+      */
+     #btnSelectFont.ui.dropdown .menu .item{
+       color:white;
+     }
+     #btnSelectFont.ui.dropdown .menu{
+       background:#f2711c;
+       margin-top:1em;
+     }
+     #btnSelectFont.ui.dropdown>.dropdown.icon{
+       display:none;
+     }
+     #btnSelectFont.ui.dropdown{
+       z-index:999;
+       width:12em;
+     }
+     /*
+      * ポップアップの背景色を揃える
+      */
+     .ui.popup{
+       padding:0;
+       border:1px solid #f2711c;
+     }
+     /*
+      * ペンの色
+      */
+     .caret.pen{
+       z-index:99;
+       display:block;
+       position:absolute;
+     }
+     /*
+      * ユーザリストが縦を超えたらスクロール
+      */
+     .ui.grid>.row:nth-child(2){
+       height:500px;
+     }
+     #userlist{
+       height:100%;
+       overflow-y:auto;
+     }
+     /*
+      * スクロールバーは非表示にする
+      */
+     #userlist::-webkit-scrollbar{
+       display:none;
+     }
+     /*
+      * ２列目のユーザの名前と呟きの変更
+      */
+     input.username{
+       width:3em;
+     }
+     input.usertweet{
+       color:grey;
+       background:transparent;
+       line-height:0;
+       outline:none;
+       border:none;
+       padding:0;
+     }
+     /*
+      * 編集時はHTMLとして編集する。改行は<DIV>だ
+      * 受信時はTEXTとして格納する。改行もTEXTだ
+      * つまり、改行された要素内は::selectionも何も指定されてないから
+      * スタイルが有効にならない。フォントを変えてもバインドされないから
+      * 編集時、改行された要素は親要素を継承する（つまり body->div:style='contentStyle'だ
+      */
+     .body .content > div{
+       font-family:inherit !important;
+       color:inherit !important;
+     }
+     .body .content > *::selection{
+       color:#0cf !important;
+       background:transparent !important;
+     }
+     /*
+      * 使い方の説明が表示時にペンが上にこないように（CARET.PEN）
+      */
+     .view.ui.segments.dimmed{
+       z-index:999;
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+
+     <!-- 相手が発言している最中は相手のユーザ色に変わる -->
+     <i :class="['icon caret pen',who.color]" :style='caretStyle'>
+    </i>
+    
+     <div class='ui grid internally celled'>
+       <!-- １行目　-->
+       <div class='row'>
+
+         <div class='twelve wide column' id='toolbar'>
+           <div class='ui labels orange' v-show='!isAsiding'>
+             <h3 id='btnTweet'
+                  class='ui label animated fadeIn pointing below blue'>
+               <i class='icon twitter'>
+              </i>ツイッターに投稿しちゃう？
+            </h3>
+             <h3 id='btnSaveImage'
+                  class='ui label animated fadeInUp delay-3s' @click='save'>
+               <i class='icon save'>
+              </i>画像で保存しとく？
+            </h3>
+             <h3 id='btnSelectColor'
+                  class='ui label animated fadeInUp delay-4s' ref='contentColor'>
+               <input type='text' v-model='content.colors.hex' placeholder='好きな色は？'>
+            </h3>
+             <div class='ui popup'>
+               <compact-picker v-model='content.colors'>
+              </compact-picker>
+            </div>
+             <h3 id='btnSelectFont'
+                  class='ui dropdown search label orange animated fadeInUp delay-5s' ref='contentFont'>
+               <input type='hidden' name='country'>
+               <i class='dropdown icon'>
+              </i>
+               <input class='search'>
+               <div class='default text'>
+                 好きなフォントは？
+              </div>
+               <div class='menu'>
+                 <div class='item'>あずき</div>
+                 <div class='item'>うずら</div>
+                 <div class='item'>しっぽり</div>
+                 <div class='item'>りいてがき</div>
+              </div>
+            </h3>
+           </div>
+        </div>
+         <div class='four wide column'>
+        </div>
+
+      </div>
+
+       <!-- 二行目 -->
+       <div class='row'>
+
+         <div class='twelve wide column'>
+           <div ref='capture' :class="['ui segments stacked view',{'grab':isGrabbing},'animated fadeIn']">    
+             <!-- 原稿用紙 -->
+             <div class='ui segment fitted paper'>
+               <img src='asset/p0181_m_layer.png'>
+            </div>
+             <!-- 原稿用紙の中身 -->
+             <article class='ui segment fitted'>   
+               <div ref='draft'>
+                 <span>&nbsp;読書感想文</span>
+                 <span>&nbsp;読書感想文&#13;&#10;　　　　　　　　あなたの名前は？</span>
+              </div>
+               <div class='body'>
+                 <div
+                   class='content'
+                  :style='contentStyle'
+                   v-text='content.text'
+                   @keyDown='keyDw($event)'
+                   @input='charIn($event)'
+                   @keyUp='keyUp($event)'
+                   contenteditable='true'
+                   spellcheck='false'
+                   ref='content'>
+                </div>
+              </div>
+            </article>
+             <!-- 使い方の説明 -->
+             <aside class='ui dimmer inverted' ref='window'>
+               <div class='content'>
+                 <h1>読書感想文</h1>
+                 <div class='ui label ribbon orange'>
+                   このサイトの使い方
+                </div>
+                 <p></p>
+                 <p>
+                   わしは可愛いフォントで作りたかったし余計なものは一切見せたくない。既にあるサービスだがわしが作るともう少し可愛くなるということを見せたかった。みたままに編集できるというのも大事な要素の１つだ。フォントも選択したかったしツイートにそのまま載せてみたかったりしたそれにフォントの色も変えたかった。テキストを選択したときはハイライトした色も変えたくてしたいことをたくさん盛り込んだ。楽しい。                     </p>
+                 <div class='ui label ribbon orange'>
+                   このサイトの使い方
+                </div>
+                 <p></p>
+                 <p>
+                   ...</p>
+              </div>
+            </aside>
+             <nav class='ui label corner' @click='open'>
+               <i class='icon edit'>
+              </i>
+            </nav>
+          </div>
+        </div>
+         <div class='four wide column' id='userlist'>
+           <div class='ui list selection divided'>
+
+             <template v-for='(row,id,no) in gun.users'>
+               <template v-if='row.id == user.id'>
+                 <a :class="['item',{'active':row.id == user.id}]">
+                   <span :class="['ui label horizontal',user.color = colors[no]]">
+                     <input class='username' type='text' v-model='user.name' @input='synchronize' placeholder='お名前'>
+                  </span>
+                   <span>
+                     <input class='usertweet' type='text' v-model='user.tweet' @input='synchronize' placeholder='一言添える'>
+                  </span>
+                </a>
+              </template>
+              <!-- input でなくてもよいが、何も入力されていない時に幅が縮まるのが面倒くさかった。INPUTなら固定 -->
+               <template v-else>         
+                 <a class='item'>
+                   <span :class="['ui label horizontal',colors[no]]">
+                     <input class='username' type='text' v-model='row.name' placeholder='お名前' readonly>
+                  </span>
+                   <span>
+                     <input class='usertweet' type='text' v-model='row.tweet' placeholder='一言添える' readonly>
+                  </span>
+                </a>
+              </template>
+            </template>
+
+          </div>
+        </div>
+
+     </div>
+   </div>
+
+  </main>
+ </body>
+</html>
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/caret-0.3.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+
+ <!-- native -->
+ <script src='js/native/push-1.0.12.min.js'></script>
+ <script src='js/native/typed-2.0.11.min.js'></script>
+ <script src='js/native/keycode-1.0.0.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/html2canvas-1.0.0.min.js'></script>
+ <script src='js/native/canvas2image-1.0.0.min.js'></script>
+
+ <!--
+   注意
+     ISSUE:https://github.com/amark/gun/issues/820
+     BYE.JSは修正の必要有（通信が途切れたら自動でコールバックする仕組み）
+     js/native/gun/lib/bye.jsをnode_modules/gun/lib/にコピーすれば修正は必要ない
+     BYE.JS自体を
+      var Gun = (typeof window !== "undefined")? window.Gun : require('../gun');
+
+      Gun.on('opt', function(root){
+        this.to.next(root);
+        if(root.once){ return }
+        root.on('in', function(msg){
+          //Msg did not have a peer property saved before, so nothing ever went further
+          if(!msg._ || !msg.BYE){ return this.to.next(msg) }
+          var peer = msg._.via;
+          (peer.bye = peer.bye || []).push(msg.BYE);
+        })
+        root.on('bye', function(peer){
+          this.to.next(peer);
+          if(!peer.bye){ return }
+          var gun = root.gun;
+          Gun.obj.map(peer.bye, function(data){
+            Gun.obj.map(data, function(put, soul){
+              gun.get(soul).put(put);
+            });
+          });
+          peer.bye = [];
+        });
+      });
+
+      Gun.chain.bye = function(){
+        var gun = this, bye = gun.chain(), root = gun.back(-1), put = bye.put;
+        bye.put = function(data){
+          gun.back(function(at){
+            if(!at.get){ return }
+            var tmp = data;
+            (data = {})[at.get] = tmp;
+          });
+          root.on('out', {BYE: data});
+          return gun;
+        }
+        return bye;
+      }
+     に変更する
+     GUN.JSの2151行目を
+       peer.bye? peer.bye() : (tmp = peer.wire) && tmp.close && tmp.close();
+     から
+       typeof peer.bye == 'function' ? peer.bye() : (tmp = peer.wire) && tmp.close && tmp.close();
+     に変更する
+   -->
+ <script src='js/native/gun/0.2019.930.js'></script>
+ <script src='js/native/gun/lib/open.js'></script>
+ <script src='js/native/gun/lib/bye.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/gun-0.0.1.min.js'></script>
+ <script src='js/vue/color-2.7.0.min.js'></script>
+
+ <script>
+   Vue.use(VueGun)
+   Vue.use(VueColor)
+
+   /*
+    * https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript/1349462
+    */
+   function CreateYourID(length) {
+     var id               = '';
+     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+     var charactersLength = characters.length
+     for(var i=0;i<length;i++){
+      id += characters.charAt(Math.floor(Math.random() * charactersLength))
+     }
+     return id
+   }
+
+   new Vue({
+     el:'main',
+     components:{
+       'compact-picker':VueColor.Compact
+     },
+     data:{
+       /*
+        * 利用者がユーザを判別する為の色一覧
+        */
+       colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ],
+       /*
+        * ＧＵＮ系（通信用）
+        */
+       gun:{
+         storage:null,      /* GUN-DB:ユーザ一覧のデータ場所 */
+         users:null         /* GUN-DB:ユーザ一覧のデータ内容 */
+       }, 
+       /*
+        * ＤＯＭ系（取得とか表示非表示）
+        */   
+       target:null,         /* 原稿用紙の中身である DOM      */
+       isAsiding:false,     /* 画面開いてる？（サイト説明）   */
+       isGrabbing:false,    /* 画面撮ってる？（キャプチャ）   */
+       /*
+        * 自分の情報（変化があれば共有するために通信する）
+        */
+       user:{
+        id:null,            /* 自分自身を識別するID         */
+        name:'名無し',       /* 自分自身を判別するNAME       */
+        tweet:'',           /* 原稿用紙に書く前のMESSAGE    */
+        color:null,         /* 自分自身を判別するCOLOR      */
+       },
+       /*
+        * 日本語入力系（CARET{}はCARET.OFFSET()）
+        */
+       cache:{
+         isComposed:false,  /* 直前の入力は変換だった？     */
+         /*
+          * 画面上の位置
+          */    
+         caret:{
+           height:0,        /* 高さHを取得する（一行のな）   */
+           left:0,          /* 座標Xを取得する（入力座標）   */
+           top:0            /* 座標Yを取得する（入力座標）   */
+         },
+         /*
+          * テキストの何文字目か
+          */
+         pos:0              /* 位置Pを取得する（文字数だ）  */
+       },
+       /*
+        * 誰かが発言している時の状態
+        */
+       who:{
+         id:null,           /* 発言している相手の識別ID    */
+         color:null         /* 発言している相手のカラー    */
+       },
+       /*
+        * 原稿用紙系
+        */
+       content:{
+         text:'',           /* 入力された文章 */
+         font:'あずき',      /* ユーザ個別のフォント */
+         /*
+          * VueColorのデータ構造そのまま
+          * どうしてこんな事をしているのかって
+          * 初期化が面倒なのと最初にバインドするため
+          * あと、Vue.$set()をわざわざ使いたくないから
+          */
+         colors:{
+           hex: '#000000',
+           hsl: {h:0,s:0,l:0,a:1},
+           hsv: {h:150,s:0,v:0,a:1},
+           rgba:{r:0,g:0,b:0,a:1},
+           a:0
+         }
+       }
+     },
+     computed:{
+       caretStyle:function(){
+         return[
+           {'left':`${this.cache.caret.left}px`},
+           {'top':`${this.cache.caret.top}px`}
+         ]
+       },
+       contentStyle:function(){
+         return[
+           {'fontFamily':`${this.content.font} !important`},
+           {'color':`${this.content.colors.hex}`}
+         ]
+       }
+     },
+     methods:{
+       /*
+        * 何を同期するんだ？と思うかもしれないがこの段階ではGUN-DBの
+        * ユーザ間のデータ共有であることは自明で、最初から整理してやる
+        * と疎結合になるし可読性も上がるかもしれないが、手がかかるんだ
+        * だから、やることが１個か２個、自分で管理できる範囲で把握して
+        * いられる時には省いて、対象の名前は必要がある時にだけ書く。
+        * それに、もし必要ならコンポーネント化するしVUE-Xの出番だ。
+        */
+       synchronize:function(){
+         this.gun.storage.get(this.user.id).put(this.user)
+       },
+       keyDw:function(event){
+       },
+       charIn:function(event){
+       },
+       keyUp:function(event){
+         var self=this
+         /*
+          * 基本的にデータ構造は自分たちの持ってる
+          * データ構造と一緒にしておくこと。TEXTはCONTENTの中みたいに
+          */
+         this.$gun.get('content').put({
+           who:{
+             id:self.user.id,
+             color:self.user.color
+           },
+           content:{
+             text:self.$refs.content.innerText,
+             pos:self.cache.pos
+           }
+         })
+         this.update()
+       },
+       construct:function(){
+         var self=this
+         // このアプリを説明するためだけにある
+         $(this.$refs.window).dimmer({
+           onShow:function(){
+             self.isAsiding = true
+           },
+           onHide:function(){
+             self.isAsiding = false
+           }
+         })
+         // フォントが選択されたら更新
+         $(this.$refs.contentFont).dropdown({
+           onChange:function(value,text,$choice){
+             self.content.font = value
+           }
+         })
+         // フォントカラーを選択するダイアログを表示
+         $(this.$refs.contentColor).popup({
+           on:'click',
+           closable:false,
+           position:'top right'
+         })
+       },
+       setup:function(){
+         // 最初に選択するフォントを初期化するだけだよ
+         $(this.$refs.contentFont).dropdown(
+           'set selected',this.content.font)
+       },
+       caret:function(){
+         // 原稿用紙の中身を選択して末尾から入力可能にするだけ
+         var range = document.createRange()
+         var sel = window.getSelection()
+         range.selectNodeContents(this.target)
+         range.collapse(false)
+         sel.removeAllRanges()
+         sel.addRange(range)
+         $(this.target).focus()
+       },
+       play:function(options){
+         // スプラッシュスクリーンみたいなもん
+         new Typed(this.target,options)
+       },
+       open:function(){
+         // ポップアップが開いていたら閉じる
+         $(this.$refs.contentColor).popup('hide')
+         $(this.$refs.window).dimmer('toggle')
+       },
+       show:function(){
+         // マウントされるまでみっともないから
+         this.$el.style.display = 'block'
+       },
+       save:function(){
+         var self=this
+         /* キャプチャ開始 */
+         this.isGrabbing = true
+         /* DOM更新後にキャプチャ */
+         this.$nextTick(function(){
+           html2canvas(this.$refs.capture).then(function(canvas) {
+             var name = new Date().toISOString()
+             // ファイル名は今日の日付
+            Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,name)
+             self.isGrabbing = false
+           })
+         })
+       },
+       update:function(){
+         var self=this
+         // オブジェクトだから個別に入れるより
+         // Vue.$setを使って一度にセットする（リアクティブ化される）
+         this.$nextTick(function(){
+           self.cache.pos = $(self.$refs.content).caret('pos')
+           self.$set(this.cache,'caret',
+             $(self.$refs.content).caret('offset')
+           )
+         })
+       },
+       /*
+        * 通知は５分間隔
+        */
+       message:_.throttle(function(name){
+         Push.create('通知',{
+            body    :`${name}がなにか書いてるよ`,
+            icon    : 'asset/icon.png',
+            timeout : 1000*60, //１分
+            onClick :function(){
+              window.focus()
+              this.close()
+            }
+         })
+       },1000*60*5)
+     },
+     mounted:function(){
+       var self=this
+
+       /*
+        * 原稿用紙の入力エリア
+        */
+       this.target = this.$refs.content
+       /*
+        * 自分自身を識別するＩＤ
+        */
+       this.user.id = CreateYourID(12)
+       /*
+        * index.html?id={保存用のキー}
+        */
+       this.gun.storage = this.$gun.get(
+         new URLSearchParams(window.location.search).get('id')
+       )
+       /*
+        * ユーザ一覧の情報を取得しよう
+        */
+       this.gun.storage.open(function(users){
+         self.$set(self.gun,'users',_.omitBy(users,
+           function(user){
+             return user == null
+           })
+         )
+         // 満員か？数は色の種類分
+         if(_.keys(self.gun.users).length > self.colors.length){
+           alert(`満員だ`)
+           window.location.href='/'
+           return
+         }
+       })
+
+       /*
+        * 最初に自分自身の情報を投稿する
+        * ローカルストレージに保存すれば前のプロフィール情報を
+        * そのまま違うid={キー}にも反映できるけれど基本は参加だけ（名無しだ）
+        */
+       this.gun.storage.get(this.user.id).put(this.user)
+       /*
+        * ユーザがページから離れたら（継続的な通信が途切れたら）
+        * 呼び出される仕組み。ここでユーザ一覧の自分自身の情報にNULLを入れる
+        * ユーザ一覧の情報を取得する時にNULLを排除するのはこれを抽出しないためだよ
+        */
+       this.gun.storage.get(this.user.id).bye().put(null)
+
+
+       this.construct() // DOM作って
+       this.setup() // 入れて
+       this.show() // 見せる
+
+       $(window).on('resize',function(){
+         // ウィンドウをリサイズしたらキャレットの位置を更新する
+         self.update()
+       })
+
+       /*
+        * タイプアニメーションの開始
+        */
+       this.play({
+         typeSpeed:125,
+         stringsElement:this.$refs.draft,
+         onComplete:function(){
+           /*
+            * OPEN()を利用するとオブジェクトの中身を一度にとれる
+            * 普通、content { text:'' }とかはtextの分までとれ
+            * ない、ネスト分を一度にとる。
+            */
+           self.$gun.get('content').open(function(from){ 
+             
+
+
+             if(from.who.id != self.user.id){
+               if(!(from.who.id in self.gun.users)){
+                 return
+               }
+
+               self.who.color = from.who.color
+              　/*
+                 * PUSHを飛ばそう
+                 */
+               self.message(self.gun.users[from.who.id].name)
+
+               /*
+                * 相手が更新した時だけV-TEXTを更新する
+                * これには理由があって、前回まではKEYDWやKEYINやKEYUP内でセット処理を書いていたけれど(innerTEXT)
+                * FIREFOXで試したら改行がうまくいってなかった。というのは、FIREFOX自体のINNERTEXTにバグがあるようなんだ
+                * 改行したら改行前の位置に戻ってしまうというバグがね。だから連続で改行できない。改行ができるのは直前に文字がある時だけ。
+                * 編集時はCONTENTEDITBLEのまま改行は<div>として表現される。更新時にV-TEXTに変換される。これで変なスクリプトを仕込まれることもない
+                */
+               self.$refs.content.innerText = from.content.text
+               
+               /*
+                * 相手のキャレット位置を表示するようにした
+                */
+               self.cache.pos = from.content.pos
+               $(self.$refs.content).caret('pos',self.cache.pos)
+               self.$nextTick(function(){
+                 self.update()
+               })
+             }
+           })
+
+           // アニメーション後に末尾から入力可能にする
+           self.caret()
+           // キャレットの位置を合わせよう
+           self.update()
+  
+         }
+       })
+
+     }
+   })
+</script>

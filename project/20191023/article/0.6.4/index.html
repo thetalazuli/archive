@@ -1,0 +1,361 @@
+
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     padding:1em;
+     width:148mm;
+     margin:0 auto;
+   }
+   .up.ui.segment{
+     padding:0;
+   }
+   div#file{
+     width:100%;
+   }
+   input[type="file"] {
+    display:none;
+   }
+   nav{
+    position: absolute;
+    text-align:right;
+    width:calc(100%);
+    z-index: 999;
+    right: -1em;
+    top: -1em;
+   }
+   .ui.menu,
+   .ui.card,
+   .ui.label,
+   .ui.segments,
+   .ui.image.label,
+   .ui.segment.editor,
+   .ui.multiple.dropdown>.label{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.segment.editor{
+     padding:0;
+   }
+   .ui.label.corner{
+     z-index:999;
+   }
+   .ui.segment .ui.label.title{
+     position:absolute;
+     z-index:999;
+     left:-1rem;
+     top:+1rem;
+   }
+   .ui.label>.icon{
+    margin-right:0;
+   }
+   textarea,
+   input[type=text]{
+     width:100%;
+     border:none;
+     outline:none;
+     box-shadow:none;
+     appearance:none;
+     background:transparent;
+   }
+   .ui.dropdown .label.active{
+  background-color: white!important;
+  border-color: white!important;
+  color: black!important;
+ }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+    margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+    vertical-align: top;
+    display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+    display:none;
+   }
+   .ui.selection.dropdown{
+    padding:.14285714em 0;
+    border:none;
+    min-height:auto;
+    background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+    font-size: .85714286rem;
+    padding: .5833em .833em;
+   }
+   section.ui.segment{
+     padding:2em 1em;
+   }
+   section.ui.segment p{
+     line-height:1.2;
+   }
+
+</style>
+
+
+
+<template id='document'>
+    <article>
+ 
+        <div class='ui segment'>
+          <div class='ui ribbon label grey' style='float:left;'>
+            {{data.title}}
+         </div><div class='ui label grey' style='float:left;'>search text...</div><div class='ui label grey' style='float:left;'>４</div><div class='ui label grey'>
+           <i class='icon heart'></i></div>
+       </div>
+ 
+ 
+      <template v-for='page in data.pages'>
+        <section class='ui segment'>
+          <nav class='ui labels blue'>
+            <div class='ui label image'>
+              <img src='https://avatars1.githubusercontent.com/u/9919?v=4'>
+              {{page.in_a_word}}
+           </div>
+            <div class='ui label'>
+              {{page.createdAt}}
+           </div>
+            <slot name='commands'>
+           </slot>
+         </nav>
+          <div class='body' v-html='page.content'>
+            
+         </div>
+       </section>
+     </template>
+   </article>
+ </template>
+
+
+<template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label'>
+          <i class='icon tags'>
+          </i>
+        </div>
+      </div>
+    </div>
+  </template>
+
+ <template id='file'>
+   <div id='file' @drop='onDrop' @dragover.prevent>
+     <nav class='ui labels orange'>
+       <div class='ui label' v-if='convertedSize != 0'>
+         {{convertedSize}}
+      </div>
+       <label class='ui label'>
+         <i class='icon plus'></i>
+         <input @change='onChange' type='file' name='image'>
+      </label>
+    </nav>
+     <div class='ui label orange ribbon  title'>
+       {{title}}
+    </div>
+     <img
+      v-if="blobURL != ''"
+      class='ui image fluid'
+      :src='blobURL'>
+  </div>
+</template>
+ <body>
+   <main>
+     <div class='ui segments'>
+     <div class='ui segment up'>
+       <span class="ui label right corner"><i class="icon terminal"></i></span>
+       <loader :title='title' @uploaded='done'>
+      </loader>
+    </div>
+  </div>
+    <div class='ui menu pointing icon'>
+      <div class='item active'><i class='home icon'></i></div>
+      <!-- これを押すと、ui.segment>nav>edit-modeからselected-modeにアイコンが代わりクリックした時[編集,削除...n]が選択される-->
+      <div class='item'><i class='edit icon'></i></div>
+      <div class='item'><i class='trash icon'></i></div>
+      <div class='right menu'>
+          <!-- お気に入りは週・期間選択に関係なくトップ画面に表示される -->
+          <div class='item'><i class='favorite icon'></i></div>
+     </div>
+   </div>
+
+    <div class="ui card fluid">
+      <div class="content">
+        <a class="header"><input type='text' v-model='title' v-autosize></a>
+        <div class="meta">
+          <span class="date">Published in 2019</span>
+        </div>
+        <div class="description">
+          <textarea v-model='description' v-autosize>
+         </textarea>
+        </div>
+      </div>
+      <div class="extra content">
+        <a>
+          <i class="user icon"></i>
+          22 Friends
+        </a>
+      </div>
+    </div>
+    
+    <div class='ui horizontal divider'>興味の対象</div>
+    <div class='ui segments articles'>
+        <div class='ui segment'>
+
+          
+
+
+
+          <!-- 目次 -->
+          <indexes
+            v-for='(article,key) in articles'
+            :color='key'
+            :article='article'
+            :template='master.article'>
+          </indexes>
+
+
+
+
+       </div>
+     </div>
+
+
+     <div class='ui horizontal divider'>月・週・日</div>
+
+
+     <article class="ui segments">
+       
+       <section class='ui segment'>
+         <nav class='ui grey labels'>
+           <div class='ui label image' style='float:left;'>
+             <img src="https://avatars1.githubusercontent.com/u/9919?v=4">Things you might want to do right now:
+          </div><div class ='ui label'>2019/09/19</div><div class='ui label'><i class='icon edit'></i></div>
+        </nav>
+         <div class='body'>
+<p>会社では今日、全体が何をしていたのか、をはっきりと見通す必要がある。それが小規模な会社の運営の鉄則だ。人々は有機的に繋がる。その理由はコミュニケーションをとることにより各人が個人個人何をしているか明らかにして全体の進捗管理にまわすためである。しかし、大いに思うが、新人や玄人、或いは相手の状況によってはそれらを持つよりこのようなインターフェイスが１つあったほうがより効率的に全員の状況を知れる。</p>
+<p>だからこれはあみだくじのように今日一日、経営者が誰が何をしているかを知り。どの道を進むべきだったか把握する為の情報共有ツールとなる。多分、会社毎、或いはプロジェクト毎に運用すると内容でみて、今日一日分の進み方に明らかな差があるだろう。デザイナでも技術者でも。それらを統合的に考え、AIがうまいこと補足の情報とか、このタグには次にこのタグが入る可能性がありますよ。とか。そういった提案のしてくれるシステムを望んでいる</p>
+<p>佐野</p>
+        </div>
+      </section>
+    　  <section class='ui segment'>
+          <nav class='ui blue labels'>
+            <div class='ui label image' style='float:left;'>
+              <img src="https://facebookbrand.com/wp-content/uploads/2018/08/thumb1.png?w=500&h=482">Things you might want to do right now:
+           </div><div class ='ui label'>2019/09/19</div><div class='ui label'><i class='icon edit'></i></div>
+         </nav>
+          <div class='body'>
+<p>大切なのは、経営者側からコミュニケーションをとらなくても各社員の現状が知れることで経営者は情報を全社員からINする前にこれをみて、即座にIN、会社の進む方向に関わる内容だけ社員に即OUTできる。しかもリフィルがあるからやんわりした表現も使えるだろう。とりわけ技術よりな経営者には絶対に会ったほうが良い情報共有ツールだ。</p>
+<p>これは技術者を経営者にする為のツールでもある</p>
+</div>
+       </section>
+       <section class='ui segment'>
+         <nav class='ui teal labels'>
+           <div class='ui label image' style='float:left;'>
+             <img src="http://www.mark-sign.net/download01/data02/twitter.png">Things you might want to do right now:
+          </div><div class ='ui label'>2019/09/19</div><div class='ui label'><i class='icon edit'></i></div>
+        </nav>
+         <div class='body'>
+<p>例えば、会社を管理する為にIFを利用する。グループウェアもありだが日本の機能もっさり主義が見受けられる。彼らが必要としているのはこれなんだ。例えば、タグ一覧に会社が必要とする業務一覧を書く、報告・連絡・相談。私は環境も大切だが習慣というサイクルが会社を成り立たせると考える。各個人の習慣が歯車のようにみえ、偽りなく、ガタついていないか観る目も経営者には必要となる。そうなるとこのインターフェイスはわかりやすい。例えば先程のタグに対して各人（ユーザ登録された）が追記するとこのトップページ上に今日一日かまたは週間という期間毎に投稿された記事が表示される。これで会社のプロジェクトの中長期計画が立てられる。</p>
+<p>例えば、生徒を管理する為にIFを利用する。タグに生徒の名前を入れてその生徒毎に編集可能な権限を与える。生徒が書けばこの日に出した課題は？と調べるだけでこのトップ画面上に全員の記事が表示される。</p>
+<p>あみだくじのように意思決定に必要な可視化を行う</p>
+<p>それがIF</p>
+</div>
+      </section>
+</article>
+<div class='ui horizontal divider'>クリックされたタグの記事が一覧表示される</div>
+<div id='画面1'>
+
+
+       <div class="ui segments"><section class="ui segment"><div class="ui ribbon label orange">
+          aaa
+        </div></section> <section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724738509</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724738915</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724739295</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724739685</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724740277</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724740573</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724741047</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724741539</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section><section class="ui segment"><nav class="ui labels blue"><div class="ui label">hello world</div> <div class="ui label">1567724742021</div> <div class="ui label"><i class="icon edit"></i></div></nav> <div class="body"></div></section></div>
+      </div>
+      <div class='ui horizontal divider'>リフィル</div> 
+      <div class='ui labels'>
+        <!-- youtubeのURLを入力すると自動解析される 例えば、リフィル上で${{movie_url}}とか${{avater-image}}とか使える-->
+        <!-- これを押すとブロックで記事が追加される -->
+        <div class='ui label'>p</div>
+        <div class='ui label'>highlight-code</div>
+        <div class='ui label'>math-jax</div>
+      </div>
+      <div class='ui horizontal divider'>ファイル一覧</div>
+      <div class='ui labels'>
+        <div class='ui label'>GIST</div>
+        <div class='ui label'>LOCAL</div>
+      </div>
+      <div class='ui horizontal divider'>記事の編集ボタンが押されると記事は一個になりエディタが表示される</div>
+
+      <!--
+        ・考える、身近な人に相談するとか。聞くとか、判断を仰ぐとか
+        ・書こうとする前に業務に合わせる（ポイントあみだくじの横線に当たる交点が強いネットワークを生む）
+        ・書く前に箱を作る（必要なものを見極める。足りなければ共通化するためにリフィルを搭載する）
+        ・書く
+
+        書く前の３ステップがある
+
+
+      -->
+
+
+
+
+
+
+
+<div id='画面2'>
+
+<!-- エディタは記事一覧が表示されている時は表示されない -->
+<div class='ui segment editor'>
+    <codemirror v-model='content'>
+   </codemirror>
+ </div>
+
+</div>
+
+<!--
+
+　このグループウェアは小規模だが、ベンチャー企業とか
+　将来性の高い会社に安く売り、後で見返りがある
+　かもしれない
+
+　ベンチャーがこぞって買ってくれたら
+　１０年後に俺は有名になってる
+　素晴らしい
+
+-->
+
+
+  </main>
+</body>
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/native/lodash/4.17.15.min.js'></script>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/native/filesize/4.1.2.min.js'></script>
+ <script src='/js/native/compressor/1.0.5.min.js'></script>
+ <script src='/js/native/local-forage/1.7.3.min.js'></script>
+ <script src='/js/vue/plugin/auto-size/1.0.2.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script src='index.js'></script>

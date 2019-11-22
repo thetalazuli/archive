@@ -1,0 +1,46 @@
+ <body>
+   <input type="file" id="file" accept="image/*">
+   <img id='view' src=''>
+</body>
+ <script src='/js/native/filesize/4.1.2.min.js'></script>
+ <script src='/js/native/compressor/1.0.5.min.js'></script>
+ <script>
+document.getElementById('file').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+
+  if (!file) {
+    return;
+  }
+
+  function set(url)
+  {
+    if(!url) {
+      return;
+    }
+
+    var el = document.getElementById('view')
+        el.src = url
+    }
+
+  new Compressor(file, {
+    quality: 0.2,
+    mimeType: 'image/jpeg',
+    success(result) {
+
+      console.dir(result)
+      console.dir(typeof result)
+      console.dir(URL.createObjectURL(result))
+
+      console.dir(filesize(result.size, {round: 0}))
+
+      var src = URL.createObjectURL(result)
+
+      set(src)
+
+    },
+    error(err) {
+      console.log(err.message);
+    },
+  });
+});
+</script>

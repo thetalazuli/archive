@@ -1,0 +1,94 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/semantic-ui/2.4.2.min.css' rel='stylesheet' media='screen'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+    <template type='x-text/template' id='document'>
+        <article :class="['ui','segment',doc.color]" id='view'>
+            <nav class='ui labels'>
+              <div :class="['ui','label',doc.color]">
+                2019-09-19
+             </div>
+              <div :class="['ui','label',doc.color]" @click='doc.edit=!doc.edit'>
+                <i class='icon edit'></i>
+             </div>
+
+           </nav>
+            <header>
+              <div :class="['ui','ribbon','label',doc.color]">
+                {{doc.title}}
+             </div>
+           </header>
+            <section v-html='doc.content' contenteditable='true' ref='editable'>
+           </section>
+         </article>
+   </template>
+    <main>
+      <div class='ui grid padded'>
+        <div class='row'>
+          <div class='column'>
+             <div class='ui ribbon label orange' style='float:left;'>NOTE</div>
+             <div class='ui dropdown selection search multiple'>
+               <input name='tags' type='hidden'>
+               <div class='default text'>
+                 <span class='ui label white'>
+                   <i class='icon tags'></i>
+                </span>
+              </div>
+            </div>
+
+             <div class='ui segments'>
+               <template v-for='doc in pages'>
+                  <document v-model='doc'>
+                 </document>
+                  <div class='ui segment' id='editor' v-if='doc.edit'>
+                    <codemirror v-model='doc.content'>
+                   </codemirror>
+                 </div>
+              </template>
+            </div>
+
+             <div class='ui menu pointing icon'>
+               <div class='item active'><i class='icon edit'></i></div>
+            </div>
+
+         </div>
+       </div>
+     </div>
+   </main>
+ </body>
+  <script src='/js/native/code-mirror/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+  <script src='/js/vue/2.6.10.min.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+  <script src='index.js'></script>
+</html>

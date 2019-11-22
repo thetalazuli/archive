@@ -1,0 +1,454 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style name='import'>
+     @import url('css/micron-1.1.6.min.css');
+     @import url('css/animate-3.7.2.min.css');
+  </style>
+   <style name='font'>
+     @font-face{
+       font-family:'azuki';
+       src:url('asset/azuki.ttf');
+     }
+  </style>
+
+   <style>
+     html,
+     body{
+       font: 12px'azuki';
+     }
+     h1,
+     h2{
+       font-family:'azuki';
+     }
+     main{
+       width:148mm;
+       padding:1em;
+       margin:0 auto;
+     }
+     .ui.segment> .ui.labels{
+      position:absolute;
+      text-align:right;
+      z-index:999;
+      width:100%;
+      top:-1em;
+      left:0;
+    }
+    
+    .ui.card,
+    .ui.menu,
+    .ui.label,
+    .ui.segments{
+      border-bottom:2px solid rgba(34,36,38,.15) !important;
+      box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+    }
+    
+    .ui.card p{
+      color:black;
+      line-height:1.2;
+    }
+
+    .ui.table>thead>tr>th,
+    .ui.table>tbody>tr>td{
+      text-align:center;
+      font-size:14px;
+      padding:0;
+    }
+    .ui.table>thead>tr>th:first-child,
+    .ui.table>tbody>tr>td:first-child{
+      width:12.5%;
+      text-align:center;
+    }
+    /*
+     * 非表示＠読込完了まで
+     */
+    main{
+      display:none;
+    }
+    .ui.dimmer{
+      z-index:0;
+    }
+     @media screen and (max-width:148mm){
+       main{
+         width:100%;
+       }
+     }
+
+  </style>
+ </head>
+  <body>
+   <!-- 読込中はローダを表示 -->
+   <div class='ui dimmer active inverted'>
+     <div class='ui loader text'>
+       問題集を読み込み中...
+    </div>
+  </div>
+
+   <main v-if='sheet' class='animated bounceInDown delay-2s'>
+     <template>
+       <div class='ui card fluid'>
+         <div class='image'>
+           <img src='asset/illustrain02-english05.png'>
+        </div>
+         <div class='content'>
+           <div class='description'>
+             <p>クイズ用のアプリです。永遠に解いてい続けられます。１問５択・出題範囲の切替・タイムアップ対応です。正解一覧表は0/Nをタップして下さい</p>
+          </div>   
+        </div>
+      </div>
+    </template>
+     <template>
+       <div class='ui segments stacked'>
+         <template v-if='show.log'>
+           <div class='ui segment fitted'>
+             <table class='ui table single line unstackable celled fixed very basic'>
+               <thead>
+                 <tr>
+                   <th>No</th>
+                   <th>問題</th>
+                   <th>解答</th>
+               </tr>
+             </thead>
+               <tbody>
+                 <template v-for='(answer,no) in answers.log'>
+                   <tr :class="[answer['結果'] ? 'positive' : 'negative']">
+                     <td>{{no+1}}</td>
+                     <td>{{answer['問題']['単語']}}</td>
+                     <td>{{answer['選択']['意味']}}</td>
+                 </tr>
+               </template>
+             </tbody>
+           </table>
+         </div>
+        </template>
+
+        <div class='ui segment' @click="解答する(sample['問題'],選択)" v-for='選択 in sample.解答群'>
+          <h2>
+            {{選択['意味']}}
+         </h2>
+       </div>
+        
+        <div :class="['ui','segment',colors[lev]]">
+          <div class='ui labels'>
+            <div :class="['ui','label','loud-link-click',colors[lev]]" @click='nextLev' data-micron='jerk' data-sound='click'>
+              {{title}}
+           </div>
+            <div class='ui label blue'>
+              <timer @up='finish' ref='downTimer'>
+             </timer>
+           </div>
+            <div class='ui label loud-link-click blue' @click='show.log = !show.log' data-micron='jerk' data-sound='click'>
+              {{answers.true}}/{{answers.log.length+1}}
+           </div>
+         </div>
+          <div class='quiz'>
+            <h1>
+              {{sample['問題']['単語']}}
+           </h1>
+         </div>
+       </div>
+      </div>
+    </template>
+  </main>
+ </body>
+</html>
+
+ <template type='x-text/template' id='timer'>
+   <div v-ui>
+     <span class='min'>
+       {{min}}
+    </span class='dli'>
+       :
+     <span class='sec'>
+       {{sec}}
+    </span>
+  </div>
+</template>
+ 
+ <!-- native -->
+ <script src='js/native/micron-1.1.6.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/xlsx-0.15.1.full.min.js'></script>
+ <script src='js/native/loud-links-1.2.min.js'></script>
+
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script>
+
+  Vue.mixin({
+    directives:{
+      ui:{
+        inserted:function(el,binding,vnode){
+          el.classList.add(vnode.context.$options.name)
+        },
+        update:function(el,binding,vnode){
+          el.classList.add(vnode.context.$options.name)
+        }
+      }
+    },
+    data:function(){
+      return{
+        colors:[
+          'grey',
+          'brown',
+          'pink',
+          'purple',
+          'violet',
+          'blue',
+          'teal',
+          'green',
+          'olive',
+          'yellow',
+          'orange',
+          'red'
+        ]
+      }
+    }
+  })
+
+  Vue.component('timer',{
+    template:'#timer',
+    computed:{
+      min:function(){
+        var val = Math.floor(this.totalTime / 60)
+        return this.padTime(val)
+      },
+      sec:function(){
+        var val = Math.floor(this.totalTime - 60 * this.min)
+        return this.padTime(val)
+      }
+    },
+    data:function(){
+      return{
+        timer:null,
+        totalTime:0
+      }
+    },
+    created:function(){
+      this.reset()
+    },
+    methods:{
+      start:function(){
+        var self=this
+        this.timer = setInterval(function(){
+          self.countDown()
+        },1000)
+      },
+      stop:function(){
+        clearInterval(this.timer)
+        this.timer = null
+      },
+      reset: function() {
+        this.stop()
+        this.totalTime=(15*60)
+      },
+      padTime: function(time) {
+          return (time < 10 ? '0' : '') + time
+      },
+      countDown:function(){
+        if(this.totalTime>=1){
+          this.totalTime--
+        }else{
+          this.totalTime=0
+          this.stop()
+          this.$emit('up')
+        }
+      }
+    }
+  })
+
+  function speech(lang)
+  {
+    this.text      =''
+    this.lang      =lang
+    this.pitch     =1.0
+    this.volume    =1.0
+    this.supported = false
+  }
+  speech.prototype.talk = function(message){
+    var obj = new SpeechSynthesisUtterance() 
+    Object.assign(obj,this,{
+      text:message
+    })
+    speechSynthesis.speak(obj)
+  }
+  speech.prototype.init = function(){
+    if('speechSynthesis' in window){
+      this.supported = true
+    }
+  }
+
+  new Vue({
+    el:'main',
+    data:{
+      book:null,      /* データファイル（エクセルのブックを読込）*/
+      sheets:[],      /* データファイルから各シートをJSONに変換 */
+      lev:0,          /* 出題範囲の切替（エクセルのシートを切替）*/
+      show:{
+        log:false     /* 解答した履歴の表示切替 */
+      },
+      answers:{
+        choice:5,     /* 解答群の個数 */
+        false:0,      /* 不正解の個数 */
+        true:0,       /* 　正解の個数 */
+        log:[         /* 解答した履歴 */
+        ]
+      },
+      quizTaker:null, /* 音声の再生用 */
+      quiz:{          /* 生成した出題 */
+      },
+    },
+    watch:{
+      'show.log':{
+        handler:function(flag){
+          if(flag){
+            var self=this
+            this.$nextTick(function(){
+              self.scrollTo('bottom')
+            })
+          }
+        }
+      }
+    },
+    computed:{
+      sheet:function(){
+        /* データが読み込まれてなければUNDEFINED返却 */
+        return this.sheets[this.lev] || undefined
+      },
+      title:function(){
+        /* 出題範囲のタイトル返却（エクセルのシート名）*/
+        return _.keys(this.book.Sheets)[this.lev]
+      },
+      sample:function(){
+        var answers=[]
+
+        if(!this.sheet)
+          return
+        else{
+          /* 出題するレコードを選択 */
+          answers.push(this.quiz)
+          
+          for(var i=0,cnt=5;i<this.answers.choice-1;i++){
+            /* 解答群にあたるレコードを選択 */
+            var answ = _.sample(this.sheet)
+            /* 選択したレコードに重複があれば再度選択（試行回数有）*/
+            if(this.isDuplicate(this.quiz,answ) && cnt >= 0)
+              answers.push(answ)
+            else{
+              /* 試行回数の減算 */
+              cnt--
+              /* 重複分の減算 */
+              i--
+            }
+          }
+
+          return {
+            /*
+             * NOTE!!!
+             * ここに依存関係を作成する
+             * this.quizを書き換えれば解答群を再計算できる
+             */
+            問題:this.quiz,
+            解答群:_.shuffle(answers) /* 入れ替えておく */
+          }
+        }
+      }
+    },
+    methods:{
+      解答する:function(問題,選択){
+        var 結果 = 問題['意味'] == 選択['意味']
+        var 音声 = 結果 ? 'せいかいです' : 'ちがいます'
+
+        /* 正解したら音出すか */
+        this.quizTaker.talk(音声)
+        /* 解答した結果を足す */
+        this.answers[結果]++
+        /* 解答した履歴に追加 */
+        this.answers.log.push({
+          結果:結果,
+          問題:問題,
+          選択:選択,
+        })
+        /* 次の出題を取得    */
+        this.getQuiz()
+      },
+      scrollTo:function(pos){
+        var el = document.scrollingElement || document.documentElement
+
+        switch(pos){
+          case 'bottom':
+            el.scrollTop = el.scrollHeight
+            break;
+        }
+      },
+      isDuplicate:function(問題,問題){
+        /* 解答群の重複検査  */
+        return 問題['単語'] == 問題['単語']
+      },
+      nextLev:function(){
+        /* 出題範囲を切替    */
+        this.lev = (this.lev+1) % this.sheets.length
+        /* 次の出題を取得    */
+        this.getQuiz()
+      },
+      getQuiz:function(){
+        var self=this
+        this.quiz = _.sample(this.sheet)
+        this.$nextTick(function(){
+          self.scrollTo('bottom')
+        })
+      },
+      finish:function(){
+        alert(answers.true + '問正解です')
+      },
+      init:function(options){
+        var self=this
+        fetch(options.location).then(function(responce){
+          return responce.arrayBuffer()
+        }).then(function(arr) {
+          self.book = XLSX.read(arr,{type:'array'})
+          self.sheets = _.map(self.book.Sheets,function(obj,i){
+            return XLSX.utils.sheet_to_json(obj)
+          })
+          options.loadedSheet()
+       })
+      }
+    },
+    mounted:function(){
+      var self=this
+      this.quizTaker = new speech('ja-JP')
+      this.init({
+        location:'asset/毎日英単語GO.xlsx',
+        loadedSheet:function(){
+          self.$nextTick(function(){
+            self.$el.style.display = 'block'
+            self.$refs.downTimer.start()
+            window.loadLinks.init({
+              mp3:'asset/'
+            })
+            self.getQuiz()
+          })
+        }
+      })
+    }
+  })
+</script>

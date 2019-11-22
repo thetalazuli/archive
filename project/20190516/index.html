@@ -1,0 +1,129 @@
+<!doctype html>
+ <html>
+  <head>
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='reply-to'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='noindex, nofollow, noarchive' name='robots'>
+   <meta content='telephone=no, address=no, email=no, date=no, url=no' name='format-detection'>
+   <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <!-- 少し変更を加えてある。おかげで古いiPhoneにも対応できる -->
+   <script src='js/native/pwa/url-1.1.5.min.js'></script>
+   <script src='js/native/pwa/2.0.8.min.js'></script>
+
+   <!-- jquery -->
+   <script src='js/jquery/3.4.1.min.js'></script>
+   <script src='js/jquery/semantic-ui-2.4.2.min.js'></script>
+
+   <!-- vue -->
+   <script src='js/vue/2.6.10.min.js'></script>
+   <script src='js/vue/loader-1.4.1.min.js'></script>
+
+   <!-- native -->
+   <script src='js/native/d3-5.12.0.min.js'></script>
+   <script src='js/native/core-2.6.9.min.js'></script>
+   <script src='js/native/flat-4.1.0.min.js'></script>
+   <script src='js/native/cleave-1.5.3.min.js'></script>
+   <script src='js/native/micron-1.1.6.min.js'></script>
+   <script src='js/native/dat-gui-0.7.6.min.js'></script>
+   <script src='js/native/lodash-4.17.15.min.js'></script>
+   <script src='js/native/file-size-4.1.2.min.js'></script>
+   <script src='js/native/pinch-zoom-2.3.4.min.js'></script>
+   <script src='js/native/compressor-1.0.5.min.js'></script>
+
+   <script src='main.js'></script>
+   <style>
+     @import url('css/dat-gui/light.min.css');
+     @import url('css/pretty-checkbox-3.0.3.min.css');
+     @import url('css/semantic-ui/2.4.2.min.css');
+     @import url('css/box-shadows-1.0.5.min.css');
+     @import url('css/animate-3.7.2.min.css');
+     @import url('css/micron-1.1.6.min.css');
+     @import url('main.css');
+  </style>
+ </head>
+  <body>
+   <main>
+
+     <div class='ui dimmer active inverted' v-if='isLoading'>
+       <div class='ui text loader'>
+         Loading
+      </div>
+    </div>
+
+      <div v-grid v-visible='!isLoading'>
+        <div class='one column row'>
+
+          <div class='column'>
+
+            <h5 class='ui header center aligned icon'>
+              <i class='icon hotel' @click='isShow = !isShow'>
+             </i>
+              <div class='content'>ホテル by 
+                <div class='header sub'>
+                  <a href=''>名前</a>
+               </div>
+             </div>
+           </h5>
+    
+            <div v-divide>
+              <i class='icon users'>
+             </i>
+           </div>
+
+            <team no='0F.進捗率' :is-show='true' detail='共有しましょう' v-model='db.team'>
+           </team>
+
+         </div>
+          <div class='column'>
+
+             <div v-divide>
+               <i class='icon user'>
+              </i>
+            </div>
+             
+             <plan no='1F.指示書' :is-show='true' detail='撮影しましょう' v-model='db.plan'>   
+            </plan>
+             <task no='2F.作業書' :is-show='true' detail='加算しましょう' @save='saveTask' v-model='db.task'>
+            </task>
+             <pile no='3F.可視書' :is-show='true' detail='把握しましょう' v-model='db.pile'>
+            </pile>
+  
+
+         </div>
+          <div class='column'>
+            <div v-divide>
+              <i class='icon clipboard'>
+             </i>
+           </div>
+
+　　　　　　　<log no='3F.データ' :is-show='true' detail='記録しましょう' v-model='db.pile'>
+           </log>
+
+         </div>
+          <div class='column'>
+            <section>
+              <!-- dat gui -->
+           </section> 
+            <div v-divide>
+              <i class='icon setting'>
+             </i>
+           </div>
+            <settings>
+           </settings>
+
+         </div>
+
+       </div>
+     </div>
+     
+  </main>
+ </body>
+</html>

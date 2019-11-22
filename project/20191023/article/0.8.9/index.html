@@ -1,0 +1,597 @@
+ <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+ <style>
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   @import url('/js/native/code-mirror/5.48.4.min.css');
+   @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+   @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+   @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+   @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+   @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+   @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+   
+   
+
+   .indexes .ui.label:nth-of-type(1){
+     background-color: #767676;
+     border-color: #767676;
+   }
+
+
+
+
+   .indexes > .ui.label:nth-of-type(2){
+     background-color: #a5673f;
+     border-color: #a5673f;
+   }
+   .indexes  > .ui.label:nth-of-type(3){
+     background-color: #e03997;
+     border-color: #e03997;
+   }
+   .indexes  > .ui.label:nth-of-type(4){
+     background-color: #a333c8;
+     border-color: #a333c8;
+   }
+   .indexes  > .ui.label:nth-of-type(5){
+     background-color: #6435c9;
+     border-color: #6435c9;
+   }
+   .indexes >  .ui.label:nth-of-type(6){
+     background-color: #2185d0;
+     border-color: #2185d0;
+   }
+   .indexes  > .ui.label:nth-of-type(7){
+     background-color: #00b5ad;
+     border-color: #00b5ad;
+   }
+   .indexes >  .ui.label:nth-of-type(8){
+     background-color: #21ba45;
+     border-color: #21ba45;
+   }
+   .indexes >  .ui.label:nth-of-type(9){
+     background-color: #b5cc18;
+     border-color: #b5cc18;
+   }
+   .indexes >  .ui.label:nth-of-type(10){
+     background-color: #fbbd08;
+     border-color: #fbbd08;
+   }
+   .indexes >  .ui.label:nth-of-type(11){
+     background-color: #f2711c;
+     border-color: #f2711c;
+   }
+   .indexes >  .ui.label:nth-of-type(12){
+     background-color: #db2828;
+     border-color: #db2828;
+   }
+   .ui.label{
+     color:white;
+   }
+
+
+
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+     margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+     margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+     display:none;
+     vertical-align:top;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+     display:none;
+   }
+   .ui.selection.dropdown{
+     border:none;
+     min-height:auto;
+     padding:.14285714em 0;
+     background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+     font-size:.85714286rem;
+     padding:.5833em .833em;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.segments{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.segments nav,
+   .ui.segment nav {
+    position: absolute;
+    text-align: right;
+    width: calc(100%);
+    z-index: 9;
+    right: -1em;
+    top: -1em;
+   }
+   .ui.label>.icon {
+     margin-right: 0;
+   }
+   .ui.selection.dropdown{
+     padding-top:0;
+   }
+   header:after{
+     display:block;
+     clear:both;
+     content:'';
+     height:0;
+   }
+
+   .ui.multiple.dropdown>.label {
+    vertical-align: middle !important;
+    margin-top:0;
+   }
+
+   .ui.segment.indexes{
+     overflow:auto;
+   }
+
+   .ui.label.transition.visible{
+     display:block !important;
+     float:left;
+   }
+
+   .ui.segment.editor{
+     padding:0;
+   }
+   .ui.segment.nopadding{
+     padding:0 !important;
+   }
+
+   .ui.popup{
+     border:none;
+     box-shadow:none;
+     padding:0 !important;
+     padding-right:0;
+   }
+   .ui.popup .dg.main .close-button{
+     display:none;
+   }
+   .ui.popup .dg.main{
+     width:100% !important;
+   }
+   .ui.corner.label{
+     color:black;
+     mix-blend-mode:luminosity;
+   }
+
+   @media screen and (max-width:148mm){
+      main{
+        width:100%;
+      }
+    }
+</style>
+
+
+<!--
+
+  　色で何かを分類しようとするんじゃない
+  　それは見せかけ
+  　カテゴライズしようとするのではなく
+  　その人がその時必要としているもの全てに目をあてること
+  　
+  　誰かがほしいものを全部いってくれたら
+  　自分がそこに文章を埋めるよ
+  　楽しもう
+
+-->
+
+<!--
+
+   まず縦のラインを決める（色分け）
+　 次に横のラインを付け足していく。自分が興味関心のあることほど長くなる
+　 GITHUB GRAPHみたいに
+　 これを.ui.segmentのoverflow-x&y両方向にscrollするようにすれば
+　 目次がどれだけ増えても
+　 安心
+
+-->
+
+<!-- 基本は目次だけ先にアウトプット (目次のみプロジェクト毎にアウトプット））-->
+
+
+ <template id='document'>
+   
+  <div>
+    <div class='ui segments' v-if='editingTree'>
+      <div class='ui segment'>
+        <indexes class='indexes' ref='labels' :article='article' color='orange'>
+        </indexes>
+      </div>
+    </div>
+
+    <div class='ui segments' v-if='editDocument'>
+      <div :class="['ui','segment',editDocument.addClasses]">
+          <nav class="ui label corner" @click='editDocument = null'><i class="icon remove"></i></nav>
+
+        <section v-html='editDocument.content'>
+       </section>
+     </div>
+   </div>
+
+
+    <div class='ui segments' v-show='!editDocument && Object.keys(article).length'>
+        <nav class="ui label corner" @click="editingTree = !editingTree">
+
+            <slot name='command'></slot>
+        
+        
+        </nav>
+        <div class='ui segment' style='padding:0;'>
+          <img class='ui fluid image' src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTM7O55zs_fe2AuVRoog0-XTSlliSxfL_gmdoXSiP-3rwLjG9ip'>
+          　　<!--<p>Ｃ言語で開発する前にＯＳＳ（オープンソース・
+            ソフトウェア）のコードを読みながら設計を書き起こします。データやシーケンスの組み合わせ、それがモジュール間をどう繋げているか設計図を見ながら実装しましょう。詳細は後に書きますがこの図を見れば大体判ると思います</p>-->
+          </div>
+
+          <div class='ui segment'>
+            <p>description</p>
+          </div>
+
+
+
+    <template  v-for='(doc,i,f) in article'>
+
+
+
+    <div class='ui title segment'>
+      <!-- menubar 編集モードの時、記事のタグを押したらエディタが開く リフィル付き -->
+      <nav :class="['ui','labels',colors[f]]">
+     
+        <!-- 物事の開始からゴール。あみだくじの縦線の数 こういうステップで物事を進めてゴールを目指しますを明らかにする -->
+        <!-- 色はステップの濃さです。深海とかね -->
+        <div class='ui label' @click="doc.expand = !doc.expand"  @dblclick='edit(doc)' style='float:left;'>{{i}}</div>
+        <indexes @select='edit' :article='doc.docs' style='float:left;'>
+       </indexes>
+     </nav>
+      <p></p>
+      <section v-html='doc.content'></section>
+    </div>
+       <!-- あみだくじの各縦線に対して踏むべきステップ、例えば仕様ステップの中に要求とあればお客さんが次のステップに来てそのステップフォルダに議事録ドキュメントがあります (議事録article:{section1,section2,2019/09/19...n} -->
+       <!-- フォルダ・トグル表示(expand)にしているのは編集中のHTML全体の部分的なDOM書き換えで表示を滞らせない為です。-->
+       <!-- また、v-ifはDOMの再挿入が起こり遅くなるため、v-showでdisplay:none:block;の切り替えで対処します -->
+       <div v-show='doc.expand' :class="['ui','segment',ddd.addClasses]" v-for='(ddd,f,x) in doc.docs'>
+         <section v-html='ddd.content'></section>
+      </div>
+
+
+    
+    </template>
+
+  </div>
+
+    <div class='ui pointing menu icon editor' v-show='editDocument'>
+        <div ref='window' class='item'><i class='icon edit'></i></div>
+
+        <div class='ui popup very basic'>
+            <div class='ui card'>
+              <!-- リフィル:フォルダ毎にパッケージング -->
+              <!-- youtueのURLを入力すると自動でタグ解析されるとか -->
+              <!-- 2chの記事を入力すると自動で纏めてくれるとか -->
+              <!-- 画像をbase64に変換するとか -->
+              <!-- toolbox -->
+              <!-- 道具箱 -->
+              <dat-gui>
+                 <dat-folder name='リフィル'>
+                   <!-- segmentのpadding:true or false-->
+                   <!-- youtubeのURLを入力すると自動でブロックとして挿入される -->
+                </dat-folder>
+                <dat-folder name='スタンプ'>
+                   <!-- segmentのpadding:true or false-->
+                   <!-- youtubeのURLを入力すると自動でブロックとして挿入される -->
+                </dat-folder>
+              </dat-gui>
+             </div>
+         </div>
+
+
+        <div class='item'>markdown</div>
+        <div class='item'>wiziwig</div>
+        <div class='item'>jexcel</div>
+        <div class='item'>vendor editor</div>
+        <div class='right menu'>
+
+
+       </div>
+     </div>
+      <div class='ui segments'  v-if='editDocument'>
+      <div class='ui segment editor'>
+        <codemirror v-model='editDocument.content'>
+       </codemirror>
+     </div>
+   </div>
+  </div>
+
+
+ </div>
+</template>
+ <template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label orange'>
+          <i class='icon tags'>
+         </i>
+       </div>
+     </div>
+      <div class='menu'>
+
+     </div>
+   </div>
+ </template>
+
+ <body>
+   <main>
+   <div class='ui grid padded'>
+
+
+     <div class='row'>
+       <div class='column'>
+         <div class='ui segments'>
+           <div class='ui corner label' style='mix-blend-mode:luminosity;'><i class='icon help'></i></div>
+            <div class='ui segment' style='padding:0;'>
+                <img class='ui fluid image' src='https://assets.entrepreneur.com/content/3x2/2000/20160315152835-startup-pagina.jpeg?width=700&crop=2:1'>
+             </div>
+
+
+
+              
+        </div>
+ 
+
+
+
+      </div>
+    </div>
+     <div class='row'>
+       <div class='column'>
+         <div class='ui menu pointing icon'>
+          
+           <div class='item active' @click='push'><i class='icon plus'></i></div>
+           <div class='right menu'>
+             <div class='item' @click="modeIcon = 'eye'"><i class='icon eye'></i></div>
+             <div class='item' @click="modeIcon = 'edit'"><i class='icon edit'></i></div>
+             <div class='item' @click="modeIcon = 'trash'"><i class='icon trash'></i></div>
+             <div class='item' @click="modeIcon = 'star'"><i class='icon star'></i></div>
+             <div class='item' @click="modeIcon = 'users'"><i class='icon users'></i></div>
+           </div>
+        </div>
+       </div>
+      </div>
+
+     <div class='row'>
+       <div class='column'>
+
+
+
+
+
+         <!-- saved -->
+         <template v-for='(doc,i) in documents'>
+      
+             <div class='ui divider horizontal'>2019/09/19</div>
+    
+             <document :index='i' :article='doc'>
+                <template v-slot:command>
+                    <i :class="['icon',modeIcon]"></i>
+               </template>
+
+             </document>
+         </template>
+   
+         
+      </div>
+    </div>
+
+
+
+
+  </div>
+  </main>
+
+</body>
+
+ <script src='/js/native/code-mirror/5.48.4.js'></script>
+ <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+ <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+ <script src='/js/native/dat-gui/0.7.6.min.js'></script>
+
+ <script src='/js/native/lodash/4.17.15.min.js'></script>
+
+ <script src='/js/vue/2.6.10.js'></script>
+ <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+ <script src='/js/vue/plugin/dat-gui/0.0.1.min.js'></script>
+ 
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+
+
+ <script>
+  Vue.use(VueDatGui)
+  Vue.use(VueCodeMirror,{
+    options:{
+      scrollbarStyle  : 'simple',
+      theme           : 'default',
+      mode            : 'htmlmixed',
+      firstLineNumber : 1,
+      tabSize         : 2,
+      indentUnit      : 2,
+      matchTags       : {bothTags: true},
+      htmlMode        : true,
+      autoCloseTags   : true,
+      foldGutter      : true,
+      lineNumbers     : true,
+      lineWrapping    : true,
+      extraKeys: {
+        'Ctrl-A': 'autocomplete',
+        'Ctrl-Q': function(cm){
+          cm.foldCode(cm.getCursor())
+        },
+        'F11': function(cm){
+          cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+        }
+      },
+      gutters: [
+        'CodeMirror-linenumbers',
+        'CodeMirror-foldgutter'
+      ]
+    }
+  })
+
+  Vue.component('document',{
+    watch:{
+      editDocument:{
+        handler:function(editing){
+
+          var self = this
+          this.$nextTick(function(){
+            if(editing != null){
+            
+            $(self.$refs.window).popup('show')
+            console.dir('show')
+          }else{
+            $(self.$refs.window).popup('hide')
+          }
+          })
+
+        }
+      }
+    },
+    methods:{
+      edit:function(doc){
+        this.editDocument = doc
+      }
+    },
+    template:'#document',
+    props:['article','index'],
+    data:function(){
+      return{
+        editingTree:true,
+        editDocument:null,
+        content:'',
+        colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ],
+        docs:{
+
+        }
+      }
+    },
+    mounted:function(){
+
+
+      $(this.$refs.window).popup({
+          on:'click',
+          closable:false,
+          position:'left center',
+      })
+
+      var self = this
+      $(this.$refs.refill).dropdown({
+        onChange:function(obj){
+          self.editDocument.content += self.refill[obj].content
+          self.editDocument.addClasses = self.refill[obj].class
+        }
+      })
+    },
+    created:function(){
+    
+    }
+  })
+
+
+  Vue.component('indexes',{
+    template:'#dropdown',
+    computed:{
+      ui:function(){
+        return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+      }
+    },
+    methods:{
+      clear:function(){
+        $(this.$refs.labels).dropdown('remove labels')
+      }
+    },
+    props:['color','article'],
+    mounted:function(){
+      var self = this
+      $(this.$refs.labels).dropdown({
+         allowAdditions:true,
+         onLabelSelect:function(name){
+           self.$emit('select',self.article[name.dataset.value])
+         },
+         onRemove:function(name){
+           self.$delete(self.article,name)
+         },
+         onAdd:function(name,value){
+           self.$set(self.article,name,{
+             expand:false,
+             addClasses:'',
+             content:'',
+             docs:{
+
+             }
+           })
+         }
+      })
+      var self = this
+      Object.keys(this.article).forEach(function(v){
+
+        $(self.$refs.labels).dropdown('add label',v,v)
+      })
+
+
+    }
+  })
+  
+  new Vue({
+    el:'main',
+    methods:{
+      push:function(){
+        this.documents.push(_.clone(this.article,true))
+        //this.$refs.labels.clear()
+        this.article = {}
+      }
+    },
+    data:{
+      modeIcon:'eye',
+      content:'',
+      documents:[
+
+      ],
+      article:{
+
+      }
+    },
+    mounted:function(){
+
+  
+    }
+  })
+</script>

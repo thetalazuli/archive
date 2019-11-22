@@ -1,0 +1,297 @@
+<!--
+  1.2.1 N/Nの記事が全て削除されたらN/[N]のキーを削除する（日付タグは全ての記事が削除されたらそれも消える）
+  1.2.3 template engine に対応（お気に入り時に{{uuid}}とすると記事のidが自動付与される）
+  　　　 動画の埋め込み
+  1.2.5 pages[createdAt].editingではなく、documents[date][createdAt] or tagIndexes[name].list[createdAt]毎に編集する
+
+  -->
+<!doctype html>
+ <html>
+  <head>
+
+   <title>書こう.みんな！</title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='書こう.みんな！' name='application-name'>
+   <meta content='歩き続けるためのノートです' name='description'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='/css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='/asset/progressive-web.json' rel='manifest'>
+   <link href='/asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('/js/native/code-mirror/addon/search/matchesonscrollbar.css');
+     @import url('/js/native/code-mirror/addon/scroll/simplescrollbars.css');
+     @import url('/js/native/code-mirror/addon/display/fullscreen.css');
+     @import url('/js/native/code-mirror/addon/fold/foldgutter.css');
+     @import url('/js/native/code-mirror/addon/hint/show-hint.css');
+     @import url('/js/native/code-mirror/addon/dialog/dialog.css');
+     @import url('/js/native/code-mirror/5.48.4.min.css');
+     @import url('/css/animate/3.7.2.min.css');
+     @import url('/css/micron/1.1.6.min.css');
+     @import url('index.css');
+     @media screen and (max-width:148mm){
+       main{
+         padding:0 1em;
+         width:100%;
+       }
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row animated fadeInDown'>
+         <div class='column'>
+           <div class='ui segments'>
+             <template v-for='(content,name,i) in drafts'>
+               <draft :title='name' :color='colors[i]' :data='content'>
+                 <template v-slot:labels>
+                   <div @click='favoriteDraft(name)' :class="['ui','label',{'blue':name in favorites}]">
+                     <i class='icon heart'></i>
+                  </div>
+                </template>
+              </draft>
+              <div class='ui editor segment'
+              v-if='content.editing'>
+              <codemirror v-model='content.html'>
+             </codemirror>
+           </div>
+            </template>
+             <header class='ui segment' v-if='emptyDraft'>
+                <video src="/asset/movie/manual.mov" controls>
+               </video>
+            </header>
+             <div class='ui segment'>
+                <create-draft
+                  ref='createDraft'
+                  @select='createDocument'
+                  :data='drafts'>
+               </create-draft>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+       <div class='row'>
+         <div class='column'>
+           <nav class='ui menu pointing icon'>
+             <div class='item active'>
+               <i :class="['icon',mode]"></i>
+            </div>
+             <div class='item input'>
+                <div class='search input'>
+                  <div class='ui calendar' ref='calendar'>
+                    <div class='ui input left icon'>
+                      <i class='icon calendar'></i>
+                      <input type='text' placeholder=''>
+                   </div>
+                 </div>
+               </div>
+            </div>
+             <div class='right menu'>
+               <router-link to='edit' class='item'>
+                 <i data-micron='groove' class='icon edit'></i>
+              </router-link>
+               <router-link to='trash' class='item'>
+                 <i data-micron='groove' class='icon trash'></i>
+              </router-link>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+       <div class='row animated fadeInUp'>
+         <div class='column'>
+            <div class='ui segments'>
+               <template v-for='(obj,date) in dateIndexes'>
+                 <article class='ui segment' v-if='date in documents'>
+                   <header class='ui labels blue'>
+                     <div @click='obj.expand = !obj.expand' class='ui label'>
+                       {{date | moment('x').format('MM/DD')}}
+                    </div>
+                  </header>
+
+                </article>
+                 <template v-for='(xxx,createdAt,j) in documents[date]'>
+                    <transition
+                    enter-active-class="animated fadeIn"
+                    leave-active-class="animated fadeOut">
+                   <document v-show='obj.expand' color='orange' :content='pages[createdAt]'>
+                     <template v-slot:labels>
+                       <div class='ui label' @click='clickDocument(createdAt,documents[date])'>
+                         {{createdAt | moment('x').format('hh:mm')}}
+                      </div>
+                       <div class='ui label'>
+                         {{pages[createdAt].name}}
+                      </div>
+                    </template>
+                  </document>
+
+                   </transition>
+                   <div class='ui editor segment'
+                     v-if='documents[date][createdAt].editing'>
+                     <codemirror v-model='pages[createdAt].html'>
+                    </codemirror>
+                  </div>
+                </template>
+              </template>
+           </div>
+         
+           
+
+           <!--
+           <template v-for='(obj,name) in tagIndexes'>
+             <div class='ui segments'>
+                 <article class='ui segment'>
+                   <header class='ui labels blue'>
+                     <div @click='obj.expand = !obj.expand' class='ui label'>
+                       {{name}}
+                    </div>
+                  </header>
+                </article>
+              <template v-for='(attr,pageIndex) in obj.list'>
+                  <document v-show='obj.expand' color='orange' :content='pages[pageIndex]'>
+                      <template v-slot:labels>
+                          <div class='ui label' @click='clickDocument(pageIndex)'>
+                              {{pageIndex | moment('x').format('hh:mm')}}
+                           </div>
+                     </template>
+                   </document>
+                   <div class='ui editor segment'
+                   v-if='pages[pageIndex].editing'>
+                   <codemirror v-model='pages[pageIndex].html'>
+                  </codemirror>
+                </div>
+             </template>
+            </div>
+
+          </template>
+          -->
+        </div>
+      </div>
+
+
+      <div class='row'>
+          <div class='column'>
+            <div class='ui menu pointing icon'>
+              <div class='item active'>
+                <i class='icon tag'></i>
+             </div>
+              <div class='item input'>
+          
+
+                     <select ref='tag' class="ui search dropdown">
+     
+                       </select>
+     
+  
+             </div>
+           </div>
+         </div>
+       </div>
+
+       <div class='row'>
+           <div class='column'>
+        <div class='ui segments' v-if='tagIndexes[currentTag]'>
+        <template v-for='(attr,pageIndex) in tagIndexes[currentTag].list' >
+           <document color='orange' :content='pages[pageIndex]'>
+               <template v-slot:labels>
+                   <div class='ui label orange' @click='clickDocument(pageIndex,tagIndexes[currentTag].list)'>
+                      {{pageIndex | moment('x').format('MM/DD')}}
+                  </div>
+                  <div class='ui label orange'>
+                      {{pageIndex | moment('x').format('hh:ss')}}
+                 </div>
+              </template>
+            </document>
+            <div class='ui editor segment'
+            v-if='tagIndexes[currentTag].list[pageIndex].editing'>
+            <codemirror v-model='pages[pageIndex].html'>
+           </codemirror>
+         </div>
+      </template>
+      </div>
+     </div>
+   </div>
+
+    </div>
+  </main>
+ </body>
+ 
+  <script id='document' type='text/x-template'>
+    <article class='ui segment'>
+      <header class='ui labels orange'>
+        <slot name='labels'>
+       </slot>
+     </header>
+      <section :class='content.uid' 
+        v-append='content.html'>
+     </section>
+   </article>
+ </script>
+
+  <script id='draft' type='text/x-template'>
+    <article :class="['ui','draft','segment',color]">
+      <header :class="['ui','labels',color]">
+        <div class='ui label'
+          @click='data.editing=!data.editing'>
+          {{title}}
+       </div>
+        <!--
+        <div class='ui label'>
+          {{data.uid}}
+       </div>
+         -->
+        <slot name='labels'>
+       </slot>
+     </header>
+      <section :class='data.uid' 
+        v-append='data.html' spellcheck='false'>   
+     </section>
+  </article>
+</script>
+
+  <script id='dropdown' type='text/x-template'>
+    <div :class='$options.name'>
+      <div ref='labels' :class='ui'>
+        <input name='labels' type='hidden'>
+        <div class='default text'>
+          <div class='ui label orange'>
+            <i class='icon tags'>
+           </i>
+         </div>
+       </div>
+     </div>
+   </div>
+ </script>
+
+
+  <script src='/js/native/moment/2.24.0.min.js'></script>
+  <script src='/js/native/lodash/4.17.15.min.js'></script>
+  <script src='/js/native/short-id/2.2.15.js'></script>
+  <script src='/js/native/moment/plugin/array-dates/2.0.3.min.js'></script>
+  <script src='/js/native/local-forage/1.7.3.min.js'></script>
+  <script src='/js/native/handlebars/4.1.2.min.js'></script>
+
+  <script src='/js/native/micron/1.1.6.min.js'></script>
+
+  <script src='/js/native/code-mirror/5.48.4.js'></script>
+  <script src='/js/native/code-mirror/keymap/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/addon/5.48.4.min.js'></script>
+  <script src='/js/native/code-mirror/mode/5.48.4.min.js'></script>
+
+  <script src='/js/jquery/3.4.1.min.js'></script>
+  <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+
+  <script src='/js/vue/2.6.10.js'></script>
+  <script src='/js/vue/router/3.1.3.min.js'></script>
+  <script src='/js/vue/plugin/append/2.0.0.js'></script>
+  <script src='/js/vue/plugin/code-mirror/4.0.6.min.js'></script>
+  <script src='/js/vue/plugin/moment-lib/1.2.2.min.js'></script>
+  <script src='index.js'></script>
+</html>

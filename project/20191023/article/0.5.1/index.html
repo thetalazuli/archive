@@ -1,0 +1,22 @@
+ <body>
+  <main>
+    <page :index='i' v-for='i in 12'>
+   </page>
+ </main>
+</body>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/vue/plugin/loader/1.4.0.min.js'></script>
+ <script>
+   Vue.use(VueLoader)
+
+   new Vue({
+     el:'main',
+     components:[
+       'url:page.vue'
+     ],
+     mounted:function(){
+
+     }
+   })
+
+</script>

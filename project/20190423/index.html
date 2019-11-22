@@ -1,0 +1,131 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <!-- 言語Σ符号 -->
+   <meta charset='utf-8'>
+   <!-- 作者Σ名前と連絡先 -->
+   <meta content='' name='author'>
+   <meta content='' name='reply-to'>
+   <!-- 基本Σアプリの名前と概要と検索エンジン対策 -->
+   <meta content='' name='application-name'>
+   <meta content='noindex, nofollow, noarchive' name='robots'>
+   <meta content='業務管理アプリです。客室清掃の進捗を共有できます。' name='description'>
+   <!-- 設定Σアプリのビューポートと自動リンクを禁止 (Safari) -->
+   <meta content='telephone=no, address=no, email=no, date=no, url=no' name='format-detection'>
+   <meta content='width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no' name='viewport'>
+   <!-- 対応Σアプリの画面はカバー率100%のベンダープレフィックス付 -->
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <!-- 詳細Σアプリの情報（名前・背景色・アイコン・表示モード）とファビコン -->
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <!-- 運用∫ブラウザはレガシー対応（ECMA2015~2019） -->
+   <script src='js/native/core-2.6.9.min.js'></script>
+   <!-- 操作∫データ処理はレガシー対応・一貫性を重視した書き方 -->
+   <script src='js/native/lodash-4.17.15.min.js'></script>
+   <!-- 実装∫システムはＭＶＶＭ採用・ファイル単位にコンポーネント化 -->
+   <script src='js/vue/2.6.10.js'></script>
+   <script src='js/vue/loader-1.4.1.min.js'></script>
+   <script src='js/vue/cookies-1.5.13.min.js'></script>
+   <!-- 通信∫データベースはグラフ型・保存はローカルストレージ・リアルタイム同期 -->
+   <script src='js/native/gun/0.2019.416.min.js'></script>
+   <script src='js/native/gun/lib/open.js'></script>
+   <script src='js/native/gun/lib/bye.js'></script>
+   <!-- 提供∫アプリケーションマニフェストの単一化・レガシー対応・動作に必要なポリフィル -->
+   <script src='js/native/pwa/xhr-0.1.10.min.js'></script>
+   <script src='js/native/pwa/url-1.1.5.min.js'></script>
+   <script src='js/native/pwa/2.0.8.min.js'></script>
+
+   <!-- 画面∫VUE版のSEMANTIC-UIは保留(完全ではないから) -->
+   <script src='js/jquery/3.4.1.min.js'></script>
+   <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+   <!-- 管理∫管理者画面やデータ操作用 -->
+   <script src='js/native/dat-gui-0.7.6.min.js'></script>
+
+   <!-- 2015年より以前のスマホのクリック後に発生する300ms遅延問題 -->
+   <script src='js/native/fast-click-1.0.6.min.js'></script>
+
+   <!-- VUE:GUNの登録 -->
+   <script src='js/vue/gun-0.0.1.min.js'></script>
+
+   <!-- GOOGLE-ANALYTICのユーザに対する識別IDを流用してGUN-DB側のユーザ識別に使う -->
+   <script src='https://www.googletagmanager.com/gtag/js?id=UA-137563800-1' async></script>
+   <script>
+     window.dataLayer = window.dataLayer || []
+     function gtag(){
+       dataLayer.push(arguments)
+     }
+     gtag('js',new Date())
+     gtag('config','UA-137563800-1')
+  </script>
+   <!-- 起動 -->
+   <script src='index.js' defer></script>
+   <style>
+     @import url('css/dat-gui/light-0.0.1.min.css');
+     @import url('css/pretty-checkbox-3.0.3.min.css');
+     @import url('css/box-shadows-1.0.5.min.css');
+     @import url('css/animate-3.7.2.min.css');
+     @import url('index.css');
+  </style>
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+  
+           <div class='view'>
+             <div id='share' class='view-component'>
+               <textarea v-model='info.text' @keyup='share' placeholder='共有事項'>
+              </textarea>
+            </div>
+             <div id='total' class='view-component'>
+               <div class='ui label attached top'>
+                 TOTAL
+              </div>
+               <total :rows='userRows' :keys="['bath','bed','check']">
+              </total>
+            </div>
+             <div id='users' class='view-component'>
+               <div class='ui label attached top'>
+                 TASK COUNTER
+              </div>
+               <data-table
+                 :rows='userRows'
+                 :keys='viewKeys'
+                 :row-class='setRowClass'
+                 :cell-class='setCellClass'>
+              </data-table>
+            </div>
+          </div>
+           
+           <div class='controller'>
+             <div id='counter' :class="['ui','five','item','icon','menu','large','controller']">
+               <div class='item browse'>
+                 <i class='icon name'>
+                </i>
+              </div>
+               <div class='ui fluid popup top left' ref='settings'>
+                 <!-- dat.gui -->
+              </div>
+              　<div class='item'>
+                  <i class='icon list'>
+                 </i>
+              </div>
+               <numeric-up-down name='bed'   action='decrease' :min='0' :max='619' v-model='user.bed'   @input='synchronize'>
+              </numeric-up-down>
+               <numeric-up-down name='bath'  action='decrease' :min='0' :max='619' v-model='user.bath'  @input='synchronize'>
+              </numeric-up-down>
+               <numeric-up-down name='check' action='decrease' :min='0' :max='619' v-model='user.check' @input='synchronize'>
+              </numeric-up-down>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+ </body>
+</html>

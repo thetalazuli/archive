@@ -1,0 +1,351 @@
+ <style>
+   @import url('/css/semantic-ui/2.4.2.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+    margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+    vertical-align: top;
+    display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+    display:none;
+   }
+   .ui.selection.dropdown{
+    padding:.14285714em 0;
+    border:none;
+    min-height:auto;
+    background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+    font-size: .85714286rem;
+    padding: .5833em .833em;
+   }
+
+   nav{
+    position: absolute;
+    text-align:right;
+    width:calc(100%);
+    z-index: 999;
+    right: 7em;
+    top: -1em;
+  }
+   .ui.menu .active.item{
+    box-shadow: inset rgba(16, 36, 94, 0.4) 0 2px 3px 0;
+   }
+   .ui.card,
+   .ui.menu,
+   .ui.label,
+   .ui.segments,
+   .ui.multiple.dropdown>.label{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+   .ui.card>.content>.description, .ui.cards>.card>.content>.description{
+     color:black;
+   }
+   p{
+    line-height:1.2;
+   }
+</style>
+ <body>
+  <template id='dropdown'>
+    <div ref='labels' :class='ui'>
+      <input name='labels' type='hidden'>
+      <div class='default text'>
+        <div class='ui label'>
+          <i class='icon tags'>
+         </i>
+       </div>
+     </div>
+   </div>
+ </template>
+  <main>
+    <div class='ui grid padded'>
+      <div class='row'>
+        <div class='column'>
+          <img class='ui image fluid' src='https://camo.githubusercontent.com/222d804618d12ea390963d6a0445e546c091ee7e/68747470733a2f2f662e636c6f75642e6769746875622e636f6d2f6173736574732f3239303439362f313335303936372f32383036393834382d333731362d313165332d386638372d3062656634356166663163342e706e67'>
+        </div>
+     </div>
+
+      <div class='row'>
+        <div class='column'>
+
+          <div class='ui segments'>
+            <!--            <nav class='ui labels'>
+              <div class='ui label orange'>
+                updated at 2019/09/19
+             </div>
+
+            </nav>
+-->
+
+
+
+
+
+              <a class="ui right corner label" >
+                <!-- ここを押すとメールとかポップアップでわいに愛のメッセージ送れるで,それとGISTのSTAR -->
+                  <i class="heart icon blue"></i>
+                </a>
+
+            <div class='ui segment'>
+                <div class='ui ribbon label orange'>NOTE</div><div class='ui label orange'>これはノート</div>
+                <p></p>
+                <indexes :color='colors[i-1]' v-for='i in 12'>
+               </indexes>
+            </div>
+             <div class='ui segment'>
+                <div class='ui ribbon label orange'>TMPL</div><div class='ui label orange'>これはリフィル</div>
+                <p></p>
+                <indexes color='black'>
+               </indexes>
+             </div>
+             <div class='ui segment'>
+                <div class='ui ribbon label orange'>files</div><div class='ui label orange'>これはファイル（githu-repo - dropdown filepath lists auto complete)</div>
+                <p></p>
+                <!-- リフィルのようにクリックすると挿入 -->
+                <indexes color='black'>
+               </indexes>
+             </div>
+          </div>
+
+
+
+       </div>
+     </div>  
+      <div class='row'>
+        <div class='column'>
+          <div ref='menu' class='ui menu pointing icon'>
+            <div data-tab='home' class='item'><i class='icon home'></i></div>
+            <div data-tab='list' class='item'><i class='icon list'></i></div>
+            <div data-tab='user' class='item'><i class='icon user'></i></div>
+            <div data-tab='users' class='item'><i class='icon users'></i></div>
+            <div data-tab='comments' class='item'><i class='icon comment'></i><div class='ui floating top label'>199</div></div>
+         </div>
+       </div>
+     </div>
+      <div class='row'>
+        <div class='column'>
+          <div data-tab='home' class='ui tab'>
+
+
+
+
+            <div class='ui card fluid'>
+                <div class='image'>
+                    <img src='https://www.axa-direct.co.jp/pet/pet-ms/img/media/2018/04/img_beard-cat_kv-710x398.jpg'>
+                 </div>
+             <div class="content">
+                <a class="header">Kristy</a>
+                <div class="meta">
+                  <span class="date">Joined in 2013</span>
+                </div>
+                <div class="description">
+                  Kristy is an art director living in New York.
+                </div>
+              </div>
+              <div class="extra content">
+                  <span class="right floated">
+                    Joined in 2013
+                  </span>
+                  <span>
+                    <i class="user icon"></i>
+                    75 Friends
+                  </span>
+                </div>
+
+           </div>
+
+            <div class='ui card fluid'>
+   
+                    <div class='content'>
+                      <div class='description'>
+                        <p>本ソフトウェアの使用・複製・変更・結合・販売・頒布・許諾を許可する。但し本許諾表示と下記の著作権表示を全ての複製又は重要な箇所に記載することを条件とし、現状のまま提供され、これらに起因する如何なる損害・請求・義務について責任を負わない。</p>
+                     </div>
+                   </div>
+                    <div class='extra content'>
+                     <span class='right floated detail'>
+                       2019/09/19 | COPYRIGHT by 猫
+                    </span>
+                   </div>
+              
+
+
+            </div>
+
+            <div class='ui card fluid'>
+         
+                    <div class='content'>
+                      <div class='description'>
+                        <p>本ソフトウェアは利用者の端末から情報を収集する。目的はサービスとしての提供・改良・開発・利用動向の把握・安全性と信頼性の向上のほか、技術的な問題の検知・防止などがあって古い端末のサポートも含む。これらの情報によって、個人は特定されない。</p>
+                     </div>
+                   </div>
+                    <div class='extra content'>
+                     <span class='right floated detail'>
+                        2019/09/19 | COPYRIGHT by 猫
+                    </span>
+                  
+                  </div>
+     
+                　  </div>
+
+                  <div class='ui card fluid'>
+                      <div class='content'>
+                        <div class='description'>
+                          <p>本ソフトウェアを利用・投稿した情報から引き起こされる全ての結果に対して利用者は責任を負う。利用者に事前に通知することなく、いつでも独自の判断により利用と保存に制限を設ける権利を留保する。この行使によって生じた結果の全てに責任を負わない。</p>
+                       </div>
+                     </div>
+                      <div class='extra content'>
+                       <span class='right floated detail'>
+                         2019/09/19 | RULE by 猫
+                      </span>
+                     </div>
+                    </div>
+
+
+        
+           
+         </div>
+          <div data-tab='list' class='ui tab'>
+            <div class='ui segments'>
+              <div class='ui segment' v-for='i in 12'>
+                <div class='ui ribbon label grey'>
+                  TITLE
+                </div>
+              </div>
+            </div>
+         </div>
+          <div data-tab='users' class='ui tab'>
+
+
+              <div class="ui ten cards">
+                  <div class="ui link card">
+                    <div class="image">
+                      <img src="data:image/jpeg;base64,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"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/daneden.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/madeas.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/codemirror.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/zloirock.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/dataarts.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/github.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/wycats.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/highlightjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/picturepan2.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jquery.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lodash.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mathjax.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/webkul.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Modernizr.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/moment.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/mikemaccana.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/Semantic-Org.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/systemjs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/CodeSeven.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/jaysalvat.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/vuejs.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/surmon-china.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/lq111lq.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/FranckFreiburger.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/brockpetrie.png"></div></div><div class="ui link card"><div class="image"><img src="https://github.com/s4l1h.png"></div></div></div>
+     
+     
+
+
+          </div>
+          <div data-tab='user' class='ui tab'>
+              <div class='ui form'>
+                  <h4 class='ui horizontal divider'>LOGIN</h4>
+                  <div class='field'>
+                    <div class='ui input left icon'>
+                      <i class='icon user'></i>
+                      <input type='text' placeholder='username'>
+                   </div>
+                 </div>
+                  <div class='field'>
+                    <div class='ui input left icon'>
+                      <i class='icon lock'></i>
+                      <input type='text' placeholder='password'>
+                   </div>
+                 </div>
+                 <h4 class='ui horizontal divider'>GIST</h4>
+                 <div class='field'>
+                    <div class='ui input left icon'>
+                      <i class='icon github'></i>
+                      <input type='text' value='c61c701c1543c6f53db814e77c9b1d56' placeholder='gist sha'>
+                   </div>
+                 </div>
+                 <h4 class='ui horizontal divider'>REPO</h4>
+                 <div class='field'>
+                    <div class='ui input left icon'>
+                      <i class='icon github'></i>
+                      <input type='text' value='files' placeholder='gist sha'>
+                   </div>
+                 </div>
+                 <div class='ui submit button'>読込</div>
+                 <div class='ui message error'></div>
+
+
+
+          </div>
+         </div>
+       </div>
+     </div>
+   </div>
+ </main>
+</body>
+ <script src='/js/vue/2.6.10.min.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/jquery/plugin/semantic-ui/2.4.2.min.js'></script>
+ <script>
+   Vue.component('indexes',{
+      props:{
+       color:{
+         default:'',
+         type:String
+       }
+     },
+     computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+     },
+     template:'#dropdown',
+     mounted:function(){
+       $(this.$refs.labels).dropdown({
+         allowAdditions:true
+       })
+     }
+   })
+   new Vue({
+     el:'main',
+     data:{
+      current:{
+        articles:null,
+        pages:null
+      },
+      users:{
+        // gist hashs... files : { user.js, comments}
+      },
+      user:{
+        articles:{
+
+        },
+        refill:{
+
+        },
+        pages:{
+
+        }
+      },
+      colors:[
+        'grey',
+        'brown',
+        'pink',
+        'purple',
+        'violet',
+        'blue',
+        'teal',
+        'green',
+        'olive',
+        'yellow',
+        'orange',
+        'red'
+       ]
+     },
+     mounted:function(){
+       $('.item',this.$refs.menu).tab({
+
+       })
+       $('.item',this.$refs.menu).tab('change tab','home')
+     }
+   })
+</script>

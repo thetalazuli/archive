@@ -1,0 +1,14 @@
+{
+  "license": "MIT",
+  "dependencies": {
+    "blipp": "^4.0.1",
+    "gun": "^0.2019.930",
+    "hapi": "^18.1.0",
+    "hapi-auth-basic": "^5.0.0",
+    "hapi-auth-ip-whitelist": "^0.1.0",
+    "inert": "^5.1.3"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

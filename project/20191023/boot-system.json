@@ -1,0 +1,38 @@
+{
+  "depends":{
+    "*":{
+      "format":"global",
+      "authorization":"true"
+    },
+    "code-mirror/addon/*":{
+      "deps":["code-mirror"]
+    },
+    "code-mirror/keymap/*":{
+      "deps":["code-mirror"]
+    },
+    "code-mirror/mode/*":{
+      "deps":["code-mirror","code-mirror/addon"]
+    },
+    "moment/array-dates/*":{
+      "deps":["moment"]
+    }
+  },
+  "groups":{
+    "native":{
+      "dat-gui"               :{"main":"0.7.6","license":"mit","link":"https://github.com/moment/moment","author":"moment"},
+      "moment"               :{"main":"2.24.0","license":"mit","link":"https://github.com/moment/moment","author":"moment"},
+      "moment/array-dates"   :{"main":"2.0.3","license":"mit","link":"","author":"array-dates"},
+      "code-mirror"          :{"main":"5.49.1","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/keymap"   :{"main":"5.49.1","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/addon"    :{"main":"5.49.1","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"},
+      "code-mirror/mode"     :{"main":"5.49.1","license":"mit","link":"https://github.com/codemirror/CodeMirror","author":"codemirror"}
+    },
+    "jquery":{
+      "fomantic-ui"          :{"main":"2.7.8","license":"mit","link":"https://github.com/Semantic-Org/Semantic-UI","author":"Semantic Org"}
+    },
+    "vue":{
+      "dat-gui"               :{"main":"0.0.1","license":"mit","link":"https://github.com/moment/moment","author":"moment"},
+      "code-mirror"          :{"main":"4.0.6","license":"mit","link":"https://github.com/surmon-china/vue-codemirror","author":"surmon-china"}
+    }
+  }
+}

@@ -1,0 +1,201 @@
+ <style>
+   @import url('/css/animate/3.7.2.min.css');
+   @import url('/css/fomantic-ui/2.7.8.min.css');
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   main{
+     width:148mm;
+     margin:0 auto;
+   }
+   .ui.multiple.search.dropdown>.text .ui.label>.icon{
+    margin-right:0;
+   }
+   .ui.multiple.search.dropdown>.text{
+    margin:0;
+   }
+   .ui.label>.close.icon, .ui.label>.delete.icon{
+    vertical-align: top;
+    display:none;
+   }
+   .ui.selection.dropdown{
+     display:block;
+   }
+   .ui.dropdown .dropdown.icon{
+    display:none;
+   }
+   .ui.selection.dropdown{
+    padding:.14285714em 0;
+    border:none;
+    min-height:auto;
+    background:transparent;
+   }
+   .ui.multiple.dropdown>.label{
+    font-size: .85714286rem;
+    padding: .5833em .833em;
+   }
+   .ui.menu,
+   .ui.label,
+   .ui.multiple.dropdown>.label{
+     box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0;
+     border-bottom: 2px solid rgba(34,36,38,.15) !important;
+   }
+</style>
+
+ <template id='component1'>
+   <div>
+     <div ref='labels' :class='ui'>
+       <input name='labels' type='hidden'>
+       <div class='default text'>
+         <div class='ui label'>
+           <i class='icon tags'>
+          </i>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+ <template id='component2'>
+   <div>
+     <div class='ui segments' v-for='idx in articles'>
+       <div class='ui segment'>
+         <div class='ui label ribbon orange'>
+           {{idx}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+ <body>
+  <main>
+    <div class='ui grid padded'>
+
+      <div class='row'>
+        <div class='column'>
+          <router-view
+           name='indexes'
+           class='animated tada'
+           :articles='articles'
+           :pages='pages'
+           >
+         </router-view>
+       </div>
+     </div>
+
+      <div class='row'>
+        <div class='column'>
+          <nav class='ui menu pointing icon'>
+            <router-link :to="{name:'page-a'}"><div class='item active'><i class='icon edit'></i></div></router-link>
+            <router-link to='/page-b'><div class='item'><i class='icon clone'></i></div></router-link>
+         </nav>
+       </div>
+     </div>
+
+      <div class='row'>
+        <div class='column'>
+            <router-view
+            name='articles'
+            class='animated tada'
+            :articles='articles'
+            :pages='pages'
+            >
+          </router-view>
+       </div>
+     </div>
+
+   </div>
+ </main>
+</body>
+ <script src='/js/vue/2.6.10.js'></script>
+ <script src='/js/jquery/3.4.1.min.js'></script>
+ <script src='/js/vue/router/3.1.3.js'></script>
+ <script src='/js/jquery/plugin/fomantic-ui/2.7.8.min.js'></script>
+ <script>
+   
+   const Component1 = {
+      template: '#component1',
+      props:{
+        articles:{
+          default:null,
+          type:Object
+        }
+      },
+      computed:{
+       ui:function(){
+         return ['ui dropdown selection multiple search','labels',this.color].join(' ')
+       }
+      },
+      mounted:function(){
+        console.dir(this.articles)
+        /* コンポーネントは v-if と同様にDOM に再挿入される */
+        /* そのため、JQUERYのコンポーネントは新しくDOMを挿入する必要が生まれる */
+        /* ページが切り替わる度にDOMが消えては挿入されを繰り返し、その度にmountedが呼ばれる */
+        /* ここでデータに対してJQUERY側から再初期化する処理を書く必要がある */
+        var self = this
+        $(this.$refs.labels).dropdown({
+          allowAdditions:true
+        })
+
+        for(k in this.articles){
+          $(this.$refs.labels).dropdown('add label',k,k)
+        }
+      }
+   };
+
+   const Component2 = {
+      template: '#component2',
+      props:['articles','pages']
+   };
+
+   const pages = [
+      { name:'page-a',path: '/page-a', components:{
+        indexes:Component1,
+        articles:Component2
+      } },
+      { name:'page-b',path: '/page-b', component: Component2 }
+   ]
+
+   const router = new VueRouter({
+    routes:pages
+   })
+   
+   new Vue({
+     el:'main',
+     router:router,
+     data:{
+       articles:{
+          '仕様':0,
+          '設計':1,
+          '実装':2,
+          '検証':4,
+          '納品':5
+       },
+       pages:{
+         '0':{
+           title:'0 page'
+         },
+         '1':{
+           title:'1 page'
+         },
+         '2':{
+           title:'2 page'
+         },
+         '3':{
+           title:'3 page'
+         },
+         '4':{
+           title:'4 page'
+         },
+         '5':{
+           title:'5 page'
+         }
+       }
+     },
+     mounted:function(){
+       console.dir(this.articles)
+     }
+   })
+ 
+</script>

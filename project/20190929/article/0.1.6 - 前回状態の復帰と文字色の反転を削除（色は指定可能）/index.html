@@ -1,0 +1,402 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet' media='screen'>
+   <link href='asset/progressive-web.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style>
+     @import url('css/instagram-0.1.4.min.css');
+     @font-face{
+       font-family:'azuki';
+       src:url('asset/azuki.ttf');
+     }
+     @font-face{
+       font-family:'M+2VM+IPAG circle';
+       src:url('asset/M+2VM+IPAG-circle.ttf');
+     }
+     
+     html,
+     body{
+       font:12px 'M+2VM+IPAG circle';
+     }
+     main{
+       margin:0 auto;
+       width:500px;
+     }
+     .ui.menu,
+     .ui.popup,
+     .ui.segments{
+       border-bottom: 2px solid rgba(34,36,38,.15) !important;
+       box-shadow: rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+
+     [spellcheck],
+     [contenteditable]{
+       outline:none;
+     }
+
+     /* 微調整 */
+     .dg .slider{
+       margin-left:0 !important;
+     }
+
+     /*
+      * アップロード用のボタン
+      */
+     .ui.menu input[type="file"] {
+       display:none;
+     }
+
+     /*
+      * 設定用のコントローラ
+      */
+     .controller .ui.popup{
+       padding:0;
+       border:none;
+       margin-top:3em;
+     }
+     .controller .ui.popup .dg.main .close-button{
+       display:none;
+     }
+
+     .view figure{
+       margin:0;
+     }
+
+     /*
+      * 入力用のビュー
+      */
+     .view pre{
+       width:100%;
+       height:100%;
+       left:0;top:0;
+       position:absolute;
+     }
+     .view pre.tweet{
+       font-size:inherit;
+       font-family:inherit;
+     }
+     .view pre.tweet{
+       padding:1em;
+       height:100%;
+       margin:0;
+     }
+
+     @media only screen and (max-width:500px){
+       main{
+         width:100%;
+       }
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui segments'>
+             <div ref='block' :class="['view',segmentClass]" :style='textStyle'>
+               <figure :class='effectClass'>
+                 <!-- NOTE!!! https://github.com/niklasvh/html2canvas/pull/1763 
+                      Combining several filters still needs some improvement.
+                 -->
+                 <img :class='imageClass' :src='image'>
+              </figure>
+               <pre class='tweet'
+                 ref='tweet'
+                 v-if='isTextLoaded'
+                 v-text='text.content'
+                 @input='text.content = $refs.tweet.innerText'
+                 contenteditable='true'
+                 spellcheck='false'
+                 v-once>
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+       <div class='row'>
+         <div class='column'>
+           <div class='ui menu pointing icon'>
+             <div class='item controller active'>
+               <i ref='controller' class='icon edit'></i>
+               <div class='ui popup very basic'>
+                 <dat-gui>
+                   <dat-value label='Instagram Filter' v-model='effect.filter' :accepted-values='filter.instagram'></dat-value>
+                   <dat-value label='テキストの位置' v-model='text.align' :accepted-values="['left','center','right']"></dat-value>
+                   <dat-value label='フォントサイズ' v-model='font.size' :min='12' :max='52' :step='1'></dat-value>
+                   <dat-value label='フォントの名前' v-model='font.name'></dat-value>
+                   <dat-color label='文字色' v-model='color.text'></dat-color>
+                </dat-gui>
+              </div>
+            </div>
+             <label class='item'>
+               <i class='icon plus'></i>
+               <input @change='onSelectImage' accept='image/*' type='file' name='image'>
+            </label>
+             <div class='right menu'>
+               <div @click='saveImage' class='item'>
+                 <i class='icon save'></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+  </main>
+ </body>
+</html>
+
+ <script src='js/native/dat-gui-0.7.6.min.js'></script>
+ <script src='js/native/file-size-4.1.2.min.js'></script>
+ <script src='js/native/compressor-1.0.5.min.js'></script>
+ <script src='js/native/html2canvas-1.0.0.min.js'></script>
+ <script src='js/native/canvas2image-1.0.0.min.js'></script>
+ <script src='js/native/local-forage-1.7.3.min.js'></script>
+
+ <script src='js/vue/2.6.10.min.js'></script>
+ <script src='js/vue/dat-gui-0.0.1.min.js'></script>
+ 
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+
+ <script>
+   Vue.use(VueDatGui)
+
+   function blobToBase64(blob,callback) {
+    var reader = new FileReader()
+        reader.readAsDataURL(blob)
+        reader.onloadend = function () {
+          callback(reader.result)
+        }
+   }
+
+   new Vue({
+     el:'main',
+     data:{
+       storage:{
+         key:'ztApp',
+         loaded:false
+       },
+       img:{
+         blob:null,
+         blobURL:null,
+         dataURI:null,
+         quality:0.3,
+         convertedSize:0 
+       },
+       effect:{
+         filter:'normal'
+       },
+       text:{
+         content:'台詞を入れましょう！',
+         align:'left'
+       },
+       color:{
+         text:'#000000'
+       },
+       filter:{
+         instagram:[
+           'normal',
+           '1977',
+           'aden',
+           'amaro',
+           'ashby',
+           'brannan',
+           'brooklyn',
+           'charmes',
+           'clarendon',
+           'crema',
+           'dogpatch',
+           'earlybird',
+           'gingham',
+           'ginza',
+           'hefe',
+           'helena',
+           'hudson',
+           'inkwell',
+           'kelvin',
+           'juno',
+           'lark',
+           'lofi',
+           'ludwig',
+           'maven',
+           'mayfair',
+           'moon',
+           'nashville',
+           'perpetua',
+           'poprocket',
+           'reyes',
+           'rise',
+           'sierra',
+           'skyline',
+           'slumber',
+           'stinson',
+           'sutro',
+           'toaster',
+           'valencia',
+           'vesper',
+           'walden',
+           'willow',
+           'xpro-ii'
+         ]
+       },
+       font:{
+         size:18,
+         list:[
+           'azuki',
+           'M+2VM+IPAG circle'
+         ],
+         name:'azuki'
+       }
+     },
+     watch:{
+       '$data':{
+         deep:true,
+         handler:function(obj){
+           console.dir(obj)
+           localforage.setItem(this.storage.key,obj)
+         }
+       }
+     },
+     computed:{
+       image:function(){
+         return this.img.dataURI || 'asset/logo.png'
+       },
+       fontStyle:function(){
+         return {
+           'fontSize':`${this.font.size}px`,
+           'fontFamily':`'${this.font.name}'`
+         }
+       },
+       textStyle:function(){
+         return [
+           {'color':this.color.text},
+           {'text-align':this.text.align},
+           this.fontStyle
+         ]
+       },
+       imageClass:function(){
+         return [
+           'ui','image','fluid'
+         ]
+       },
+       effectClass:function(){
+         return [
+           `filter-${this.effect.filter}`
+         ]
+       },
+       segmentClass:function(){
+         return ['ui','segment','fitted']
+       },
+       isTextLoaded:function(){
+         /*
+          * NOTE!!!
+          * 現在、画像上のテキストはV-ONCEであり
+          * データが一度のみバインドする。このタイミングを制御して
+          * 前回のデータの読み込み処理を終えたタイミングでDOMを有効化する
+          */
+         return this.storage.loaded
+       }
+     },
+     methods:{
+       ready:function(){
+         $(this.$refs.controller).popup('show')
+       },
+       construct:function(){
+         $(this.$refs.controller).popup({
+           on:'click',
+           closable:false,
+           position:'bottom left',
+         })
+       },
+       set:function(blob){
+         var self = this
+         this.img.blob = blob
+         this.img.blobURL = URL.createObjectURL(blob)
+         this.img.convertedSize = filesize(blob.size, {round: 0})
+         /* blobURLはhtml2canvas上でレンダリングされない。その為dataURIを使う */
+         blobToBase64(
+           blob,
+           function(base64){
+             self.img.dataURI = base64
+           }
+         )
+       },
+       info:function(blob){
+         console.dir(blob)
+         console.dir(URL.createObjectURL(blob))
+         console.dir(filesize(blob.size, {round: 0}))
+       },
+       saveImage:function(){
+         var self = this
+         var summary = this.text.content.substr(0,21)
+         html2canvas(this.$refs.block).then(function(canvas) {
+           Canvas2Image.saveAsPNG(canvas,canvas.width,canvas.height,summary)
+         })
+       },
+       loadImage:function(file){
+         var self = this
+         new Compressor(file, {
+           quality  :self.quality,
+           mimeType :'image/jpeg',
+           beforeDraw(context,canvas) {
+             context.fillStyle = 'white'
+             /* PNG->JPG:背景は塗りつぶされる（黒色） */
+             /* 直後にbeforeDraw()呼び出しがあり、再度塗り潰す（白色） */
+             context.fillRect(0,0,canvas.width,canvas.height);
+           },
+           success  :function(result) {
+             self.set(result)
+             self.info(result)
+             self.$emit('loaded',
+             this.blobURL)
+           },
+           error    :function(err) {
+             console.log(err.message)
+           },
+         })
+      },
+       onSelectImage:function(e){
+         var selectedFile = e.target.files[0]
+         this.loadImage(selectedFile)
+       }
+     },
+     created:function(){
+       var self = this
+       function set(src){
+         self.img = src.img
+         self.effect = src.effect
+         self.text = src.text
+         self.color = src.color
+         self.filter = src.filter
+         self.font = src.font
+       }
+
+       function loaded(flag){
+         self.storage.loaded = flag
+       }
+
+       localforage.getItem(this.storage.key,function(err,obj){
+         if(obj){ set(obj) }
+         loaded(true)
+       })
+     },
+     mounted:function(){
+       this.construct()
+       this.ready()
+     }
+   })
+</script>
