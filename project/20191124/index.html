@@ -1,0 +1,514 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='notranslate' name='google'>
+   <!-- GOOGLE:https://support.google.com/webmasters/answer/79812 -->
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style name='editor'>
+     @import url('css/code-mirror/5.49.1.min.css');
+     @import url('css/code-mirror/addon-5.49.1.min.css');
+     @import url('css/code-mirror/mode-5.49.1.min.css');
+     @import url('css/code-mirror/5.49.1.min.css');
+  </style>
+   <style name='font'>
+     @font-face{
+       font-family:'M+2VM+IPAG circle';
+       src:url('asset/m+2vm+ipag-circle.ttf');
+     }
+  </style>
+   <style>
+     html,
+     body{
+       font:12px 'M+2VM+IPAG circle';
+     }
+     /*
+      * 配置（中央）
+      */
+     body{
+       display:flex;
+       align-items:center;
+       justify-content:center;
+     }
+     main{
+       width:999px;
+       height:100%;
+     }
+     .ui.grid{
+       height:100%;
+     }
+     /*
+      * 見栄（凹凸）
+      */
+     .ui.label,
+     .ui.table,
+     .ui.segment{
+       border-bottom:2px solid rgba(34,36,38,.15) !important;
+       box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+     }
+     /*
+      * 調整（位置）
+      */
+     .ui.table,
+     .ui.segment{
+       margin-top:0;
+     }
+     /*
+      * 調整（全体）
+      */
+     .ui.table>thead>tr>th,
+     .ui.table>tbody>tr>td{
+       padding:.2em;
+     }
+     /*
+      * 調整（個々）
+      */
+     .ui.table>thead>tr>th:nth-child(2){
+       width:5em;
+     }
+     .ui.table>thead>tr>th:nth-child(3),
+     .ui.table>tbody>tr>td:nth-child(3),
+     .ui.table>thead>tr>th:nth-child(4),
+     .ui.table>tbody>tr>td:nth-child(4),
+     .ui.table>thead>tr>th:nth-child(5),
+     .ui.table>tbody>tr>td:nth-child(5){
+       text-align:center;
+       width:3em;
+     }
+     .ui.table>thead>tr>th{
+       text-align:center;
+     }
+     .ui.table>tbody>tr:hover{
+       cursor:pointer;
+     }
+     /*
+      * 構造（エディタ）
+      */
+     #editor{
+       display:flex;
+       flex-direction:column;
+     }
+     #eidotr #editor-view{
+       flex:1;
+     }
+     #editor #editor-controller{
+       
+     }
+     /*
+      * 設定（スクロールとフォント）
+      */
+     #editor,
+     #editor .ui.segment,
+     #editor .ui.segment .vue-codemirror,
+     #editor .ui.segment .vue-codemirror .CodeMirror{
+       height:100%;
+     }
+     #editor .ui.segment .vue-codemirror .CodeMirror{
+       font:12px 'M+2VM+IPAG circle';
+     }
+     #viewer{
+       height:100%;
+       overflow-y:scroll;
+     }
+     /*
+      * FOMANTIC-UI(が既に指定してる)
+      * CREATE TABLE->(sql2json):<TABLE>群は
+      * スクロールバーがあるとみっともないので非表示
+      * #viewer::webkit-scrollbarは効かないので上書き
+      */
+     body ::-webkit-scrollbar {
+       display:none;
+     }
+     .ui.label>i.icon{
+       margin-right:0;
+     }
+     /*
+      * FOMANTIC-UI
+      * 2.7.8は古いFONTAWESOMEを利用中
+      * ので新しいフォントを入れ直して個々に定義する
+      * path:css/fomantic-ui/themes/default/assets/fonts
+      */
+      i.icon.file-csv:before    {content:'\f6dd';}
+      i.icon.file-image:before  {content:'\f1c5';}
+      /*
+       * MODEL
+       * CREATE-TABLEをTABLE化したモノ
+       * 画像化した際（クロームの拡張機能による要素指定キャプチャ）影を残す
+       * https://chrome.google.com/webstore/search/element%20capture?_category=extensions
+       */
+      #viewer div.model{
+        padding-bottom:.7em;
+        padding-right:.7em;
+        padding-left:.7em;
+        padding-top:0;
+      }
+      /*
+       * sql2json
+       * エラー時の色合わせ
+       */
+      .ui.label.error-message,
+      .CodeMirror .error-line{
+        background:#fff0f0 !important;
+        color:#ff7373 !important;
+      }
+  </style>
+ </head>
+  <body>
+   <main>
+
+     <div class='ui grid internally celled'>
+       <div class='row'>
+         <div class='eleven wide column' id='editor'>
+            <div class='ui labels blue' id='editor-controller'>
+              <div class='ui label pointing below'>
+                全テーブル
+             </div>
+              <a class='ui label' target='_blank' href='https://chrome.google.com/webstore/detail/html-elements-screenshot/mckfdaahjhmnchjihljdiakamamondld?hl=ja'>
+                <i class='icon file-image'>
+               </i><div class='ui detail'>PNG</div>
+             </a>
+              <a class='ui label' target='_blank' href='https://chrome.google.com/webstore/detail/download-table-as-csv/jgeonblahchgiadgojdjilffklaihalj?hl=ja'>
+                <i class='icon file-csv'>
+               </i><div class='ui detail'>CSV</div>
+             </a>
+              <div class='ui label error-message' v-if='hasErrSql2json'>
+                {{err.message}}
+             </div>
+          </div>
+           <div class='ui segment fitted' id='editor-view'>
+             <codemirror ref='myCm' v-model='content'>  
+            </codemirror>
+          </div>
+        </div>
+         <div class='five wide column' id='viewer'>
+           <div ref='models' v-for='(obj,n) in json'>
+             <model v-model='json[n]'>
+            </model>
+          </div>
+        </div>  
+      </div>
+    </div>
+  </main>
+ </body>
+</html>
+
+ <template id='model' type='text/x-template'>
+   <div v-ui>
+     <div class='ui divider horizontal'>
+       {{table.name}}
+    </div>
+     <table class='ui table attached top single line unstackable celled fixed green'>
+       <thead>
+         <th>名</th>
+         <th>型</th>
+         <th>値</th>
+         <th>虚</th>
+         <th>加</th>
+      </thead>
+       <tbody>
+         <template ref='models' v-for='(obj,i) in table.columns'>
+           <!-- ここ修正 -->
+           <tr v-if='hasName(obj)' :class="[{'positive':highlight[obj.name]}]" @dblclick='highlightRow(obj)'>
+             <td><span>{{getName(obj)}}</span></td>
+             <td><span>{{getDataType(obj)}}</span></td>
+             <td><span>{{getDataTypeParam(obj)}}</span></td>
+             <td>
+               <span>
+                 <template v-if='getNullType(obj)'>
+                   <i class='icon check'>
+                  </i>
+                </template>
+              </span>
+            </td>
+             <td>
+               <span>
+                 <template v-if='getAutoIncrementType(obj)'>
+                   <i class='icon check'>
+                  </i>
+                </template>
+              </span>
+            </td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</template>
+ 
+ <!-- native:code-mirror -->
+ <script src='js/native/code-mirror/5.49.1.min.js'></script>
+ <script src='js/native/code-mirror/addon-5.49.1.min.js'></script>
+ <script src='js/native/code-mirror/mode-5.49.1.min.js'></script>
+
+ <!-- native:sql2json -->
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/nearley/2.19.0.min.js'></script>
+ <script src='js/native/nearley/grammar.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/code-mirror-4.0.6.min.js'></script>
+ <script>
+   Vue.directive('ui',function(el,binding,vnode){
+     el.classList.add(vnode.context.$options.name)
+   })
+
+   Vue.component('model',{
+     template:'#model',
+     model:{
+       prop:'table',
+       event:'input'
+     },
+     props:{
+       table:{
+         required:true,
+         type:Object,
+         default:{}
+       }
+     },
+     data:function(){
+       return{
+         highlight:{
+         }
+       }
+     },
+     methods:{
+       /*
+        * 行色
+        */
+       highlightRow:function(obj){
+         if(this.hasName(obj)){
+           var name = obj.name
+           var toggle = (name in this.highlight) ? !this.highlight[name] : true
+           this.$set(this.highlight,name,toggle)
+         }
+       },
+       /*
+        * 取得
+        */
+       getName:function(column){
+         return column.name
+       },
+       getNullType:function(column){
+         if(this.hasNullType(column)){
+           return column.allow_null
+         }
+       },
+       getDataType:function(column){
+         if(this.hasDataType(column)){
+           return column.data_type.type
+         }
+       },
+       getDataTypeParam:function(column){
+         if(this.hasDataTypeParams(column)){
+           return column.data_type.params[0]
+         }
+       },
+       getAutoIncrementType:function(column){
+         if(this.hasAutoIncrementType(column)){
+           return column.auto_increment
+         }
+       },
+       /*
+        * 検証
+        */
+       hasAutoIncrementType:function(obj){
+         return 'auto_increment' in obj
+       },
+       hasDataTypeParams:function(obj){
+         return this.hasDataType(obj) ? 'params' in obj.data_type : false
+       },
+       hasDataType:function(obj){
+         return 'data_type' in obj
+       },
+       hasNullType:function(obj){
+         return 'allow_null' in obj
+       },
+       hasName:function(obj){
+         return 'name' in obj
+       }
+     }
+   })
+
+   /*
+    * view-source:https://codemirror.net/mode/sql/
+    */
+   Vue.use(VueCodeMirror,{
+     options:{
+       scrollbarStyle  : 'simple',
+       theme           : 'default',
+       mode            : 'text/x-mysql',
+       firstLineNumber : 1,
+       tabSize         : 2,
+       indentUnit      : 2,
+       matchTags       : {bothTags: true},
+       htmlMode        : true,
+       autoCloseTags   : true,
+       foldGutter      : true,
+       lineNumbers     : true,
+       lineWrapping    : true,
+       styleActiveLine     : true,
+       styleActiveSelected : true,
+       extraKeys: {
+         'Ctrl-A': 'autocomplete',
+         'Ctrl-Q': function(cm){
+           cm.foldCode(cm.getCursor())
+         },
+         'F11': function(cm){
+           cm.setOption("fullScreen", !cm.getOption("fullScreen"))
+         }
+       }
+     }
+   })
+
+   new Vue({
+     el:'main',
+     data:{
+       err:{
+         message:'',
+         line:0,
+         col:0
+       },
+       json:[],
+       content:`
+CREATE TABLE action_protocol (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  createdbyuserkey varchar(40) NOT NULL DEFAULT '',
+  userkey varchar(40) NOT NULL DEFAULT '',
+  dt_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  servicekey varchar(40) NOT NULL DEFAULT '',
+  information text NOT NULL,
+  objectkey varchar(40) NOT NULL DEFAULT '',
+  action varchar(50) DEFAULT '',
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE crm_reports (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  entrykey varchar(40) NOT NULL,
+  userkey varchar(40) NOT NULL,
+  reportname varchar(255) NOT NULL,
+  description varchar(255) NOT NULL,
+  tablekey varchar(40) NOT NULL,
+  dt_created datetime NOT NULL,
+  dt_start datetime NOT NULL,
+  dt_end datetime NOT NULL,
+  date_field varchar(100),
+  displayfields text NOT NULL,
+  specials text NOT NULL,
+  interval varchar(255) NOT NULL,
+  filter text NOT NULL,
+  defaultreport int(11) NOT NULL DEFAULT '0',
+  basedonaddressbook int(11) NOT NULL,
+  allow_select_fields int(11) NOT NULL DEFAULT '1',
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+CREATE TABLE adminactions (
+  id int(11) NOT NULL AUTO_INCREMENT,
+  dt_created datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  userkey varchar(50) NOT NULL DEFAULT '',
+  urlvariables text NOT NULL,
+  formvariables longtext NOT NULL,
+  resellerkey varchar(50) NOT NULL DEFAULT '',
+  companykey varchar(50) NOT NULL DEFAULT '',
+  href text NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+       ` 
+     },
+     watch:{
+       content:{
+         /*
+          * 監視（入力）
+          * 何故か、handler:function(old,new)にはならない（逆）
+          * わかりづらいので、this.contentをそのまま保存して対処する
+          */
+         deep:true,
+         handler:function(newSQL,oldSQL){
+        　 /*
+            * 保存
+            */
+           localStorage.setItem('cache',this.content)
+
+          /*
+           * 解析
+           */
+          var self=this
+          var editor=self.$refs.myCm.codemirror
+  
+          /*
+           * 保存間隔は850ms
+           */
+          var processing = _.throttle(function(){
+
+            // 消去:前回のエラー
+            editor.removeLineClass(self.err.line,'wrap','error-line')
+
+            try{
+              // 変換
+              self.sql2json()
+              // 変換:正常
+              self.err.message = ''
+            }catch(exception){
+              // 取得:エラーの情報と内容
+              var errInfo = exception.message.split('\n')[0]
+              var errContent = exception.message.split('\n')[2]
+              // 整形:エラーとして表示するメッセージ
+              self.err.message = errInfo + ':' + errContent
+              // 取得:エラーの発生した行と列(https://www.regextester.com/97589 "Syntax error at line 111 col 1:: test")
+              self.err.line = parseInt(errInfo.match(/line\s[0-9]+/g)[0].replace('line ','')) - 1
+              self.err.col = parseInt(errInfo.match(/col\s[0-9]+/g)[0].replace('col ',''))
+              // 追加:今回のエラー(https://codemirror.net/doc/manual.html#removeLineClass)
+              self.$refs.myCm.codemirror.addLineClass(self.err.line,'wrap','error-line')
+            }
+          },850)
+          
+          /*
+           * 処理
+           */
+          processing()
+          /*
+           * 表示
+           */
+          console.dir(
+            this.json
+          )
+         }
+       }
+     },
+     computed:{
+       hasErrSql2json:function(){
+         return this.err.message.length > 0
+       }
+     },
+     methods:{
+       init:function(){
+         if('cache' in localStorage){
+           this.content = localStorage.getItem('cache')
+         }
+       },
+       sql2json:function(){
+         this.json = new nearley.Parser(grammar).feed(this.content).results[0]
+       }
+     },
+     created:function(){
+       this.init()
+       this.sql2json()
+     }
+   })
+</script>
