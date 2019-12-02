@@ -1,0 +1,628 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='notranslate' name='google'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style name='font'>
+    @font-face{
+     font-family:'M+2VM+IPAG circle';
+     src:url('asset/m+2vm+ipag-circle.ttf');
+    }
+  </style>
+   <style name='list-tab'>
+     .list-tab{
+
+     }
+  </style>
+   <style name='list-view'>
+    /*
+     * 対象
+     */
+    .list-view.ui.segment .ui.table>tbody>tr:hover{
+      -webkit-box-shadow: 0 0 0 #a3c293 inset;
+      box-shadow: 0 0 0 #a3c293 inset;
+      background: #fcfff5;
+      color: #2c662d;
+      cursor:pointer;
+    }
+  </style>
+   <style name='list-view-edit'>
+     .list-view.edit{
+
+     }
+  </style>
+   <style name='note-write'>
+    .note-write textarea::placeholder{
+      color:grey;
+    }
+    /*
+     * 名前
+     */
+    .note-write>.ui.labels{
+      position:absolute;
+      text-align:left;
+      z-index:-999;
+      left:-4.2em;
+      width:100%;
+      top:-1em;
+    }
+    /*
+     * 内容
+     */
+    .note-write textarea{
+      resize:vertical;
+      padding:.5em;
+      outline:none;
+      border:none;
+      width:100%;
+    }
+  </style>
+   <style name='note-create'>
+   /*
+    * 構造
+    */
+    .note-create .ui.multiple.search.dropdown>.text>.ui.label>.icon{
+      font-size:10px;
+    }
+    .note-create .ui.multiple.search.dropdown>input.search{
+      margin:.43238095em 0 .43238095em .64285714em;
+      vertical-align:middle;
+    }
+    .note-create .ui.multiple.search.dropdown>.text{
+      margin:0;
+    }
+    .note-create .ui.multiple.dropdown>.label{
+      font-size:.85714286rem;
+      padding:.5833em .833em;
+      margin-bottom:0;
+      margin-top:0;
+    }
+    .note-create .ui.label>.delete.icon {
+      display:none;
+    }
+    .note-create .ui.selection.dropdown{
+      background:transparent;
+      vertical-align:top;
+      min-height:auto;
+      border:none;
+      width:100%;
+      padding:0;
+    }
+    .note-create  .ui.selection.active.dropdown .menu{
+      border:none;
+    }
+    .note-create .ui.label>.icon{
+      margin-right:0;
+    }
+   /*
+    * 色分
+    */
+    .note-create .ui.label:nth-of-type(1){
+      background-color:#767676;
+      border-color:#767676;
+    }
+    .note-create .ui.label:nth-of-type(2){
+      background-color:#a5673f;
+      border-color:#a5673f;
+    }
+    .note-create .ui.label:nth-of-type(3){
+      background-color:#e03997;
+      border-color:#e03997;
+    }
+    .note-create .ui.label:nth-of-type(4){
+      background-color:#a333c8;
+      border-color:#a333c8;
+    }
+    .note-create .ui.label:nth-of-type(5){
+      background-color:#6435c9;
+      border-color:#6435c9;
+    }
+    .note-create .ui.label:nth-of-type(6){
+      background-color:#2185d0;
+      border-color:#2185d0;
+    }
+    .note-create .ui.label:nth-of-type(7){
+      background-color:#00b5ad;
+      border-color:#00b5ad;
+    }
+    .note-create .ui.label:nth-of-type(8){
+      background-color:#21ba45;
+      border-color:#21ba45;
+    }
+    .note-create .ui.label:nth-of-type(9){
+      background-color:#b5cc18;
+      border-color:#b5cc18;
+    }
+    .note-create .ui.label:nth-of-type(10){
+      background-color:#fbbd08;
+      border-color:#fbbd08;
+    }
+    .note-create .ui.label:nth-of-type(11){
+      background-color:#f2711c;
+      border-color:#f2711c;
+    }
+    .note-create .ui.label:nth-of-type(12){
+      background-color:#db2828;
+      border-color:#db2828;
+    }
+    .note-create .ui.label.active{
+      background-color:white!important;
+      border-color:white!important;
+      color:black!important;
+    }
+    .note-create .ui.label{
+      color:white;
+    }
+  </style>
+   <style>
+    html,
+    body{
+     font:12px 'M+2VM+IPAG circle';
+    }
+    /*
+     * 中央
+     */
+    main{
+     width:128mm;
+     margin:0 auto;
+    }
+    /*
+     * 構造
+     */
+    .ui.table>thead>tr>th,
+    .ui.table>tbody>tr>td{
+      padding:0;
+    }
+    .ui.table>thead>tr>th:first-child,
+    .ui.table>tbody>tr>td:first-child{
+      width:3em;
+      text-align:center;
+    }
+    textarea{
+      width:100%;
+      tab-size:2;
+      border:none;
+      outline:none;
+      padding:.5em;
+      resize:vertical;
+    }
+    /*
+     * 一番下の余白を削除
+     */
+    textarea{
+      vertical-align:bottom;
+    }
+    /*
+     * 見栄
+     */
+    .ui.label,
+    .ui.segments{
+      border-bottom:2px solid rgba(34,36,38,.15) !important;
+      box-shadow:rgba(16, 36, 94, 0.4) 0 2px 6px 0 !important;
+    }
+   </style>
+ </head>
+  <body>
+   <main>
+    <div class='ui grid padded'>
+     <div class='row'>
+      <div class='column'>
+
+       <!-- 選択（リスト）は切り替えられます -->
+       <list-tab class='ui labels green' v-model='list.view' @clicked='listTabClicked'>
+      </list-tab>
+
+       <div class='ui segments'>
+        <!-- 表示（リスト）はビューを複数持ちます -->
+        <list-view class='ui segment fitted' v-model='list.view' :selected-view='list.selectedView' @clicked='listViewRowClicked'>
+       </list-view>
+        <!-- 編集（リスト）ビューは箇条書きから変換されます -->
+        <list-view-edit class='ui segment fitted' v-model='list'>
+       </list-view-edit>
+      </div>
+
+       <!-- 区切 -->
+       <div class='ui divider horizontal'>
+        メモ
+      </div>
+
+       <!-- 編集（ノート） -->
+       <template v-if='hasNote'>
+        <div class='ui segments'>
+         <template v-for='(it,key) in note.store'>
+          <note-write class='ui segment fitted' :name='key' v-model='note.store[key]' placeholder=''>
+         </note-write>
+        </template>
+       </div>
+      </template>
+
+       <!-- 作成（ノート） -->
+       <note-create v-model='note.store' :skelton='note.draft'> 
+      </note-create>
+      
+     </div>
+    </div>
+     <div class='row'>
+      <div class='column'>
+     </div>
+    </div>
+   </div>
+  </main>
+ </body>
+</html>
+ <script type='text/x-template' id='list-tab'>
+  <div v-ui>
+   <template v-for='item in view'>
+    <div class='ui label pointing below step' @click="$emit('clicked',item.name)">
+     {{item.name}}<div class='ui detail'>{{item.children.length}}</div>
+   </div>
+  </template>
+ </div>
+</script>
+ <script type='text/x-template' id='list-view'>
+  <div v-ui>
+   <template v-for='(item,i) in list'>
+    <template v-if='item.name == selectedView'>
+     <table class='ui table single line unstackable celled fixed very basic'>
+      <thead>
+       <tr>
+        <th>NO</th>
+        <th>LINE-ITEM</th> 
+      </tr> 
+     </thead>
+      <tbody>
+       <template v-for='(content,n) in item.children'>
+        <tr @click.left='nextStep(i,n)' @click.right.prevent='lastStep(i,n)'>
+         <td>{{n+1}}</td>
+         <td>{{content.name}}</td>
+       </tr>
+     </template>
+     </tbody>
+    </table>
+   </template>
+  </template>
+ </div>
+</script>
+ <script type='text/x-template' id='list-view-edit'>
+  <div v-ui>
+   <textarea class='tabIndent' v-model='list.indentedText'>
+  </textarea>
+ </div>
+</script>
+ <script type='text/x-template' id='note'>
+  <div v-ui>
+   <div class='ui labels'>
+    <div class='ui label right pointing blue'>
+     {{name}}
+   </div>
+  </div>
+   <textarea v-model='note.content' :placeholder='placeholder'>
+  </textarea>
+ </div>
+</script>
+ <script type='text/x-template' id='dropdown'>
+  <div v-ui>
+   <div class='ui dropdown selection multiple search labels' ref='labels'>
+    <input type='hidden' name='labels'>
+    <div class='text default'>
+     <div class='ui label orange'>
+      <i class='icon tags'>
+     </i>
+    </div>
+   </div>
+  </div>
+ </div>
+</script>
+ <!-- native -->
+ <script src='js/native/indent2obj-0.0.3.min.js'></script>
+ <script src='js/native/tab-indent-0.1.8.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/d3-5.12.0.min.js'></script>
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script>
+  /*
+   * コンポーネントの名前を自動的に付与
+   */
+  Vue.mixin({
+    directives:{
+      ui:{
+        inserted:function(el,binding,vnode){
+          el.classList.add(vnode.context.$options.name)
+        },
+        update:function(el,binding,vnode){
+          el.classList.add(vnode.context.$options.name)
+        }
+      }
+    }
+  })
+  /*
+   * 切替
+   */
+  Vue.component('list-tab',{
+    model:{
+      prop:'view',
+      event:'input'
+    },
+    props:{
+      view:{
+        type:Array,
+        default:[]
+      },
+      selectedView:{
+        type:String,
+        default:''
+      }
+    },
+    template:'#list-tab',
+  })
+  /*
+   * 一覧
+   */
+  Vue.component('list-view',{
+    model:{
+      prop:'list',
+      event:'input'
+    },
+    props:{
+      list:{
+        type:Array,
+        default:[]
+      },
+      selectedView:{
+        type:String,
+        default:''
+      }
+    },
+    template:'#list-view',
+    methods:{
+      bindText:function(){
+        var line = []
+        for(var i=0;i<this.list.length;i++){
+          /*
+           * 取得（現アイテムをリストから）
+           */
+          var item = this.list[i]
+          line.push(item.name)
+          /*
+           * 取得（元アイテムのレコード群をアイテムから）
+           */
+          var lineItems = d3.hierarchy(this.list[i]).descendants().slice(1)
+          lineItems.forEach(function(obj,i){
+            line.push('\t'.repeat(obj.depth) + obj.data.name)
+          })
+        }
+        this.$emit('clicked',line.join('\n'))
+      },
+      execStep:function(item,line,obj){
+        /*
+         * 交換する（今の箇条書きから次の箇条書き）
+         * ITEM-PREV
+         *   LINE-1 … REMOVE
+         *   LINE-2
+         *   LINE-N
+         * ITEM-NEXT
+         *   LINE-1 … PUSH
+         */
+        item.prev.children.splice(line,1)
+        item.next.children.push(obj)
+      },
+      nextStep:function(itemIndex,lineIndex){
+        /*
+         * 移動する（次の箇条書きに行を挿入）
+         */
+        if(itemIndex + 1 > this.list.length - 1)
+          return 'これがラスト・ステップです'
+        else{
+          var item={
+            prev:this.list[itemIndex],
+            next:this.list[itemIndex + 1]
+          }
+          this.execStep(
+            item,
+            lineIndex,
+            this.list[itemIndex].children[lineIndex]
+          )
+          this.bindText()
+        }
+      },
+      lastStep:function(itemIndex,lineIndex){
+        /*
+         * 移動する（末の箇条書きに行を挿入）
+         */
+        if(itemIndex + 1 > this.list.length - 1)
+          return 'ラスト・ステップにあるものは次に移動できません'
+        else{
+          var item={
+            prev:this.list[itemIndex],
+            next:this.list[this.list.length - 1]
+          }
+          this.execStep(
+            item,
+            lineIndex,
+            this.list[itemIndex].children[lineIndex]
+          )
+          this.bindText()
+        }
+      }
+    }
+  })
+  /*
+   * 編集
+   */
+  Vue.component('list-view-edit',{
+    model:{
+      prop:'list',
+      event:'input'
+    },
+    props:{
+      list:{
+        type:Object,
+        default:null
+      }
+    },
+    template:'#list-view-edit'
+  })
+  /*
+   * メモ
+   */
+  Vue.component('note-write',{
+    model:{
+      prop:'note',
+      event:'input'
+    },
+    props:{
+      name:{
+        type:String,
+        default:''
+      },
+      note:{
+        type:Object,
+        default:null,
+      },
+      placeholder:{
+        type:String,
+        default:''
+      }
+    },
+    template:'#note'
+  })
+  /*
+   * 作成
+   */
+  Vue.component('note-create',{
+    model:{
+      prop:'store',
+      event:'input'
+    },
+    props:{
+      store:{
+        type:Object,
+        default:null,
+      },
+      skelton:{
+        type:Object,
+        default:null
+      }
+    },
+    methods:{
+      init:function(){
+        var self=this
+        _.keys(this.store).forEach(function(name,i){
+          $(self.$refs.labels).dropdown('add label',name,name)
+        })
+      },
+      construct:function(){
+        var self = this
+        $(this.$refs.labels).dropdown({
+     　   allowAdditions:true,
+          onLabelSelect  :self.select,
+          onRemove       :self.remove,
+          onAdd          :self.create
+        })
+      },
+      create:function(name){
+        this.$set(this.store,name,_.clone(this.skelton,true))
+      },
+      select:function($dom){
+        this.$emit('select',$dom.dataset.value)
+      },
+      remove:function(name){
+        this.$delete(this.store,name)
+      }
+    },
+    template:'#dropdown',
+    mounted:function(){
+      this.construct()
+      this.init()
+    }
+  })
+  /*
+   * 本体
+   */
+  new Vue({
+    el:'main',
+    data:{
+      list:{
+        view:[
+        ],
+        selectedView:'',
+        indentedText:''
+      },
+      actionWait:250,
+      note:{
+        store:{
+          
+        },
+        draft:{
+          content:''
+        }
+      }
+    },
+    computed:{
+      hasNote:function(){
+        return _.keys(this.note.store).length > 0
+      }
+    },
+    watch:{
+      /*
+       * 箇条書きをリストに変換
+       */
+      'list.indentedText':{
+        deep:true,
+        handler:_.throttle(function(newValue,oldValue){
+          this.list.view = indent2obj(newValue,'\t')
+        },this.actionWait)
+      },
+      /*
+       * 状態を保存
+       */
+      $data:{
+        deep:true,
+        handler:_.throttle(function(newValue,oldValue){
+          localStorage.setItem(this.$options.name,JSON.stringify(newValue))
+        },this.actionWait)
+      }
+    },
+    methods:{
+      listTabClicked:function(name){
+        this.list.selectedView = name
+      },
+      listViewRowClicked:function(text){
+        this.list.indentedText = text
+      }
+    },
+    created:function(){
+      /*
+       * 状態を復帰
+       */
+      var self=this
+      if(this.$options.name in localStorage){
+        _.extend(this.$data,JSON.parse(localStorage.getItem(this.$options.name)))
+      }
+    },
+    mounted:function(){
+      /*
+       * タブを使用可能にする
+       */
+      tabIndent.renderAll()
+    }
+  })
+</script>
