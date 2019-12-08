@@ -1,0 +1,346 @@
+<!doctype html>
+ <html>
+  <head>
+
+   <title></title>
+
+   <meta charset='utf-8'>
+   <meta content='' name='author'>
+   <meta content='' name='description'>
+   <meta content='' name='application-name'>
+   <meta content='notranslate' name='google'>
+   <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+   <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+   <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+   <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+   <link href='asset/manifest.json' rel='manifest'>
+   <link href='asset/favicon.ico' rel='icon'>
+
+   <style name='font'>
+    @font-face{
+     font-family:'M+2VM+IPAG circle';
+     src:url('asset/m+2vm+ipag-circle.ttf');
+    }
+  </style>
+   <style>
+     html,
+     body{
+       font:12px 'M+2VM+IPAG circle';
+     }
+     body{
+       display:flex;
+       align-items:center;
+       justify-content:center;
+     }
+     main{
+       width:100mm;
+     }
+     .ui.label{
+       border-bottom: 1px solid rgba(34,36,38,.15) !important;
+       box-shadow: rgba(16, 36, 94, 0.4) 0 1px 2px 0 !important;
+     }
+     .ui.segments>.ui.labels{
+       position:absolute;
+       text-align:left;
+       z-index:-999;
+       left:-4.2em;
+       width:100%;
+       top:-1em;
+    }
+     .ui.table>thead>tr>th,
+     .ui.table>tbody>tr>td{
+       padding:0;
+     }
+     .ui.table>thead>tr>th:first-child,
+     .ui.table>tbody>tr>td:first-child{
+       width:3em;
+       text-align:center;
+     }
+  </style>
+   <style name='dat-gui'>
+     .dg.main{
+       width:100% !important;
+     }
+     .dg.main .close-button{
+       display:none;
+     }
+     .dg.main select{
+       width:100%;
+       outline:none;
+     }
+     .dg .cr.string input[type=text] {
+       color:black !important;
+     }
+  </style>
+ </head>
+  <body>
+   <main>
+
+     <div class='ui card fluid'>
+       <div class='image'>
+         <img src='https://tk.ismcdn.jp/mwimgs/4/2/1140/img_4290c3dbc2b3bca5794438f2a3504431658251.jpg'>
+      </div>
+       <div class='content'>
+         <div class='header'>
+           貸出情報の登録「DAT.GUIを登録画面に利用」
+        </div>
+         <div class='meta'>
+           <span class='date'>
+          </span>
+        </div>
+      </div>
+    </div>
+
+     <div class='ui divider horizontal'>
+       一覧
+    </div>
+
+     <div ref='menu' class='ui menu mini pointing icon'>
+       <div data-tab='users' class='item'>
+         <i class='icon users'>
+        </i>
+      </div>
+       <div data-tab='book' class='item'>
+         <i class='icon book'>
+        </i>
+      </div>
+    </div>
+
+
+     <div data-tab='users' class='ui segments tab'>
+       <div class='ui labels'>
+         <div class='ui label right pointing black'>
+            一覧
+        </div>
+      </div>
+       <div class='ui segment fitted'>
+         <table class='ui table single line unstackable celled fixed very basic'>
+           <thead>
+             <tr>
+              <th>NO</th>
+              <th>ID</th>
+              <th>利用者</th>
+            </tr>
+          </thead>
+           <tbody>
+            <template v-for='(user,id,no) in store.users'>
+              <tr>
+               <td>{{no+1}}</td>
+               <td>{{user.id}}</td>
+               <td>{{user.name}}</td>
+             </tr>
+           </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+     <div data-tab='book' class='ui segments tab'>
+       <div class='ui labels'>
+         <div class='ui label right pointing black'>
+            一覧
+        </div>
+      </div>
+       <div class='ui segment fitted'>
+         <table class='ui table single line unstackable celled fixed very basic'>
+           <thead>
+             <tr>
+              <th>NO</th>
+              <th>書名</th>
+              <th>ISBN</th>
+              <th>種類</th>
+              <th>利用者</th>
+            </tr>
+          </thead>
+           <tbody>
+            <template v-for='(book,no) in store.books'>
+              <tr>
+               <td>{{no+1}}</td>
+               <td>{{book.name}}</td>
+               <td>{{book.isbn}}</td>
+               <td>{{book.size}}</td>
+               <td>{{getUser(book.owner.id)}}</td>
+             </tr>
+           </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+
+     <div class='ui divider horizontal'>
+       登録
+    </div>
+    
+
+     <div class='ui segments'>
+       <div class='ui labels'>
+         <div class='ui label right pointing blue'>
+            登録
+        </div>
+      </div>
+       <div class='ui segment fitted'>
+         <dat-gui>
+           <dat-value v-model='user.name' label='利用者' ></dat-value>
+        </dat-gui>
+      </div>
+    </div>
+     <template v-if='hasUserError'>
+       <div class='ui label fluid green' v-if='hasUserError'>
+         {{user.error}}
+      </div>
+    </template>
+     <template v-else>
+       <div class='ui label icon blue' @click='setUser'>
+         <i class='icon plus'>
+        </i>
+      </div>
+    </template>
+
+     <div class='ui segments'>
+       <div class='ui labels'>
+         <div class='ui label right pointing green'>
+           登録
+        </div>
+      </div>
+       <div class='ui segment fitted'>
+         <dat-gui>
+           <dat-value v-model='book.name' label='書名 (EN)' ></dat-value>
+           <dat-value v-model='book.isbn' label='ISBN (13 or 10)'></dat-value>
+           <dat-value v-model='book.size' label='種類' :accepted-values="['folio','quarto','Imperial octavo', 'Super octavo','Royal octavo','Medium octavo','octavo','Crown octavo','duodecimo or twelvemo','sextodecimo or sixteenmo','octodecimo or eighteenmo','trigesimo-secundo or thirty-twomo','quadragesimo-octavo or forty-eightmo','sexagesimo-quarto or sixty-fourmo']"></dat-value>
+           <dat-folder name='貸出'>
+             <dat-value v-model='book.owner.id' label='貸出者'></dat-value>
+          </dat-folder>
+       </dat-gui>
+      </div>
+    </div>
+     <template v-if='hasBookError'>
+       <div class='ui label fluid green' v-if='hasBookError'>
+         {{book.error}}
+      </div>
+    </template>
+     <template v-else>
+       <div class='ui label icon green' @click='pushBook'>
+         <i class='icon plus'>
+        </i>
+      </div><div class='ui label green'>
+        {{getUser(book.owner.id)}}さんに貸し出しますか？
+      </div>
+    </template>
+
+  </main>
+ </body>
+</html>
+ <!-- native -->
+ <script src='js/native/dat-gui-0.7.6.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8.min.js'></script>
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/dat-gui-0.0.1.min.js'></script>
+ <script>
+   Vue.use(VueDatGui)
+</script>
+ <script>
+   var validate = {
+     /*
+      * https://stackoverflow.com/questions/41271613/use-regex-to-verify-an-isbn-number
+      */
+     isIsbn:function(text){
+       return /^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/.test(text)
+     },
+     /*
+      * https://stackoverflow.com/questions/2450641/validating-alphabetic-only-string-in-javascript
+      */
+     isAlphabet:function(text){
+       return /^[a-zA-Z()]*$/.test(text)
+     }
+   }
+
+   new Vue({
+     el:'main',
+     data:{
+       saveActionWait:250,
+       seq:{
+         userId:1
+       },
+       user:{
+         error:'',
+         id:1,
+         name:''
+       },
+       book:{
+        error:'',
+        name:'',
+        isbn:'',
+        size:'',
+        owner:{
+          id:''
+        }
+       },
+       store:{
+         books:[],
+         users:{}
+       }
+     },
+     computed:{
+       hasUserError:function(){
+         return this.user.error.length > 0
+       },
+       hasBookError:function(){
+         return this.book.error.length > 0
+       }
+     },
+     watch:{
+       'book.owner.id':function(newId,oldId){
+         this.book.error = (newId in this.store.users) ? '' : '利用者が存在しません'
+       },
+       'book.name':function(newName,oldName){
+         this.book.error = validate.isAlphabet(newName) ? '' : '書名はアルファベットのみ入力出来ます'
+       },
+       'book.isbn':function(newIsbn,oldIsbn){
+         this.book.error = validate.isIsbn(newIsbn) ? '' : 'ISBNの形式を確認して下さい'
+       },
+       $data:{
+         deep:true,
+         handler:_.throttle(function(newValue,oldValue){
+           localStorage.setItem(this.$options.name,JSON.stringify(newValue))
+         },this.saveActionWait)
+      }
+     },
+     methods:{
+       getUser:function(id){
+         return id in this.store.users ? this.store.users[id].name : ''
+       },
+       setUser:function(){
+         this.user.id = this.seq.userId++
+         this.$set(this.store.users,this.user.id,_.clone(this.user,true))
+       },
+       pushBook:function(){
+         var book = _.clone(this.book,true)
+         this.store.books.push(book)
+       },
+       init:function(){
+         this.book.name = 'Reversing: Secrets of Reverse Engineering'
+         this.book.isbn = '978-0764574818'
+         this.book.size = 'folio'
+       }
+     },
+     created:function(){
+       this.init()
+       var self=this
+       if(this.$options.name in localStorage){
+         _.extend(this.$data,JSON.parse(localStorage.getItem(this.$options.name)))
+       }
+     },
+     mounted:function(){
+       $('.item',this.$refs.menu).tab({})   
+     }
+   })
+</script>
+ <style>
+   @import url('css/dat-gui/light.min.css');
+</style>

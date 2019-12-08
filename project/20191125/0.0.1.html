@@ -39,6 +39,13 @@
       color: #2c662d;
       cursor:pointer;
     }
+    .list-view .ui.table>tbody>tr>td section{
+      white-space:pre;
+    }
+    .list-view .ui.table>tbody>tr>td{
+      white-space:pre;
+      tab-size:2;
+    }
   </style>
    <style name='list-view-edit'>
      .list-view.edit{
@@ -275,8 +282,8 @@
 </script>
  <script type='text/x-template' id='list-view'>
   <div v-ui>
-   <template v-for='(item,i) in list'>
-    <template v-if='item.name == selectedView'>
+   <template v-for='(view,i) in list'>
+    <template v-if='view.name == selectedView'>
      <table class='ui table single line unstackable celled fixed very basic'>
       <thead>
        <tr>
@@ -285,10 +292,10 @@
       </tr> 
      </thead>
       <tbody>
-       <template v-for='(content,n) in item.children'>
+       <template v-for='(item,n) in view.children'>
         <tr @click.left='nextStep(i,n)' @click.right.prevent='lastStep(i,n)'>
          <td>{{n+1}}</td>
-         <td>{{content.name}}</td>
+         <td>{{item.name}}<section v-html='itemText(item)'></section></td>
        </tr>
      </template>
      </tbody>
@@ -393,7 +400,15 @@
     },
     template:'#list-view',
     methods:{
-      bindText:function(){
+      itemText:function(item){
+        var line = []
+        var lineItems = d3.hierarchy(item).descendants().slice(1)
+            lineItems.forEach(function(obj,i){
+              line.push('\t'.repeat(obj.depth) + obj.data.name)
+            })
+        return line.join('\n')
+      },
+      itemAllText:function(){
         var line = []
         for(var i=0;i<this.list.length;i++){
           /*
@@ -440,7 +455,7 @@
             lineIndex,
             this.list[itemIndex].children[lineIndex]
           )
-          this.bindText()
+          this.itemAllText()
         }
       },
       lastStep:function(itemIndex,lineIndex){
@@ -459,7 +474,7 @@
             lineIndex,
             this.list[itemIndex].children[lineIndex]
           )
-          this.bindText()
+          this.itemAllText()
         }
       }
     }
@@ -564,7 +579,24 @@
         view:[
         ],
         selectedView:'',
-        indentedText:''
+        indentedText:`修正
+	好きな食べ物は？
+	好きなアプリは？
+		好きな動物は？
+完了
+	好きな数字は？
+	よく使うアプリは？
+	小さい頃の夢は？
+	朝ご飯は米派？パン派？
+	好きな食べ物？
+	好きなアイスの味は？
+	逆に嫌いな食べ物は？
+	苦手な動物は？
+	好きな匂いは？
+	ケータイ何色？
+	好きなおにぎりの具は？
+	好きな色は？
+		受註画面のソートIDを受註日付に変更`
       },
       actionWait:250,
       note:{
