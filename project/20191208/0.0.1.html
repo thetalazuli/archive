@@ -1,0 +1,1209 @@
+
+<!doctype html>
+<html>
+ <head>
+
+  <title></title>
+
+  <meta charset='utf-8'>
+  <meta content='' name='author'>
+  <meta content='' name='description'>
+  <meta content='' name='application-name'>
+  <meta content='notranslate' name='google'>
+  <meta content='telephone=no,address=no,email=no,date=no,url=no' name='format-detection'>
+  <meta content='noimageindex,notranslate,nosnippet,noarchive,nofollow,noindex' name='robots'>
+  <meta content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no' name='viewport'>
+
+  <link href='css/fomantic-ui/2.7.8.min.css' rel='stylesheet'>
+  <link href='asset/manifest.json' rel='manifest'>
+  <link href='asset/favicon.ico' rel='icon'>
+
+</head>
+ <body>
+   <div class='container'>
+     <div class='grad background-1'></div>
+     <div class='grad background-2'></div>
+     <div class='grad background-3'></div>
+     <div class='grad background-4'></div>
+     <div class='grad background-5'></div>
+     <div class='grad background-6'></div>
+     <div class='grad background-7'></div>
+     <div class='grad background-8'></div>
+     <div class='grad background-9'></div>
+  </div>
+
+   <main>
+     <div class='ui grid padded'>
+       <div class='row'>
+         <div class='column'>
+        </div>
+         <div class='column'>  
+
+           <div class='ui tab' data-tab='schedule'>
+
+             <div class='ui labels'>
+               <div class='ui label blue'>
+                 {{viewDaysCount.toString()|JP2ZENKAKU}}件分の記録があります
+              </div>
+            </div>
+
+             <div class='ui segments calendar'>
+               <div class='ui segment fitted'>
+                 <div class='ui calendar' ref='calendar'>
+                </div>
+              </div>
+            </div>
+
+             <template v-for='(month,index) in viewDays'>
+               <div class='ui divider horizontal month'>
+                {{month|YYYYMM}}
+              </div>
+               <template v-for='(daystamp,count) in month'>
+
+                 <div class='ui label pointing below orange' v-if='$options.filters.JP2HOLIDAY(daystamp)'>
+                   {{daystamp|JP2HOLIDAY}}
+                </div>
+
+                 <article class='todo' v-for='(timestamp,no) in _.keys(calendar[daystamp])'>                   
+                   <div class='view'>
+                     <div :class="['ui label daystamp right pointing',calendar[daystamp][timestamp].files.length ? 'green' : 'blue']" v-show='no < 1'>
+                       <div class='daystamp' @click='toggleTodoFiles(calendar[daystamp])'>  
+                         {{daystamp|YYMMDD}}
+                      </div>
+                    </div><div class='ui label green'>
+                       <div class='timestamp'>
+                        {{timestamp|HHmm}}
+                      </div>
+                       <div class='ui detail'>
+                         <input
+                           type='text'
+                           class='text'
+                           @click='toggleController(calendar[daystamp][timestamp])'
+                           v-model='calendar[daystamp][timestamp].text'
+                          :placeholder='config.todo.placeholder'>
+                      </div>
+                    </div>
+                  </div>
+
+                   <template v-if='calendar[daystamp][timestamp].toggle.files'>
+                     <div class='ui segments file' v-if='calendar[daystamp][timestamp].files.length'>
+                       <div class='ui segment file fitted' v-for='(file,i) in calendar[daystamp][timestamp].files'>
+                         <component :is="file.type.replace('/','-')" v-model='calendar[daystamp][timestamp].files[i]'>
+                        </component>
+                      </div>
+                    </div>
+                  </template>
+
+                   <template v-if='calendar[daystamp][timestamp].toggle.remove'>
+                     <div class='ui labels'>
+                       <div class='ui label green'>
+                         削除してよろしいですか？
+                       </div><div class='ui label purple' @click='removeYes(daystamp,timestamp)'>
+                         YES
+                       </div><div class='ui label pink' @click='removeNo(calendar[daystamp][timestamp])'>
+                         NO  
+                       </div>
+                     </div>
+                  </template>
+
+                   <div class='controller' v-if='calendar[daystamp][timestamp].toggle.controller'>
+                     <div class='ui labels'>
+                       <div class='ui label icon purple' @click='removeStart(calendar[daystamp][timestamp])'>
+                         <i class='icon trash'></i>
+                      </div><label class='ui label icon blue'>
+                        <i class='icon file'></i>
+                        <input type='file' @change='uploadFiles($event,calendar[daystamp][timestamp])' multiple>
+                      </label><label class='ui label icon blue'>
+                        <i class='icon camera'></i>
+                        <input type='file' @change='uploadCaptureFile($event,calendar[daystamp][timestamp])' accept='image/*' capture>
+                      </label>
+                    </div>
+                  </div>
+
+                </article>
+              </template>
+            </template>
+
+          </div>
+           <div class='ui tab' data-tab='process'>
+            
+             <div class='ui labels'>
+               <div class='ui label blue'>
+                 {{viewTreeItemCount.toString()|JP2ZENKAKU}}件分の看板があります
+              </div>
+            </div>
+
+             <div class='ui segments textarea'>
+               <div class='ui segment fitted'>
+                 <textarea class='tabIndent' v-model='process.text'>
+                </textarea>   
+              </div>
+            </div>
+
+             <template v-for='(list,tree_no) in process.tree'>
+               <div class='ui segments list'>
+                 <article class='ui segment list fitted'>
+                   <div class='view'>
+                     <div :class="['ui label right pointing',colors[tree_no]]">
+                       {{list.name}}
+                    </div>
+                  </div>
+                   <div class='table'>
+                     <table class='ui table single line unstackable celled fixed very basic'>
+                       <thead>
+                        <tr>
+                         <th>NO</th>
+                         <th>ITEMS</th> 
+                       </tr> 
+                      </thead>
+                       <tbody>
+                         <template v-for='(record,record_no) in list.children'>
+                           <tr @click='recordNextStep(tree_no,record_no)'>
+                             <td>{{record_no+1}}</td>
+                             <td class='record'>{{record.name}}<div v-html='recordGetAllText(record)'></div></td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </div>
+            </template>
+             
+          </div>
+           <div class='ui tab' data-tab='memo'>
+
+             <div class='ui labels'>
+               <div class='ui label blue'>
+                 {{viewMemoCount.toString()|JP2ZENKAKU}}件分の記録があります
+              </div>
+            </div>
+
+             <div class='ui segments memo'>
+               <div class='ui segment fitted'>
+                 <dat-gui>
+                   <dat-folder name='メモ'>
+                     <dat-value label='書く' @click='write'></dat-value>
+                     <dat-value label='出退勤を書く' @click='write_timecard'></dat-value>
+                  </dat-folder>
+                </dat-gui>
+              </div>
+            </div>
+
+             <template v-for='(item,i) in memo'>
+
+               <template v-if='item.toggle.remove'>
+                 <div class='ui labels'>
+                   <div class='ui label green'>
+                     削除してよろしいですか？
+                  </div><div class='ui label purple' @click='removeMemoYes(i)'>
+                     YES
+                  </div><div class='ui label pink' @click='removeMemoNo(i)'>
+                     NO  
+                  </div>
+                </div>
+              </template>
+              
+               <div class='ui segments memo'>
+                 <article class='ui segment memo fitted'>
+                   <div class='view'>
+                     <div class='ui label right pointing blue' @click='removeMemoStart(i)'>
+                       {{item.attr.created_at|YYMMDD}}
+                    </div>
+                  </div>
+                   <component :is='item.type' v-model='item.data'>
+                  </component>
+                </article>
+              </div>
+            </template>
+          </div>
+
+           <div class='ui labels blue' ref='menu'>
+             <div class='ui label' data-tab='schedule'>
+               予定
+            </div><div class='ui label' data-tab='process'>
+               進捗  
+            </div><div class='ui label' data-tab='memo'>
+               メモ  
+            </div>
+
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </main>
+
+ </body>
+</html>
+
+ <!-- files -->
+ <template type='text/x-template' id='image'>
+   <div v-ui>
+     <img :src='blobURL' style='display:block;width:100%;'>
+  </div>
+</template>
+
+ <!-- memos -->
+ <template type='text/x-template' id='memo_write'>
+   <div v-ui>
+     <textarea v-model='item.content.text' :style="[{'height':item.state.height}]">
+    </textarea>
+  </div>
+</template>
+ <template type='text/x-template' id='memo_write_timecard'>
+   <div v-ui>
+     <table class='ui table single line unstackable celled fixed very basic'>
+       <thead>
+         <tr>
+           <th>通番</th>
+           <th>日時</th>
+           <th>出勤</th>
+           <th>退勤</th> 
+        </tr> 
+      </thead>
+       <tbody>
+         <template v-for='(time,i) in item.content.times'>
+           <tr>
+             <td>{{i+1}}</td>
+             <td><input type='text' v-model='item.content.times[i].date' data-inputmask-regex='^(\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$'></td>
+             <td><input type='text' v-model='item.content.times[i].start'data-inputmask-regex='^([01]?[0-9]|2[0-3]):([0-5][0-9])$'></td>
+             <td><input type='text' v-model='item.content.times[i].end'  data-inputmask-regex='^([01]?[0-9]|2[0-3]):([0-5][0-9])$'></td>
+          </tr>
+        </template>
+      </tbody>
+    </table>
+  </div>
+</template>
+
+ <!-- native -->
+ <script src='js/native/japanese-holidays-1.0.9.min.js'></script>
+ <script src='js/native/local-forage-1.7.3.min.js'></script>
+ <script src='js/native/indent2obj-0.0.3.min.js'></script>
+ <script src='js/native/tab-indent-0.1.8.min.js'></script>
+ <script src='js/native/lodash-4.17.15.min.js'></script>
+ <script src='js/native/dat-gui-0.7.6.min.js'></script>
+ <script src='js/native/moment-2.24.0.min.js'></script>
+ <script src='js/native/jaconv-1.0.4.min.js'></script>
+ <script src='js/native/d3-5.12.0.min.js'></script>
+
+ <!-- jquery -->
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/input-mask-5.0.1.min.js'></script>
+ <script src='js/jquery/custom-fomantic-ui-2.7.8.js'></script>
+
+ <!-- vue -->
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/vue/dat-gui-0.0.1.min.js'></script>
+ 
+ <script>
+   Vue.use(VueDatGui)
+</script>
+ <script>
+   Vue.component('memo_write',{
+     model:{
+       prop:'item',
+       event:'input'
+     },
+     props:{
+       item:{
+         type:Object,
+         default:null
+       }
+     },
+     template:'#memo_write',
+   })
+</script>
+ <script>
+   Vue.component('memo_write_timecard',{
+     model:{
+       prop:'item',
+       event:'input'
+     },
+     props:{
+       item:{
+         type:Object,
+         default:null
+       }
+     },
+     template:'#memo_write_timecard',
+     mounted:function(){
+       var self = this
+       var RETURN = 13
+       var next_to_input = function(event){
+         var count = $('input').length
+         var input = {
+           current:$('input').index(this),
+           next:$('input').index(this) + 1 
+         }
+
+         if(input.next < count){
+           // フォーカスを一旦外せばINPUT-MASKの挙動を正せる
+           $('input').eq(input.current).blur()
+           $('input').eq(input.next).focus()
+         }
+       }
+
+       $('input',this.$el).inputmask()
+       $('input',this.$el).on('keyup', function(event) {
+         event.preventDefault()
+         switch(event.which){
+           case RETURN:
+             next_to_input.call(this)
+             break;
+         }
+       })
+     }
+   })
+</script>
+ <script>
+   Vue.mixin({
+     data:function(){
+       return{
+        colors:[
+          'grey',
+          'brown',
+          'pink',
+          'purple',
+          'violet',
+          'blue',
+          'teal',
+          'green',
+          'olive',
+          'yellow'
+        ],
+       }
+     },
+     directives:{
+       ui:{
+         inserted:function(el,binding,vnode){
+           el.classList.add(vnode.context.$options.name)
+         },
+         update:function(el,binding,vnode){
+           el.classList.add(vnode.context.$options.name)
+         }
+       }
+     }
+   })
+</script>
+ <script>
+   Vue.component('image-apng',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-bmp',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-gif',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-x-icon',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-jpeg',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-png',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-tiff',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+   Vue.component('image-webp',{
+     template:'#image',
+     model:{
+       prop:'file',
+       event:'input'
+     },
+     props:{
+       file:{
+         type:File,
+         default:null,
+       }
+     },
+     computed:{
+       blobURL:function(){
+         return URL.createObjectURL(this.file)
+       }
+     },
+     mounted:function(){
+       
+     }
+   })
+</script>
+ <script>
+  new Vue({
+    el:'main',
+    data:{
+      is:{},
+      config:{
+        todo:{
+          placeholder:'・ω・予定をいれましょう'
+        },
+        cache:{
+          tab:''
+        }
+      },
+      /*
+       * ここに動詞があり変更された場合
+       * その処理結果は全体の状態（名詞）に作用する
+       */
+      select:{
+        month:undefined
+      },
+      mode:{
+        month:true
+      },
+      calendar:{
+        
+      },
+      process:{
+        text:`報告
+　〜から連絡あった
+連絡
+　〜これしといた
+相談
+　〜これする？
+`,
+        tree:{
+        }
+      },
+      memo:[
+        
+      ]
+    },
+    computed:{
+      days:function(){
+        return Object.keys(this.calendar).sort()
+      },
+      today:function(){
+        return moment().valueOf()
+      },
+      minByDay :function(){
+        return _.min(this.days)
+      },
+      maxByDay:function(){
+        return _.max(this.days)
+      },
+      groupByMonth:function(){
+        //_.groupBy(this.days, (day) => moment(day,'x').startOf('month')) (年跨ぐから)
+        return _.groupBy(this.days, function(day){
+          return moment(day,'x').format('YYYYMM')
+        })
+      },
+      viewDays:function(){
+        var hasDays = this.groupKeyMonth in this.groupByMonth
+        var mon = hasDays ? [this.groupByMonth[this.groupKeyMonth]] : []
+        var all = this.groupByMonth
+        return this.mode.month ? mon : all
+      },
+      viewDaysCount:function(){
+        return _.keys(this.viewDays[0]).length
+      },
+      viewTreeItemCount:function(){
+        return _.keys(this.process.tree).length
+      },
+      groupKeyMonth:function(){
+        return moment(this.select.month,'x').format('YYYYMM')
+      },
+      viewMemoCount:function(){
+        return _.keys(this.memo).length
+      }
+    },
+    watch:{
+      $data:{
+        deep:true,
+        handler:_.throttle(function(newValue,oldValue){
+          localforage.setItem('app',newValue,function(err){
+          });
+        },1000)
+      },
+      'process.text':{
+        deep:true,
+        handler:_.throttle(function(newValue,oldValue){
+          this.textToTree()
+        },250)
+      }
+    },
+    filters:{
+      /*
+       * 件数を大文字にする為だけ
+       */
+      JP2HOLIDAY:function(daystamp){
+        return JapaneseHolidays.isHoliday(moment(daystamp,'x').toDate())
+      },
+      JP2ZENKAKU:function(str){
+        return jaconv.toZen(str)
+      },
+      /*
+       * 基本
+       */
+      YYYYMM:function(date){
+        return moment(date,'x').format('YYYY-MM')
+      },
+      YYMMDD:function(date){
+        return moment(date,'x').format('YY-MM-DD')
+      },
+      HHmm:function(date){
+        return moment(date,'x').format('HH:mm')
+      }
+    },
+    methods:{
+      /*
+       * １１番目に作った
+       */
+      removeMemoNo:function(i){
+        this.memo[i].toggle.remove = false
+      },
+      removeMemoYes:function(i){
+        if(this.memo[i].toggle.remove){
+           this.memo.splice(i,1)
+        }
+      },
+      removeMemoStart:function(i){
+        this.memo[i].toggle.remove = !this.memo[i].toggle.remove
+      },
+      /*
+       * １０番目に作った
+       */
+      write_timecard:function(){
+        this.memo.push({
+          type:'memo_write_timecard',
+          attr:{
+            created_at:moment().valueOf(),
+          },
+          toggle:{
+            remove:false
+          },
+          data:{
+            state:{
+              height:'auto',
+            },
+            content:{
+              times:_.map(new Array(7),function(obj){
+                return {
+                  date:'',
+                  start:'',
+                  end:''
+                }
+              })
+            }
+          }
+        })
+      },
+      write:function(){
+        this.memo.push({
+          type:'memo_write',
+          attr:{
+            created_at:moment().valueOf(),
+          },
+          toggle:{
+            remove:false
+          },
+          data:{
+            state:{
+              height:'5em',
+            },
+            content:{
+              text:''
+            }
+          }
+        })
+      },
+      /*
+       * ９番目に作った
+       */
+      treeGetAllText:function(){
+        var line = []
+        for(var i=0;i<this.process.tree.length;i++){
+          var item = this.process.tree[i]
+          line.push(item.name)
+          var lineItems = d3.hierarchy(this.process.tree[i]).descendants().slice(1)
+          lineItems.forEach(function(obj,i){
+            line.push('　'.repeat(obj.depth) + obj.data.name)
+          })
+        }
+        return line.join('\n')
+      },
+      /*
+       * ８番目に作った
+       */
+       recordStep:function(tree_item,record_no,obj){
+         tree_item.prev.children.splice(record_no,1)
+         tree_item.next.children.push(obj)
+       },
+       recordNextStep:function(tree_no,click_record_no){
+        if(tree_no + 1 > this.process.tree.length - 1)
+          return 'これがラスト・ステップです'
+        else{
+          var item={
+            prev:this.process.tree[tree_no],
+            next:this.process.tree[tree_no + 1]
+          }
+          this.recordStep(
+            item,
+            click_record_no,
+            this.process.tree[tree_no].children[click_record_no]
+          )
+          this.process.text = this.treeGetAllText()
+        }
+      },
+      recordGetAllText:function(item){
+        var line = []
+        var lineItems = d3.hierarchy(item).descendants().slice(1)
+            lineItems.forEach(function(obj,i){
+              line.push('　'.repeat(obj.depth) + obj.data.name)
+            })
+        return line.join('\n')
+      },
+      /*
+       * ７番目に作った
+       */
+      textToTree:function(){
+        this.process.tree = indent2obj(this.process.text,'　')
+      },
+      /*
+       * ６番目に作った
+       */
+      uploadCaptureFile:function(event,todo){
+        console.dir(event)
+        todo.toggle.files = true
+        /* COMPRESSOR.JSで圧縮する？*/
+        _.each(event.target.files,function(file){
+          if(file.type.replace('/','-') in Vue.options.components){
+            todo.files.push(file)
+          }
+        })
+      },
+      /*
+       * ５番目に作った
+       */
+      toggleTodoFiles:function(day){
+        _.each(day,function(todo){
+          todo.toggle.files = !todo.toggle.files
+          todo.toggle.controller = todo.toggle.files
+        })
+      },
+      /*
+       * ４番目に作った
+       */
+      uploadFiles:function(event,todo){
+        console.dir(event)
+        todo.toggle.files = true
+        _.each(event.target.files,function(file){
+          if(file.type.replace('/','-') in Vue.options.components){
+            todo.files.push(file)
+          }
+        })
+      },
+      /*
+       * ３番目に作った
+       */
+      removeNo:function(todo){t
+        todo.toggle.remove = false
+      },
+      removeYes:function(daystamp,timestamp){
+
+        var day = this.calendar[daystamp]
+
+        this.$delete(day,timestamp)
+
+        var todoIsEmpty = _.keys(day).length == 0
+        if (todoIsEmpty){
+          this.$delete(this.calendar,daystamp)
+        }
+
+      },
+      removeStart:function(todo){
+        todo.toggle.remove = !todo.toggle.remove
+      },
+      /*
+       * ２番目に作った
+       */
+      toggleController:function(todo){
+        todo.toggle.files = !todo.toggle.files
+        todo.toggle.controller = todo.toggle.files
+      },
+      /*
+       * １番目に作った
+       */
+      schedule:function(date){
+        var self= this
+
+        var at  = moment(date).valueOf()
+        var day = moment(date).set({hour:0,minute:0,second:0,millisecond:0}).valueOf()
+
+        var has = {
+          day:day in self.calendar
+        }
+        var set = {
+          todo:function(){
+            self.$set(self.calendar[day],at,{
+              text:'',
+              toggle:{
+                controller:false,
+                remove:false,
+                files:false,
+              },
+              content:[
+              ],
+              files:[
+              ]
+            })
+          },
+          day:function(){
+            self.$set(self.calendar,day,{})
+          }
+        }
+        
+        if(has.day == false){
+          set.day()
+        }
+        
+        set.todo()
+      },
+      construct:function(){
+        var self = this
+
+        tabIndent.config.tab = '　'
+        tabIndent.renderAll()
+
+        $('.ui.label',this.$refs.menu).tab({
+          onLoad:function(name){
+            self.config.cache.tab = name
+          }
+        })
+
+        var revertCalendar = function(){
+          $(self.$refs.calendar).calendar('set mode','day')
+        }
+
+        $(this.$refs.calendar).calendar({
+          /*
+           * 自作:次月：前月のカレンダーから押した時に
+           * 　　 コールバックを呼び出すようにしました（custom-fomantic-ui）　
+           */
+          onChangeDate:function(date,mode){
+            switch(mode){
+              case 'day':
+                self.select.month = moment(date).valueOf()
+                break;
+            }
+          },
+          onSelect:function(date,mode){
+            switch(mode){
+              case 'minute':
+                self.schedule(date)
+                self.$nextTick(function(){
+                  revertCalendar()
+                })
+                break;
+            }
+          },
+          ampm:false,
+          selectAdjacentDays:true,
+          formatter:{
+            dayHeader:function(date,settings){
+              return date.getFullYear()+'年'+settings.text.months[date.getMonth()]+'月'
+            },
+            date:function(date,settings){
+              return date?date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate():''
+            }
+          },
+          popupOptions: {
+            position    :'bottom left'
+          },
+          text:{
+            days        :['日','月','火','水','木','金','土'],
+            months      :['1','2','3','4','5','6','7','8','9','10','11','12'],
+            monthsShort :['1','2','3','4','5','6','7','8','9','10','11','12'],
+            today       :'本日',
+            now         :'現在',
+            am          :'午前',
+            pm          :'午後'
+          }, 
+        })
+      },
+      init:function(){
+        var self=this
+        var startup = function(){
+          /*
+           * 開始時はカレンダーに今月を設定する
+           */
+          if(self.select.month == undefined){
+             self.select.month = moment().valueOf()
+          }
+          $(self.$refs.calendar).calendar('set date',moment(self.select.month,'x').format('YYYY/MM/DD'))
+          /*
+           * 前回のタブに設定
+           */
+          $.tab('change tab',self.config.cache.tab)
+        }
+        localforage.getItem('app',function(err,obj){
+          _.extend(self.$data,obj)
+          self.$nextTick(function(){
+            startup()
+          })
+        })
+      }
+    },
+    mounted:function(){
+      var self=this
+      var print={
+        component:function(){
+          console.log('対応しているファイルタイプ一覧')
+          console.dir(Vue.options.components)
+          console.dir(self.$options.components)
+        },
+        holidays:function(){
+          var today = new Date()
+          var holidays = JapaneseHolidays.getHolidaysOf(today.getFullYear())
+          console.log('対応している祝日（振替含）の一覧')
+          holidays.forEach(function(holiday) {
+            console.log(
+                today.getFullYear() + "年" +
+                holiday.month + "月" + 
+                holiday.date + "日: " +
+                holiday.name
+            )
+          })
+        }
+      }
+
+      for(log in print){print[log]()}
+      this.textToTree()
+      this.construct()
+      this.init()
+    }
+  })
+
+</script>
+ <style name='background.sunrise'>
+   @import url('css/dat-gui/light.min.css');
+   @import url('css/sunrise-0.0.1.css');
+</style>
+ <style name='font'>
+   @font-face{
+     font-family:'M+2VM+IPAG circle';
+     src:url('asset/m+2vm+ipag-circle.ttf');
+   }
+</style>
+ <style name='responsive'>
+   @media only screen and (max-width:500px){
+     main{
+       width:100%;
+     }
+   }
+</style>
+ <style name='grid'>
+   .ui.grid>.row>.column:nth-child(1){
+     width:5em;
+   }
+   .ui.grid>.row>.column:nth-child(2){
+     flex:1;
+   }
+</style>
+ <style>
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   .ui.label,
+   .ui.segments{
+     border-bottom: 1px solid rgba(34,36,38,.15) !important;
+     box-shadow: rgba(16, 36, 94, 0.4) 0 1px 2px 0 !important;
+   }
+   .ui.calendar .ui.table{
+     border:none;
+   }
+</style>
+ <style name='article.strucutre'>
+   article.todo>.view>.ui.label:nth-child(1){
+     position:absolute;
+     transform:translateX(calc(-100% - 10px));
+   }
+   article.todo>.view>.ui.label:nth-child(2){
+     width:100%;
+     display:flex;
+   }
+   article.todo>.view>.ui.label:nth-child(2) input{
+     background:transparent;
+     line-height:0;
+     color:white;
+     outline:none;
+     border:none;
+     width:100%;
+     padding:0;
+   }
+   article.todo>.view>.ui.label>.ui.detail{
+     flex:1;
+   }
+   article.todo>.view>.ui.label{
+     margin:0;
+   }
+   article.todo>.view> input.text{
+     height:1em;
+   }
+   article.todo>.view>.ui.labels{
+     margin-bottom:.5em;
+   }
+   article.todo>.view{
+     margin-bottom:.5em;
+   }
+   article.todo{
+     margin-bottom:.5em;
+   }
+</style>
+ <style name='article.item'>
+   article.todo{
+   }
+   article.todo .ui.detail{
+     opacity:1;
+   }
+   article.todo .daystamp{
+   }
+   article.todo .timestamp{
+   }
+   article.todo input.text{
+     color:white;
+   }
+</style>
+ <style name='input.files'>
+   input[type=file]{
+     display:none;
+   }
+</style>
+ <style name='tab'>
+   .ui.tab{
+     margin-bottom:.5em;
+   }
+</style>
+ <style name='process'>
+   [data-tab=process] .ui.segments.textarea textarea{
+     background:transparent;
+     resize:vertical;
+     display:block;
+     outline:none;
+     border:none;
+     height:210px;
+     width:100%;
+   }
+</style>
+ <style name='article.list'>
+   article.list>.view>.ui.label:nth-child(1){
+     top:-1em;
+     position:absolute;
+     transform:translateX(calc(-100% - 10px));
+   }
+   article.list .ui.table>thead>tr>th,
+   article.list .ui.table>tbody>tr>td{
+     padding:0;
+   }
+   article.list .ui.table>thead>tr>th:first-child,
+   article.list .ui.table>tbody>tr>td:first-child{
+     width:3em;
+     text-align:center;
+   }
+   article.list .ui.table>tbody>tr>td.record{
+     white-space:pre;
+   }
+   article.list .ui.table>tbody>tr>td.record{
+     white-space:pre;
+     tab-size:2;
+   }
+</style>
+ <style>
+   .ui.divider.month{
+     color:white;
+   }
+</style>
+ <style>
+   .ui.segments.calendar{
+     margin-top:0;
+   }
+</style>
+ <style>
+   .ui.segments.textarea{
+     margin-top:0;
+   }
+</style>
+ <style name='dat-gui'>
+   .dg.main{
+     width:100% !important;
+   }
+   .dg .slider{
+     margin-left:0;
+   }
+   .dg.main .close-button{
+     display:none;
+   }
+   .dg .cr.function{
+     border-left: 3px solid #21ba45;
+   }
+</style>
+ <style>
+   .ui.segments.memo{
+     margin-top:0;
+   }
+</style>
+ <style>
+   article.memo>.view>.ui.label:nth-child(1){
+     top:-1em;
+     position:absolute;
+     transform:translateX(calc(-100% - 10px));
+   }
+</style>
+ <style>
+   .memo_write textarea{
+     outline:none;
+     width:100%;
+   }
+</style>
+ <style>
+   .memo_write_timecard .ui.table>thead>tr>th:first-child,
+   .memo_write_timecard .ui.table>tbody>tr>td:first-child{
+     text-align:center;
+     width:3em;
+   }
+   .memo_write_timecard .ui.table>thead>tr>th{
+     text-align:center;
+   }
+   .memo_write_timecard .ui.table>thead>tr>th,
+   .memo_write_timecard .ui.table>tbody>tr>td{
+     padding:0;
+   }
+   .memo_write_timecard input{
+     background:transparent;
+     text-align:center;
+     line-height:0;
+     outline:none;
+     border:none;
+     width:100%;
+     padding:0; 
+   }
+</style>
