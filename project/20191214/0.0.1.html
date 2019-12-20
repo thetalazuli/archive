@@ -1,0 +1,210 @@
+ <body>
+   <canvas id='canvas-txt' width='200' height='24'></canvas>
+   <canvas id='canvas-demo' width='1200' height='600'></canvas>  
+</body>
+ <style>
+/*
+  NOTE 'implemented dat-gui-0.7.6-custom.js >> var styleSheet = ___$insertStyle(".dg ul{lis
+  .dg .cr.wide .c{
+    width:100%;
+  }
+  .dg .cr input,
+  .dg .cr select{
+    width:100%;
+  }
+  .dg .slider{
+    margin-left:0;
+  }
+  .dg .cr.number,
+  .dg .cr.boolean,
+  .dg .cr.boolean,
+  .dg .cr.function,
+  .dg .cr.textarea{
+    border-left: 3px solid #1ed36f;
+  }
+  .dg .cr.textarea{
+    height:auto;
+  }
+  .dg .cr.textarea textarea{
+    background: #303030;
+    resize:vertical;
+    color: #1ed36f;
+    margin-top:4px;
+    outline: none;
+    padding:3px;
+    width:100%;
+    border:0;  
+  }
+  .dg .cr.string.error{
+    border-left: 3px solid pink;
+  }
+  .dg input::placeholder,
+  .dg textarea::placeholder{
+    color:rgba(255,255,255,.752);
+  }
+*/
+ </style>
+
+ <script src='js/native/obelisk-1.2.2.js'></script>
+ <script src='js/native/input-mask-5.0.1.js'></script>
+ <script src='js/native/dat-gui-0.7.6-custom.js'></script>
+ 
+ <script>
+
+  var gui
+  var params
+
+  function init(){
+    gui = new dat.GUI({})
+    params = new function(){
+      this.color = 0xCCFF00
+      this.gridColor = '#ffffff'
+      this.ipt = 'codepen'
+      this.height = 24
+      this.size = 10
+    }
+  }
+
+  // canvas element
+  var offCanvas = document.getElementById('canvas-txt')
+  var ctx = offCanvas.getContext('2d')
+  ctx.font = '20px Helvetica,sans-serif'
+
+  // pixel view
+  var canvas = document.getElementById('canvas-demo')
+  var point = new obelisk.Point(150, 30);
+  var pixelView = new obelisk.PixelView(canvas, point);
+  var brick;
+  var cube;
+
+  var threshold = 130
+
+  function buildPrimitive() {
+    // floor
+    var colorBrick = new obelisk.CubeColor().getByHorizontalColor(parseInt(params.gridColor.replace('#', '0x'), 16))
+    var dimensionBrick = new obelisk.BrickDimension(params.size, params.size)
+    brick = new obelisk.Brick(dimensionBrick, colorBrick)
+
+    // cube
+    var colorCube = new obelisk.CubeColor().getByHorizontalColor(parseInt(params.color))
+    var dimensionCube = new obelisk.CubeDimension(params.size, params.size, params.height)
+    cube = new obelisk.Cube(dimensionCube, colorCube, false)
+  }
+  function draw() {
+    var size = params.size
+    var txtWidth = offCanvas.width
+    var txtHeight = offCanvas.height
+
+    // clear everything
+    pixelView.clear()
+    ctx.clearRect(0, 0, txtWidth, txtHeight)
+    ctx.fillText(params.ipt,2,18)
+
+    var textData = ctx.getImageData(0, 0, txtWidth, txtHeight);
+    // draw grid
+    for (var y = 0; y <= txtHeight; y++) {
+      for (var x = 0; x <= txtWidth; x++) {
+        var p3d = new obelisk.Point3D(x * (size - 2), y * (size - 2), 0)
+        pixelView.renderObject(brick, p3d)
+      }
+    }
+    // draw text
+    for (var y = 0; y < txtHeight; y++) {
+      for (var x = 0; x < txtWidth; x++) {
+        // check pixel
+        var index = (y * textData.width + x) * 4
+        if (textData.data[index + 3] > threshold) {
+            var p3d = new obelisk.Point3D(x * (size - 2), y * (size - 2), 0)
+            pixelView.renderObject(cube, p3d)
+        }
+      }
+    }
+  }
+
+  window.addEventListener('load',function(){
+
+    init()
+
+    var fparam  = gui.addFolder('parameter')
+    var fsample = gui.addFolder('I plan on first Pull Request to datarts')
+
+    var conColor  = fparam.addColor(params, 'gridColor')
+    var conHeight = fparam.add(params, 'height',4,100).step(1)
+    var conSize   = fparam.add(params, 'size',6,20).step(2)
+    var conIpt    = fparam.add(params, 'ipt')
+    var conColor  = fparam.add(params,'color',{
+        GRASS_GREEN:0xCCFF00,
+        YELLOW:0xFFFF00,
+        WINE_RED:0xFF0099,
+        PINK:0xFF7CBF,
+        PURPLE:0xCC00FF,
+        BLUE:0x00CCFF,
+        GRAY:0xEEEEEE,
+        BLACK:0x666666
+    })
+
+    function redraw(){
+      buildPrimitive()
+      draw()
+    }
+
+    fparam.__controllers.forEach(function(controller){
+      controller.onChange(function(){
+        redraw()
+      })
+    })
+
+    var supported = {
+      date:'',
+      text:'',
+      place:'',
+      wide:function(){
+        fparam.toggleWide()
+      }
+    }
+
+    /*
+    * I plan on first Pull Request to datarts
+    */
+    fsample.add(supported,'date').mask('^(\\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$').placeholder('validate input-mask')
+    fsample.addTextarea(supported,'text').placeholder('add textarea to controller')
+    fsample.add(supported,'place').placeholder('set placeholder to controller')
+    fsample.add(supported,'wide').name('toggle wide input')
+    
+    redraw()
+
+  })
+</script>
+<style>
+
+body {
+  font-family: 'helvetica', sans-serif;
+}
+
+#canvas-txt {
+  visibility: hidden;
+  position: absolute;
+}
+
+#ipt {
+  font-family: 'helvetica', sans-serif;
+  border-radius: 4px;
+  border: 2px solid #dadddf;
+  height: 28px;
+  font-size: 14px;
+  margin: 0 0 0 3px;
+  padding: 0 10px;
+  background-color: #fff;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  outline: none;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+</style>
