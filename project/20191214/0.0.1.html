@@ -1,54 +1,24 @@
+ <!doctype html>
  <body>
    <canvas id='canvas-txt' width='200' height='24'></canvas>
    <canvas id='canvas-demo' width='1200' height='600'></canvas>  
 </body>
  <style>
-/*
-  NOTE 'implemented dat-gui-0.7.6-custom.js >> var styleSheet = ___$insertStyle(".dg ul{lis
-  .dg .cr.wide .c{
-    width:100%;
-  }
-  .dg .cr input,
-  .dg .cr select{
-    width:100%;
-  }
-  .dg .slider{
-    margin-left:0;
-  }
-  .dg .cr.number,
-  .dg .cr.boolean,
-  .dg .cr.boolean,
-  .dg .cr.function,
-  .dg .cr.textarea{
-    border-left: 3px solid #1ed36f;
-  }
-  .dg .cr.textarea{
-    height:auto;
-  }
-  .dg .cr.textarea textarea{
-    background: #303030;
-    resize:vertical;
-    color: #1ed36f;
-    margin-top:4px;
-    outline: none;
-    padding:3px;
-    width:100%;
-    border:0;  
-  }
-  .dg .cr.string.error{
-    border-left: 3px solid pink;
-  }
-  .dg input::placeholder,
-  .dg textarea::placeholder{
-    color:rgba(255,255,255,.752);
-  }
-*/
+   /*
+    * DOCTYPE HTML
+    * HTMl5 モードでレンダリングされると
+    * DAT-GUIのレイアウトが極端に崩れる為
+    */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
  </style>
 
- <script src='js/native/obelisk-1.2.2.js'></script>
- <script src='js/native/input-mask-5.0.1.js'></script>
- <script src='js/native/dat-gui-0.7.6-custom.js'></script>
- 
+ <script src='https://thetalazuli.github.io/archive/project/20191214/js/native/obelisk-1.2.2.js'></script>
+ <script src='https://thetalazuli.github.io/archive/project/20191214/js/native/input-mask-5.0.1.js'></script>
+ <script src='https://thetalazuli.github.io/archive/project/20191214/js/native/dat-gui-0.7.6-custom.js'></script>
  <script>
 
   var gui
@@ -164,8 +134,8 @@
     }
 
     /*
-    * I plan on first Pull Request to datarts
-    */
+     * I plan on first Pull Request to datarts
+     */
     fsample.add(supported,'date').mask('^(\\d{4})/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$').placeholder('validate input-mask')
     fsample.addTextarea(supported,'text').placeholder('add textarea to controller')
     fsample.add(supported,'place').placeholder('set placeholder to controller')

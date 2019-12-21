@@ -1,0 +1,258 @@
+ <!doctype html>
+ <body>
+   <main>
+
+     <div class='ui label ribbon orange'>
+       Year
+    </div>
+
+     <div class='ui segments'>
+       <div class='ui segment fitted emoji'>
+         <h1 class='emoji text'>
+           {{getYearEmoji(yearIndex)}}
+        </h1>
+      </div>
+    </div>
+
+     <div class='ui label ribbon orange'>
+       Month
+    </div>
+
+     <div class='ui segments'>
+       <div class='ui segment fitted'>
+         <img class='monthly image' :src="getMontlyImage(monthIndex)">
+      </div>
+    </div>
+
+     <div class='ui label ribbon orange'>
+       Calendar
+    </div>
+
+     <h3 class='ui header block center aligned'>
+       <div class='content'>
+         Fomantic-ui calendar
+         <div class='sub header'>
+           change image when next or prev buttons are clicked.
+        </div>
+      </div>
+     </h3>
+
+     <div class='ui segments calendar'>
+       <div class='ui segment fitted'>
+         <div class='ui calendar' ref='calendar'>
+        </div>
+      </div>
+    </div>
+
+     <div class='ui divider horizontal'>
+       Clicked Button {Prev,Next}
+    </div>
+
+     <div class='ui label fluid blue'>
+       {{changed.mode}}<div class='ui detail'>
+       {{changed.date | YYMMDD}}
+      </div>
+    </div>
+
+     <div class='ui divider horizontal'>
+       Selected Cell {Day,Hour,Minute}
+    </div>
+
+     <div class='ui label fluid green'>
+       {{selected.mode}}<div class='ui detail'>
+       {{selected.date | YYMMDD}}
+      </div>
+    </div>
+
+  </main>
+</body>
+ <style>
+   @import url('css/fomantic-ui/2.7.8.min.css');
+
+   html,
+   body{
+     font-size:12px;
+   }
+   body{
+     display:flex;
+     align-items:center;
+     justify-content:center;
+   }
+   main{
+     width:92mm;
+     padding:1em;
+     border-left: 1px solid #ddd;
+   }
+   .ui.label,
+   .ui.header,
+   .ui.segments{
+     border-bottom: 1px solid rgba(34,36,38,.15) !important;
+     box-shadow: rgba(16, 36, 94, 0.4) 0 1px 2px 0 !important;
+   }
+   .ui.calendar .ui.table{
+     border:none;
+   }
+   .ui.calendar .prev.link i.icon,
+   .ui.calendar .next.link i.icon{
+     color:#2185d0;
+   }
+   .ui.calendar .ui.day.table .link,
+   .ui.calendar .ui.hour.table .link,
+   .ui.calendar .ui.minute.table .link{
+     color:#21ba45;
+   }
+   .ui.divider{
+     display:inline-block;
+   }
+   .monthly.image{
+     width:100%;
+     display:block;
+   }
+   .emoji.segment{
+     text-align:center;
+   }
+   .emoji.text{
+     font-size:10em;
+     text-shadow:black 0 5px 18px;
+   }
+</style>
+ <script src='js/vue/2.6.10.js'></script>
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/jquery/fomantic-ui-2.7.8-custom.js'></script>
+ <script src='js/native/moment-2.24.0.min.js'></script>
+ <script>
+   new Vue({
+     el:'main',
+     data:{
+       changed:{
+         mode:'',
+         date:0
+       },
+       selected:{
+         mode:'',
+         date:0
+       },
+       emoji:[
+         '🐵',
+         '🐔',
+         '🐶',
+         '🐗',
+         '🐭',
+         '🐮',
+         '🐯',
+         '🐰',
+         '🐲',
+         '🐍',
+         '🐴',
+         '🐏',
+       ]
+     },
+     filters:{
+       YYMMDD:function(date){
+         return moment(date,'x').format('YY-MM-DD HH:mm:ss')
+       }
+     },
+     computed:{
+       yearIndex:function(){
+         return moment(this.changed.date,'x').year()
+       },
+       monthIndex:function(){
+         return moment(this.changed.date,'x').month() + 1
+       }
+     },
+     methods:{
+       /*
+        * Let's Emoji
+        * https://lets-emoji.com/twelve-horary-signs-emoji/
+        */
+       getYearEmoji:function(year){
+         console.dir(year)
+         return this.emoji[year % this.emoji.length]
+       },
+       /*
+        * Frame Illust
+        * https://frame-illust.com/?p=12204
+        */
+       getMontlyImage:function(mon){
+         return 'asset/monthly/' + mon + '.png'
+       },
+       /*
+        * new:this called event when next or prev buttons are clicked.
+        * fomantic-ui-2.7.8-custom.js
+        *  LINE:3591
+        *   else if (focusDate) {
+              module.set.focusDate(focusDate);
+              settings.onChangeDate.call(element,focusDate,module.get.mode());
+            }
+        *  LINE:4567
+        *   onChangeDate: function (date) {
+        *     return true
+        *   },
+        */
+       onChangeDate:function(date,mode){
+         switch(mode){
+           case 'day':
+           case 'hour':
+           case 'minute':
+             this.changed.mode = mode
+             this.changed.date = moment(date).valueOf()
+             break;
+         }
+       },
+       onSelect:function(date,mode){
+         var self = this
+         var revert = function() {
+           $(self.$refs.calendar).calendar('set mode','day')
+         }
+         switch(mode){
+           case 'day':
+           case 'hour':
+           case 'minute':
+             this.selected.mode = mode
+             this.selected.date = moment(date).valueOf()
+             break;
+         }
+         if(mode == 'minute'){
+           this.$nextTick(function(){
+             revert()
+           })
+         }
+       },
+       onChange:function(){
+         console.log('onChange Event')
+       },
+       construct(){
+         var self=this
+        $(this.$refs.calendar).calendar({
+          onSelect:self.onSelect,
+          onChangeDate:self.onChangeDate,
+          ampm:false,
+          selectAdjacentDays:true,
+          formatter:{
+            dayHeader:function(date,settings){
+              return date.getFullYear()+'-'+settings.text.months[date.getMonth()]
+            },
+            date:function(date,settings){
+              return date?date.getFullYear()+'/'+(date.getMonth()+1)+'/'+date.getDate():''
+            }
+          },
+          text:{
+            days        :['SUN','MON','TUE','WED','THU','FRI','SAT'],
+            months      :['1','2','3','4','5','6','7','8','9','10','11','12'],
+            monthsShort :['1','2','3','4','5','6','7','8','9','10','11','12'],
+            today       :'DAY',
+            now         :'NOW',
+            am          :'AM',
+            pm          :'PM'
+          }, 
+        })
+       }
+     },
+     created:function(){
+       this.changed.date = moment().valueOf()
+     },
+     mounted:function(){
+       this.construct()
+     }
+   })
+</script>
