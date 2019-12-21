@@ -166,7 +166,6 @@
         * https://lets-emoji.com/twelve-horary-signs-emoji/
         */
        getYearEmoji:function(year){
-         console.dir(year)
          return this.emoji[year % this.emoji.length]
        },
        /*
@@ -218,12 +217,13 @@
            })
          }
        },
-       onChange:function(){
-         console.log('onChange Event')
+       onChange:function(date, text, mode){
+         console.dir(arguments)
        },
        construct(){
          var self=this
         $(this.$refs.calendar).calendar({
+          onChange:self.onChange,
           onSelect:self.onSelect,
           onChangeDate:self.onChangeDate,
           ampm:false,
