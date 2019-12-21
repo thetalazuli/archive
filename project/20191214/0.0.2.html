@@ -1,0 +1,176 @@
+ <body>
+   <main>
+     <div class='ui label fluid request blue'>
+       GET PARAMS
+    </div>
+     <div class='ui segments'>
+       <div class='ui segment fitted'>
+        <div class='dat params'>
+       </div>
+      </div>
+    </div>
+     <div class='ui label fluid error pink' style='display:none;'>
+    </div>
+  </main>
+</body>
+ <style>
+   @import url('css/fomantic-ui/2.7.8.min.css');
+
+   @font-face{
+     font-family:'M+2VM+IPAG circle';
+     src:url('asset/m+2vm+ipag-circle.ttf');
+   }
+
+   html,
+   body{
+     font:12px 'M+2VM+IPAG circle';
+   }
+   body{
+     display:flex;
+     align-items:center;
+     justify-content:center;
+   }
+   main{
+     width:100mm;
+   }
+   
+   .dg.main,
+   .dg.main .close-button{
+     width:100% !important;
+     margin-right:0;
+     float:none;
+   }
+   .dg.main .close-button{
+     display:none;
+   }
+   .dg.main textarea{
+     height:128px !important;
+   }
+   
+   .ui.label,
+   .ui.segments{
+     border-bottom: 1px solid rgba(34,36,38,.15) !important;
+     box-shadow: rgba(16, 36, 94, 0.4) 0 1px 2px 0 !important;
+   }
+
+   .ui.request.label{
+     word-break: break-all;
+   }
+
+   .ui.segments.params{
+     margin-top:0;
+   }
+</style>
+ <script src='js/jquery/3.4.1.min.js'></script>
+ <script src='js/native/input-mask-5.0.1.js'></script>
+ <script src='js/native/dat-gui-0.7.6-custom.js'></script>
+ <script>
+   var gui
+   var params
+
+   function init(){
+     /*
+      * 登録用の変数
+      */
+     params = function(){
+       this.name    = ''
+       this.code    = ''
+       this.tel     = ''
+       this.email   = ''
+       this.pref    = ''
+       this.address = ''
+       this.memo    = ''
+     }
+     /*
+      * 登録用の変数をビルド（クエリ）
+      */
+     params.prototype.build = function(){
+       var self=this
+       return Object.keys(this).map(function(key) {
+         return key + '=' + self[key]
+       }).join('&')
+     }
+     /*
+      * 登録用の変数をリクエスト（AJAX）
+      */
+     params.prototype.request = function(){
+       /*
+        * 仕様上のバリデート
+        *　 郵便番号が000-0000なんてありえない
+        *   日付が0000/00/00なんてありえない
+        * など（多分バックエンドで行うと思います）
+        */
+       $('.request.label').text(
+         this.build()
+       )
+
+       /*
+        * 通信
+        */
+       console.dir(
+         this
+       )
+     }
+   }
+
+   /*
+    * 入力用マスクのエラー
+    */
+   function error(message){
+     console.log(message)
+     $el = $('.error.label')
+     $el.text(message)
+     $el[message.length ? 'show' : 'hide']()
+   }
+
+   document.addEventListener('DOMContentLoaded',function(){
+
+    init()
+
+    params = new params()
+
+    gui = new dat.GUI({})
+    /*
+     * フロントエンド側は書式のみバリデート（データ型に依存しない部分）
+     * 書式上のバリデート
+     */
+    gui.add(params,'name').name('名前').mask('^[あ-ん゛゜ぁ-ぉゃ-ょー「」、]+$','入力は全角文字のみです',error).inputmode('kana')
+    gui.add(params,'email').name('メールアドレス').mask('^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$','メールアドレスは***@***.***です',error).inputmode('email')
+    gui.add(params,'code').name('郵便番号').mask('^\\d{3}-\\d{4}$','郵便番号は***-****です',error)
+    gui.add(params,'tel').name('電話番号').mask('^\\d{3}-\\d{4}-\\d{4}$','電話番号は***-***-****です',error)
+    gui.add(params,'pref',['愛知県','三重県','岐阜県','静岡県']).name('県')
+    gui.add(params,'address').name('住所')
+    gui.addTextarea(params,'memo').name('備考')
+    gui.add(params,'request').name('登録')
+    gui.toggleWide()
+    
+    var $container = $('.dat.params')
+    var $controllers = $(gui.domElement).find('input,textarea,select')
+
+    $container.append(gui.domElement)
+    $controllers.on('keydown',function(event){
+      /*
+       * エンターキーでなければ次にフォーカスを移す必要はないし
+       * エラーがあるならフォーカスを移すべきじゃない
+       */
+      if(event.which != 13){
+        $(this).focus()
+      }else{
+        var count  =  $controllers.length
+        var input = {
+          current:$controllers.index(this),
+          next:($controllers.index(this) + 1) % count
+        }
+
+        if (input.next < count){
+          $controllers.eq(input.current).blur()
+          $controllers.eq(input.next).focus()
+        }
+      }
+
+    })
+
+
+   })
+
+</script>

@@ -1611,6 +1611,10 @@ var saveDialogContents = "<div id=\"dg-save\" class=\"dg dialogue\">\n\n  Here's
 var ControllerFactory = function ControllerFactory(object, property) {
   var initialValue = object[property];
   if (Common.isArray(arguments[2]) || Common.isObject(arguments[2])) {
+    
+
+
+    
     return new OptionController(object, property, arguments[2]);
   }
   if (Common.isNumber(initialValue)) {
@@ -2210,9 +2214,13 @@ Common.extend(GUI.prototype,
           controller.__name.style.display = controller.wide ? 'none' : '';
           dom.toggleClass(controller.__li, 'wide')
           break;
+      }
+
+      switch(className){
         case 'StringController':
         case 'TextareaController':
           controller.__input.placeholder = controller.wide ? controller.propertyname : '';
+          break;
       }
     })
   }
@@ -2267,18 +2275,26 @@ function augmentController(gui, li, name, controller) {
         });
       }
     },
+    inputmode: function inputmode(name){
+      controller.__input.setAttribute('inputmode',name)
+      return controller;
+    },
     placeholder: function placeholder(text){
       controller.propertyname = text
       controller.__input.placeholder = text
       return controller;
     },
-    mask: function(pattern){
+    mask: function(pattern,message,callback){
       controller.__input.setAttribute('data-inputmask-regex',pattern)
       if ('Inputmask' in window){
         Inputmask({
           onKeyValidation:function(key,result){
 
             dom[(result ? 'remove' : 'add') + 'Class'](controller.__li,'error')
+            if (callback){
+              callback(result ? '' : message)
+            }
+            
           }
         }).mask(controller.__input)
 
@@ -2292,7 +2308,18 @@ function augmentController(gui, li, name, controller) {
       return controller;
     },
     name: function name(_name) {
+      controller.propertyname = _name
       controller.__li.firstElementChild.firstElementChild.innerHTML = _name;
+
+      if(controller.constructor.name == 'OptionController'){
+        var el = document.createElement('option');
+            el.setAttribute('disabled','')
+            el.setAttribute('selected','')
+            el.textContent = _name
+            
+        controller.__select.appendChild(el)
+      }
+
       return controller;
     },
     listen: function listen() {
